@@ -23,10 +23,10 @@ const Header = () => {
   return (
     <AppBar position="sticky">
       <Toolbar component="nav">
-        <Typography variant="h6" component="h3">
-          My Project Name
-        </Typography>
         <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="h6" component="h3">
+            My Project Name
+          </Typography>
           <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
             <Button color="inherit" onClick={goHome}>
               Main Page
@@ -52,7 +52,7 @@ const Header = () => {
             <NativeSelect
               defaultValue={'en'}
               inputProps={{
-                name: 'age',
+                name: 'lang',
                 id: 'uncontrolled-native',
               }}
               sx={{

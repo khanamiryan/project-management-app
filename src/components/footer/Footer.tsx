@@ -7,7 +7,7 @@ const Footer = () => {
     <Container
       component="footer"
       sx={{
-        position: 'absolute',
+        position: 'fixed',
         bottom: '0',
         backgroundColor: '#1976d2',
         minHeight: 48,
