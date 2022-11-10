@@ -14,6 +14,13 @@ import { Board } from '../boardsList.types';
 import { isBoardOwner } from 'utils/isBoardOwner';
 
 const BoardCard = ({ board }: { board: Board }) => {
+  const onClickDelete = () => {
+    // TODO We need modal window for this
+    // eslint-disable-next-line no-restricted-globals
+    confirm(`Are you absolutely sure you want to delete this board?
+    ${JSON.stringify(board)}`);
+  };
+
   return (
     <>
       <Card sx={{ position: 'relative' }}>
@@ -31,9 +38,14 @@ const BoardCard = ({ board }: { board: Board }) => {
           </Typography>
         </CardContent>
         <CardActions sx={{ pt: 0 }}>
-          <Button size="medium">OPEN</Button>
+          <Button variant="contained" href={`/boards/${board._id}`}>
+            OPEN BOARD
+          </Button>
         </CardActions>
-        <IconButton sx={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+        <IconButton
+          sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+          onClick={onClickDelete}
+        >
           <DeleteIcon fontSize="large" />
         </IconButton>
       </Card>

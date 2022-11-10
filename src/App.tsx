@@ -18,6 +18,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="login" element={<SignIn />} />
           <Route path="registration" element={<SignUp />} />
+          <Route path="/boards/:id" element={<p>This is a page for some board</p>} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
