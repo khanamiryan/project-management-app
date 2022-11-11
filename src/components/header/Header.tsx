@@ -16,6 +16,7 @@ const Header = () => {
   const navigate = useNavigate();
   const goHome = () => navigate('/');
   const goBoards = () => navigate('/boards');
+  const goBetaBoard = () => navigate('/boards/1');
   const goProfile = () => navigate('/profile');
   const goSignIn = () => navigate('/login');
   const goSignUp = () => navigate('/registration');
@@ -33,6 +34,9 @@ const Header = () => {
             </Button>
             <Button color="inherit" onClick={goBoards}>
               Boards
+            </Button>
+            <Button color="inherit" onClick={goBetaBoard}>
+              Beta Board
             </Button>
             <Button color="inherit" onClick={goProfile}>
               Profile
