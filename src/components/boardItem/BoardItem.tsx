@@ -5,6 +5,9 @@ import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
 
 export default function BoardItem(): JSX.Element {
+  const handleEditBoard = () => {};
+  const handleDeleteBoard = () => {};
+
   return (
     <>
       <Box className="board-header">
@@ -19,10 +22,10 @@ export default function BoardItem(): JSX.Element {
           </Button>
           <Box>
             <ButtonGroup>
-              <Button variant="contained" color="warning">
+              <Button variant="contained" color="warning" onClick={handleEditBoard}>
                 Edit
               </Button>
-              <Button variant="contained" color="warning">
+              <Button variant="contained" color="warning" onClick={handleDeleteBoard}>
                 Delete
               </Button>
             </ButtonGroup>
@@ -30,6 +33,8 @@ export default function BoardItem(): JSX.Element {
         </Stack>
       </Box>
       <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
+        <TasksList></TasksList>
+        <TasksList></TasksList>
         <TasksList></TasksList>
         <TasksList></TasksList>
         <TasksList></TasksList>

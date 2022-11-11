@@ -4,7 +4,23 @@
   width: 280px;
   min-width: 280px;
   height: 100%;
-  padding: 15px;
+  
+
+  .column-name{
+    padding: .5rem;
+    background-color: rgb(32, 208, 220);
+
+    .column-title{
+      display:flex;
+      justify-content: space-between;
+      h3{
+        text-transform: uppercase;
+        line-height: 32px;
+      }
+    }
+
+    }
+
 
   .tasks-list{
   position: relative;
