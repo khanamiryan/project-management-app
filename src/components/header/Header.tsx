@@ -41,10 +41,10 @@ const Header = () => {
 
           <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
             <Button color="inherit" onClick={goSignIn}>
-              Sing in
+              Sign in
             </Button>
             <Button color="inherit" onClick={goSignUp}>
-              Sing up
+              Sign up
             </Button>
           </ButtonGroup>
 

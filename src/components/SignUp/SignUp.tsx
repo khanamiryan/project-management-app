@@ -43,6 +43,13 @@ const SignUp = () => {
           label="Login"
           name="login"
           autoComplete="login"
+          rules={{
+            required: 'Login is required',
+            minLength: {
+              value: 3,
+              message: 'Login is too short',
+            },
+          }}
         />
       </div>
       <div>
@@ -53,6 +60,13 @@ const SignUp = () => {
           label="Password"
           type="password"
           autoComplete="current-password"
+          rules={{
+            required: 'Password is required',
+            minLength: {
+              value: 8,
+              message: 'Password is too short',
+            },
+          }}
         />
       </div>
       <Button type="submit" variant="contained">
