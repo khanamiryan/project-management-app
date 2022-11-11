@@ -1,51 +1,69 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import './SignIn.scss';
-import { Box, TextField, Button, Link } from '@mui/material';
+import { Box, Button, Link } from '@mui/material';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import InputText from '../InputText/InputText';
+
+interface ISignInForm {
+  login: string;
+  password: string;
+  something: string;
+}
 
 const SignIn = () => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    console.log(e);
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
+  const { handleSubmit, control } = useForm<ISignInForm>({
+    defaultValues: {
+      login: '',
+      password: '',
+      something: '',
+    },
+  });
 
-    console.log({
-      email: data.get('login'),
-      password: data.get('password'),
-    });
+  const onSubmit: SubmitHandler<ISignInForm> = (data) => {
+    console.log(data);
 
     //todo: dispatch to signin thunk when it will available
   };
   return (
-    <Box component="form" className={'SignInForm'} onSubmit={handleSubmit}>
+    <Box component="form" className={'SignInForm'} onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <TextField
-          margin="normal"
-          required
-          label="Login"
+        <InputText
           name="login"
+          label="Login"
           autoComplete="login"
-          // helperText="Incorrect entry."
-          // error
-          autoFocus
+          control={control}
+          rules={{
+            required: 'Login is required',
+            minLength: {
+              value: 3,
+              message: 'Login is too short',
+            },
+          }}
         />
       </div>
       <div>
-        <TextField
-          margin="normal"
-          required
+        <InputText
           name="password"
+          control={control}
+          rules={{
+            required: 'Password is required',
+            minLength: {
+              value: 8,
+              message: 'Password is too short',
+            },
+          }}
+          margin="normal"
           label="Password"
           type="password"
-          autoComplete="current-password"
-          // helperText="Incorrect entry."
-          // error
+          autoComplete="password"
         />
       </div>
+
       <Button type="submit" variant="contained">
         Sign In
       </Button>
       <div>
-        <Link href="/sign-up" margin="normal">
+        <Link href="/registration" margin="normal">
           Dont have an account? Sign Up
         </Link>
       </div>

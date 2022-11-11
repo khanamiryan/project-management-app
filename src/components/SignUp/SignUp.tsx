@@ -1,64 +1,65 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import './SignUp.scss';
-import { Box, TextField, Button, Link } from '@mui/material';
+import { Box, Button, Link } from '@mui/material';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import InputText from '../InputText/InputText';
+
+interface ISignUpForm {
+  name: string;
+  login: string;
+  password: string;
+}
 
 const SignUp = () => {
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    console.log(e);
-    e.preventDefault();
+  const { handleSubmit, control } = useForm<ISignUpForm>({
+    defaultValues: {
+      name: '',
+      login: '',
+      password: '',
+    },
+  });
 
-    const data = new FormData(e.currentTarget);
-
-    console.log({
-      name: data.get('name'),
-      email: data.get('login'),
-      password: data.get('password'),
-    });
+  const onSubmit: SubmitHandler<ISignUpForm> = (data) => {
+    console.log(data);
 
     //todo: dispatch to signUp thunk when it will available
   };
   return (
-    <Box component="form" className="SignUpForm" onSubmit={handleSubmit}>
+    <Box component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <TextField
+        <InputText
+          control={control}
           margin="normal"
-          required
           label="Name"
           name="name"
           autoComplete="name"
-          // helperText="Incorrect entry."
-          // error
           autoFocus
         />
       </div>
       <div>
-        <TextField
+        <InputText
+          control={control}
           margin="normal"
-          required
           label="Login"
           name="login"
           autoComplete="login"
-          // helperText="Incorrect entry."
-          // error
         />
       </div>
       <div>
-        <TextField
+        <InputText
+          control={control}
           margin="normal"
-          required
           name="password"
           label="Password"
           type="password"
           autoComplete="current-password"
-          // helperText="Incorrect entry."
-          // error
         />
       </div>
       <Button type="submit" variant="contained">
         Sign In
       </Button>
       <div>
-        <Link href="/sign-in" margin="normal">
+        <Link href="/login" margin="normal">
           Have an account? Sign in
         </Link>
       </div>
