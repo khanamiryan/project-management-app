@@ -1,4 +1,4 @@
-import { Board } from 'components/boardsList/boardsList.types';
+import { Board } from 'types/types';
 
 const boardsSet: Board[] = [
   {

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Board } from '../boardsList.types';
+import { Board } from 'types/types';
 import { isBoardOwner } from 'utils/isBoardOwner';
 
 const BoardCard = ({ board }: { board: Board }) => {
