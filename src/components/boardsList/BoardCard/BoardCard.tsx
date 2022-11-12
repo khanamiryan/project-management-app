@@ -21,8 +21,14 @@ const BoardCard = ({ board }: { board: Board }) => {
     setModalOpen(true);
   };
 
-  const onBoardDelete = () => {};
-  const onModalClose = () => {};
+  const onModalClose = () => setModalOpen(false);
+  const onBoardDelete = () => {
+    //TODO dispatch action for delete board
+    onModalClose();
+  };
+
+  const modalTitle = `Delete the board ${board.title}?`;
+  const modalText = "It's irreversible. If you delete a board, you won't be able to restore it.";
 
   return (
     <>
@@ -52,7 +58,14 @@ const BoardCard = ({ board }: { board: Board }) => {
           <DeleteIcon fontSize="large" />
         </IconButton>
       </Card>
-      <Modal open={modalOpen} onClickConfirm={onBoardDelete} onClickCancel={onModalClose} />
+      <Modal
+        open={modalOpen}
+        title={modalTitle}
+        onClickConfirm={onBoardDelete}
+        onClickCancel={onModalClose}
+      >
+        {modalText}
+      </Modal>
     </>
   );
 };

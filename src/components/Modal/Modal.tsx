@@ -9,33 +9,47 @@ import DialogTitle from '@mui/material/DialogTitle';
 type ModalProps = {
   open: boolean;
   onClickConfirm: () => void;
-  onClickCancel: () => void;
+  onClickCancel?: () => void;
+  children: JSX.Element | string;
+  title?: string;
+  confirmButtonText?: string;
+  cancelButtonTex?: string;
+  onlyConfirmButton?: boolean;
 };
 
-export default function Modal({ open }: ModalProps) {
-  const handleClose = () => {
-    console.log('handleClose');
-  };
+export default function Modal({
+  open,
+  onClickConfirm,
+  onClickCancel,
+  children,
+  title,
+  confirmButtonText,
+  cancelButtonTex,
+  onlyConfirmButton,
+}: ModalProps) {
+  const content =
+    typeof children === 'string' ? (
+      <DialogContentText id="alert-dialog-description">{children}</DialogContentText>
+    ) : (
+      children
+    );
 
   return (
     <div>
       <Dialog
         open={open}
-        // onClose={handleClose}
+        onClose={onClickCancel}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous location data to
-            Google, even when no apps are running.
-          </DialogContentText>
-        </DialogContent>
+        {title && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
+        <DialogContent>{content}</DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
+          {!onlyConfirmButton && (
+            <Button onClick={onClickCancel}>{cancelButtonTex || 'Cancel'}</Button>
+          )}
+          <Button onClick={onClickConfirm} autoFocus>
+            {confirmButtonText || 'Confirm'}
           </Button>
         </DialogActions>
       </Dialog>
