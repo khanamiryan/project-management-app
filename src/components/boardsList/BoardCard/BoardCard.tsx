@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -12,14 +12,17 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import { isBoardOwner } from 'utils/isBoardOwner';
+import Modal from 'components/Modal/Modal';
 
 const BoardCard = ({ board }: { board: Board }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   const onClickDelete = () => {
-    // TODO We need modal window for this
-    // eslint-disable-next-line no-restricted-globals
-    confirm(`Are you absolutely sure you want to delete this board?
-    ${JSON.stringify(board)}`);
+    setModalOpen(true);
   };
+
+  const onBoardDelete = () => {};
+  const onModalClose = () => {};
 
   return (
     <>
@@ -49,6 +52,7 @@ const BoardCard = ({ board }: { board: Board }) => {
           <DeleteIcon fontSize="large" />
         </IconButton>
       </Card>
+      <Modal open={modalOpen} onClickConfirm={onBoardDelete} onClickCancel={onModalClose} />
     </>
   );
 };
