@@ -5,27 +5,17 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
-type ModalProps = {
-  open: boolean;
-  onClickConfirm: () => void;
-  onClickCancel?: () => void;
-  children: JSX.Element | string;
-  title?: string;
-  confirmButtonText?: string;
-  cancelButtonTex?: string;
-  onlyConfirmButton?: boolean;
-};
+import { ModalProps } from './Modal.types';
 
 export default function Modal({
   open,
-  onClickConfirm,
-  onClickCancel,
   children,
   title,
   confirmButtonText,
   cancelButtonTex,
   onlyConfirmButton,
+  onClickConfirm,
+  onClickCancel,
 }: ModalProps) {
   const content =
     typeof children === 'string' ? (

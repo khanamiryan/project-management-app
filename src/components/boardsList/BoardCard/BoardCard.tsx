@@ -16,19 +16,20 @@ import Modal from 'components/Modal/Modal';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const isOwner = isBoardOwner(board.owner);
+  const modalTitle = `${isOwner ? 'Delete' : 'Leave'} the board ${board.title}?`;
+  const modalText = `It's irreversible. If you ${
+    isOwner ? 'delete' : 'leave'
+  } this board, you won't be able to restore it.`;
 
   const onClickDelete = () => {
     setModalOpen(true);
   };
-
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {
-    //TODO dispatch action for delete board
+    //TODO dispatch action for delete or leave board
     onModalClose();
   };
-
-  const modalTitle = `Delete the board ${board.title}?`;
-  const modalText = "It's irreversible. If you delete a board, you won't be able to restore it.";
 
   return (
     <>
@@ -38,7 +39,7 @@ const BoardCard = ({ board }: { board: Board }) => {
             {board.title}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Role: {isBoardOwner(board.owner) ? 'owner' : 'contributor'}
+            Role: {isOwner ? 'owner' : 'contributor'}
           </Typography>
           <Typography variant="body2">
             <Badge badgeContent={board.users.length + 1} color="primary">
