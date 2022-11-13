@@ -40,6 +40,9 @@ const CreateBoardModal = ({ open, onModalClose }: { open: boolean; onModalClose:
           rules={{
             required: 'title is required',
           }}
+          inputProps={{
+            style: { fontSize: '1.2rem' },
+          }}
         />
         <UsersSelect onUserSelect={onShare} />
       </>
