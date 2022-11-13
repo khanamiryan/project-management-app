@@ -1,15 +1,13 @@
+import React from 'react';
 import InputText from 'components/InputText/InputText';
 import Modal from 'components/Modal/Modal';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
-import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-export type CreateBoardFormFields = {
-  title: string;
-  users: string[];
-};
+type CreateBoardFormFields = { title: string; users: string[] };
+type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
 
-const CreateBoardModal = ({ open, onModalClose }: { open: boolean; onModalClose: () => void }) => {
+const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   let users: string[] = [];
 
   const { handleSubmit, control } = useForm<CreateBoardFormFields>({
