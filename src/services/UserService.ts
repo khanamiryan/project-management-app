@@ -7,8 +7,22 @@ export const authApi = axios.create({
   // withCredentials: true,
 });
 
+export const addBearer = (token: string) => {
+  authApi.defaults.headers.common = {
+    Authorization: `Bearer ${token}`,
+  };
+};
+
 export const signInService = async (user: ISignInForm) => {
   const response = await authApi.post('auth/signin', user);
+  //////
+  addBearer(response.data.token); //definetly need to change the place
+  ///////
+  return response.data;
+};
+
+export const getUserService = async (id: string) => {
+  const response = await authApi.get(`users/${id}`);
   return response.data;
 };
 

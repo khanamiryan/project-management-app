@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './SignIn.scss';
-import { Alert, Box, Button, Link, Snackbar } from '@mui/material';
+import { Box, Button, Link } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import { ISignInForm, selectUser, signIn } from '../../store/userSlice';
 
 import { useNavigate } from 'react-router-dom';
+import Toast from '../Toast/Toast';
 
 const SignIn = () => {
   const { handleSubmit, control, clearErrors, setError } = useForm<ISignInForm>({
@@ -27,6 +28,7 @@ const SignIn = () => {
       navigate('/boards');
     }
   }, [login, loggedIn]);
+
   useEffect(() => {
     if (error.length) {
       setMessage(error);
@@ -42,25 +44,14 @@ const SignIn = () => {
 
   return (
     <Box component="form" className={'SignInForm'} onSubmit={handleSubmit(onSubmit)}>
-      <Snackbar
+      <Toast
         open={open}
-        autoHideDuration={3000}
         onClose={() => {
           setOpen(false);
         }}
       >
-        <Alert
-          elevation={6}
-          variant="filled"
-          onClose={() => {
-            setOpen(false);
-          }}
-          severity="error"
-          sx={{ width: '100%' }}
-        >
-          {message}
-        </Alert>
-      </Snackbar>
+        {message}
+      </Toast>
 
       <div>
         <InputText
