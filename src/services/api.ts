@@ -22,7 +22,7 @@ enum HTTPMethod {
   PATCH = 'PATCH',
   POST = 'POST',
 }
-const decodedToket: DecodedToken = jwt_decode(token);
+const decodedToken: DecodedToken = jwt_decode(token);
 
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
@@ -42,13 +42,29 @@ export const api = createApi({
         headers: { Authorization: `Bearer ${token}` },
       }),
     }),
+    createBoard: builder.mutation<Board, Omit<Board, '_id' | 'owner'>>({
+      query: (boardData) => {
+        console.log(JSON.stringify({ ...boardData, owner: decodedToken.id }));
+        return {
+          url: `${Endpoint.BOARDS}`,
+          method: HTTPMethod.POST,
+          headers: { Authorization: `Bearer ${token}` },
+          body: { ...boardData, owner: decodedToken.id },
+        };
+      },
+    }),
     getBoardsSetByUserId: builder.query<Board[], string>({
       query: () => ({
-        url: `${Endpoint.BOARDS_SET}${decodedToket.id}`,
+        url: `${Endpoint.BOARDS_SET}${decodedToken.id}`,
         headers: { Authorization: `Bearer ${token}` },
       }),
     }),
   }),
 });
 
-export const { useGetBoardsQuery, useGetBoardsSetByUserIdQuery, useDeleteBoardMutation } = api;
+export const {
+  useGetBoardsQuery,
+  useGetBoardsSetByUserIdQuery,
+  useDeleteBoardMutation,
+  useCreateBoardMutation,
+} = api;
