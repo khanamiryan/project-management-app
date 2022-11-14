@@ -3,7 +3,7 @@ export type ModalProps = {
   children: JSX.Element | string;
   title?: string;
   confirmButtonText?: string;
-  cancelButtonTex?: string;
+  cancelButtonText?: string;
   onlyConfirmButton?: boolean;
   onClickConfirm: () => void;
   onClickCancel?: () => void;

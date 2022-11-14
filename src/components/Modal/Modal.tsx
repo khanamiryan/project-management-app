@@ -6,14 +6,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ModalProps } from './Modal.types';
-import './Modal.scss';
 
 export default function Modal({
   open,
   children,
   title,
   confirmButtonText,
-  cancelButtonTex,
+  cancelButtonText,
   onlyConfirmButton,
   onClickConfirm,
   onClickCancel,
@@ -37,7 +36,7 @@ export default function Modal({
       <DialogContent sx={{ overflowY: 'initial' }}>{content}</DialogContent>
       <DialogActions>
         {!onlyConfirmButton && (
-          <Button onClick={onClickCancel}>{cancelButtonTex || 'Cancel'}</Button>
+          <Button onClick={onClickCancel}>{cancelButtonText || 'Cancel'}</Button>
         )}
         <Button onClick={onClickConfirm} autoFocus>
           {confirmButtonText || 'Confirm'}
