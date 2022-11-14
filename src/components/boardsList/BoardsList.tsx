@@ -1,16 +1,25 @@
-import { Grid, Typography } from '@mui/material';
+import { Alert, Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 import BoardCard from './BoardCard/BoardCard';
 import { useGetBoardsSetByUserIdQuery } from 'services/api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const BoardsList = () => {
-  const { data } = useGetBoardsSetByUserIdQuery('');
+  const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery('');
 
   return (
     <>
       <Typography variant="h4" sx={{ mb: '1rem' }}>
         My boards
       </Typography>
+      <Box textAlign={'center'}>
+        {isLoading && <CircularProgress size={80} />}
+        {isError && (
+          <Alert variant="outlined" severity="error">
+            Oops! A Server error occurred.
+          </Alert>
+        )}
+      </Box>
       <Grid container spacing={2}>
         {data?.length &&
           data.map((board) => {

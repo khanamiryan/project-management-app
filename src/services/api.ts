@@ -11,6 +11,8 @@ type DecodedToken = {
 const BASE_URL = 'http://localhost:3000/';
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg0MzQzODEsImV4cCI6MTY2ODQ3NzU4MX0.Mums_mazx3pYqqJ2iJR4FNFhJR515B1xSR3boIA-bvs';
+const decodedToken: DecodedToken = jwt_decode(token);
+
 enum Endpoint {
   BOARDS = 'boards/',
   BOARDS_SET = 'boardsSet/',
@@ -22,8 +24,6 @@ enum HTTPMethod {
   PATCH = 'PATCH',
   POST = 'POST',
 }
-const decodedToken: DecodedToken = jwt_decode(token);
-
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
   reducerPath: 'api',

@@ -14,6 +14,7 @@ import { Board } from 'types/types';
 import { isBoardOwner } from 'utils/isBoardOwner';
 import Modal from 'components/Modal/Modal';
 import { useDeleteBoardMutation } from 'services/api';
+import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,6 +34,10 @@ const BoardCard = ({ board }: { board: Board }) => {
     deleteBoard(board._id);
     onModalClose();
   };
+
+  if (result.isLoading) {
+    return <LoadingBackdrop />;
+  }
 
   return (
     <>

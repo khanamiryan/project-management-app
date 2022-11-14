@@ -4,6 +4,7 @@ import Modal from 'components/Modal/Modal';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useCreateBoardMutation } from 'services/api';
+import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 
 type CreateBoardFormFields = { title: string; users: string[] };
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
@@ -11,7 +12,6 @@ type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
 const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   let users: string[] = [];
   const [createBoard, result] = useCreateBoardMutation();
-
   const { handleSubmit, control } = useForm<CreateBoardFormFields>({
     defaultValues: {
       title: '',
@@ -19,8 +19,6 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   });
 
   const onSubmit: SubmitHandler<CreateBoardFormFields> = (data) => {
-    // TODO dispatch createBoardAction
-    console.log({ ...data, users });
     createBoard({ ...data, users });
     onModalClose();
   };
@@ -28,6 +26,10 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   const onShare = (usersId: string[]) => {
     users = usersId;
   };
+
+  if (result.isLoading) {
+    return <LoadingBackdrop />;
+  }
 
   return (
     <Modal open={open} onClickCancel={onModalClose} onClickConfirm={handleSubmit(onSubmit)}>
