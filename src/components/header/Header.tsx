@@ -17,6 +17,7 @@ const Header = () => {
   const navigate = useNavigate();
   const goHome = () => navigate('/');
   const goBoards = () => navigate('/boards');
+  const goBetaBoard = () => navigate('/boards/1');
   const goProfile = () => navigate('/profile');
   const goSignIn = () => navigate('/login');
   const goSignUp = () => navigate('/registration');
@@ -28,28 +29,29 @@ const Header = () => {
   const onModalClose = () => setModalOpen(false);
 
   return (
-    <>
-      <AppBar position="sticky">
-        <Toolbar component="nav">
-          <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h6" component="h3">
-              My Project Name
-            </Typography>
-            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
-              <Button color="inherit" onClick={goHome}>
-                Main Page
-              </Button>
-              <Button color="inherit" onClick={goBoards}>
-                Boards
-              </Button>
-              <Button color="inherit" onClick={onClickAddBoard}>
+    <AppBar position="sticky">
+      <Toolbar component="nav">
+        <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="h6" component="h3">
+            My Project Name
+          </Typography>
+          <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
+            <Button color="inherit" onClick={goHome}>
+              Main Page
+            </Button>
+            <Button color="inherit" onClick={goBoards}>
+              Boards
+            </Button>
+            <Button color="inherit" onClick={onClickAddBoard}>
                 Add board
               </Button>
-              <Button color="inherit" onClick={goProfile}>
-                Profile
-              </Button>
-            </ButtonGroup>
-
+            <Button color="inherit" onClick={goBetaBoard}>
+              Beta Board
+            </Button>
+            <Button color="inherit" onClick={goProfile}>
+              Profile
+            </Button>
+          </ButtonGroup>
             <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
               <Button color="inherit" onClick={goSignIn}>
                 Sign in

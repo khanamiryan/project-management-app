@@ -1,22 +1,10 @@
-import { Container, Link } from '@mui/material';
+import { Box, Container, Link } from '@mui/material';
 import React from 'react';
 import './footer.scss';
 
 const Footer = () => {
   return (
-    <Container
-      component="footer"
-      sx={{
-        position: 'fixed',
-        bottom: '0',
-        backgroundColor: '#1976d2',
-        minHeight: 48,
-        maxHeight: 64,
-        display: 'flex',
-        justifyContent: 'space-between',
-      }}
-      className="footer"
-    >
+    <Box component="footer" className="footer">
       <div className={'footer-year'}>
         <p>© 2022</p>
       </div>
@@ -24,7 +12,7 @@ const Footer = () => {
         href="https://github.com/khanamiryan"
         underline="none"
         target="_blank"
-        sx={{ maxWidth: 50, color: '#fff' }}
+        className="footer-link"
       >
         Ashot Khanamiryan
       </Link>
@@ -32,7 +20,7 @@ const Footer = () => {
         href="https://github.com/siarheiha"
         underline="none"
         target="_blank"
-        sx={{ maxWidth: 50, color: '#fff' }}
+        className="footer-link"
       >
         Siarhei Hancharyk
       </Link>
@@ -40,14 +28,14 @@ const Footer = () => {
         href="https://github.com/utyfjs"
         underline="none"
         target="_blank"
-        sx={{ maxWidth: 50, color: '#fff' }}
+        className="footer-link"
       >
         Henadzi Suhakou
       </Link>
       <a href="https://rs.school/react/" target="_blank" rel="noreferrer">
         <img src="/assets/svg/rs_school.svg" alt="rss school" className="icon-rsschool" />
       </a>
-    </Container>
+    </Box>
   );
 };
 
