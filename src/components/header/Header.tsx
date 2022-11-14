@@ -62,15 +62,19 @@ const Header = () => {
               </Button>
             </ButtonGroup>
             {!user.loggedIn && (
-            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
-              <Button color="inherit" onClick={goSignIn}>
-                Sign in
-              </Button>
-              <Button color="inherit" onClick={goSignUp}>
-                Sign up
-              </Button>
-            </ButtonGroup>
-                )}
+              <ButtonGroup
+                variant="outlined"
+                aria-label="outlined button group"
+                sx={{ ml: 'auto' }}
+              >
+                <Button color="inherit" onClick={goSignIn}>
+                  Sign in
+                </Button>
+                <Button color="inherit" onClick={goSignUp}>
+                  Sign up
+                </Button>
+              </ButtonGroup>
+            )}
             <FormControl>
               <NativeSelect
                 defaultValue={'en'}
