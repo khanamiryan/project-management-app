@@ -12,6 +12,8 @@ import React, { useState } from 'react';
 import './header.scss';
 import { useNavigate } from 'react-router-dom';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
+import { selectUser, signOut } from '../../store/userSlice';
+import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -27,6 +29,12 @@ const Header = () => {
   };
   const onModalClose = () => setModalOpen(false);
 
+  const user = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
+  const logOut = () => {
+    dispatch(signOut());
+    navigate('/');
+  };
   return (
     <>
       <AppBar position="sticky">
@@ -49,15 +57,20 @@ const Header = () => {
                 Profile
               </Button>
             </ButtonGroup>
-
-            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
-              <Button color="inherit" onClick={goSignIn}>
-                Sign in
-              </Button>
-              <Button color="inherit" onClick={goSignUp}>
-                Sign up
-              </Button>
-            </ButtonGroup>
+            {!user.loggedIn && (
+              <ButtonGroup
+                variant="outlined"
+                aria-label="outlined button group"
+                sx={{ ml: 'auto' }}
+              >
+                <Button color="inherit" onClick={goSignIn}>
+                  Sign in
+                </Button>
+                <Button color="inherit" onClick={goSignUp}>
+                  Sign up
+                </Button>
+              </ButtonGroup>
+            )}
 
             <FormControl>
               <NativeSelect
@@ -77,7 +90,11 @@ const Header = () => {
                 <option value={'ru'}>ru</option>
               </NativeSelect>
             </FormControl>
-            <Button color="inherit">Log out</Button>
+            {user.loggedIn && (
+              <Button color="inherit" onClick={logOut}>
+                Log out
+              </Button>
+            )}
           </Container>
         </Toolbar>
       </AppBar>
