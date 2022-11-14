@@ -28,12 +28,20 @@ const decodedToken: DecodedToken = jwt_decode(token);
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  tagTypes: ['Boards'],
   endpoints: (builder) => ({
     getBoards: builder.query<Board[], string>({
       query: () => ({
         url: Endpoint.BOARDS,
         headers: { Authorization: `Bearer ${token}` },
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Boards' as const, _id })),
+              { type: 'Boards', id: 'LIST' },
+            ]
+          : [{ type: 'Boards', id: 'LIST' }],
     }),
     deleteBoard: builder.mutation<Board, string>({
       query: (id) => ({
@@ -41,6 +49,7 @@ export const api = createApi({
         method: HTTPMethod.DELETE,
         headers: { Authorization: `Bearer ${token}` },
       }),
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
     createBoard: builder.mutation<Board, Omit<Board, '_id' | 'owner'>>({
       query: (boardData) => {
@@ -52,12 +61,20 @@ export const api = createApi({
           body: { ...boardData, owner: decodedToken.id },
         };
       },
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
     getBoardsSetByUserId: builder.query<Board[], string>({
       query: () => ({
         url: `${Endpoint.BOARDS_SET}${decodedToken.id}`,
         headers: { Authorization: `Bearer ${token}` },
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Boards' as const, _id })),
+              { type: 'Boards', id: 'LIST' },
+            ]
+          : [{ type: 'Boards', id: 'LIST' }],
     }),
   }),
 });
