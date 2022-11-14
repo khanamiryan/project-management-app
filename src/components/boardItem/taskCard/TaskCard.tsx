@@ -2,12 +2,9 @@ import { Button, ButtonGroup, Card, Typography } from '@mui/material';
 import React from 'react';
 import './taskCard.scss';
 
-interface ITaskCardProps {
-  handleDeleteTask: () => void;
-}
-
-export default function TaskCard({ handleDeleteTask }: ITaskCardProps): JSX.Element {
+export default function TaskCard(): JSX.Element {
   const handleEditTask = () => {};
+  const handleDeleteTask = () => {};
 
   return (
     <>
