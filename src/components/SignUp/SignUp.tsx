@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './SignUp.scss';
-import { Box, Button, Link } from '@mui/material';
+import { Alert, Box, Button, Link, Snackbar } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
-
-interface ISignUpForm {
-  name: string;
-  login: string;
-  password: string;
-}
+import { ISignUpForm, selectUser, signIn, signUp } from '../../store/userSlice';
+import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-  const { handleSubmit, control } = useForm<ISignUpForm>({
+  const { handleSubmit, control, setError } = useForm<ISignUpForm>({
     defaultValues: {
       name: '',
       login: '',
@@ -19,13 +16,51 @@ const SignUp = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<ISignUpForm> = (data) => {
-    console.log(data);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { login, loggedIn, error, loading } = useAppSelector(selectUser);
 
-    //todo: dispatch to signUp thunk when it will available
+  useEffect(() => {
+    if (login.length) {
+      navigate('/boards');
+    }
+  }, [login, loggedIn]);
+  useEffect(() => {
+    if (error.length) {
+      setError('name', { type: 'custom', message: '' });
+      setError('login', { type: 'custom', message: '' });
+      setError('password', { type: 'custom', message: '' });
+      setOpen(true);
+      setMessage(error);
+    }
+  }, [error]);
+
+  const onSubmit: SubmitHandler<ISignUpForm> = async (data) => {
+    await dispatch(signUp(data));
   };
   return (
     <Box component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
+        <Alert
+          elevation={6}
+          variant="filled"
+          onClose={() => {
+            setOpen(false);
+          }}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
       <div>
         <InputText
           control={control}
@@ -34,6 +69,13 @@ const SignUp = () => {
           name="name"
           autoComplete="name"
           autoFocus
+          rules={{
+            required: 'Name is required',
+            minLength: {
+              value: 3,
+              message: 'Name is too short',
+            },
+          }}
         />
       </div>
       <div>
@@ -69,8 +111,8 @@ const SignUp = () => {
           }}
         />
       </div>
-      <Button type="submit" variant="contained">
-        Sign In
+      <Button type="submit" variant="contained" disabled={loading}>
+        Sign Up {loading && '...'}
       </Button>
       <div>
         <Link href="/login" margin="normal">
