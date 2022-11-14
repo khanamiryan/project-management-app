@@ -5,8 +5,11 @@ import {
   PreloadedState,
   combineReducers,
 } from '@reduxjs/toolkit';
+import { api } from 'services/api';
 
-export const reducersList = {};
+export const reducersList = {
+  [api.reducerPath]: api.reducer,
+};
 
 export const rootReducer = combineReducers(reducersList);
 
@@ -14,6 +17,7 @@ const setupStore = (preloadedState?: PreloadedState<RootState>) => {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
   });
 };
 
