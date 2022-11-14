@@ -26,8 +26,8 @@ const boardsSet: Board[] = [
     users: [
       'userId of invited user #1',
       'userId of invited user #2',
-      'userId of invited user #1',
-      'userId of invited user #2',
+      'userId of invited user #3',
+      'userId of invited user #4',
     ],
   },
 ];
@@ -38,4 +38,32 @@ const currentUser = {
   login: 'TestLoginMock',
 };
 
-export { boardsSet, currentUser };
+const users = [
+  {
+    _id: 'mockId1',
+    name: 'mockName1',
+    login: 'mockLogin1',
+  },
+  {
+    _id: 'mockId2',
+    name: 'mockName2',
+    login: 'mockLogin2',
+  },
+  {
+    _id: 'mockId3',
+    name: 'mockName3',
+    login: 'mockLogin3',
+  },
+  {
+    _id: 'mockId4',
+    name: 'mockName4',
+    login: 'mockLogin4',
+  },
+  {
+    _id: 'mockId5',
+    name: 'mockName5',
+    login: 'mockLogin5',
+  },
+];
+
+export { boardsSet, currentUser, users };

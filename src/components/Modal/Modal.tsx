@@ -12,7 +12,7 @@ export default function Modal({
   children,
   title,
   confirmButtonText,
-  cancelButtonTex,
+  cancelButtonText,
   onlyConfirmButton,
   onClickConfirm,
   onClickCancel,
@@ -25,24 +25,23 @@ export default function Modal({
     );
 
   return (
-    <div>
-      <Dialog
-        open={open}
-        onClose={onClickCancel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        {title && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
-        <DialogContent>{content}</DialogContent>
-        <DialogActions>
-          {!onlyConfirmButton && (
-            <Button onClick={onClickCancel}>{cancelButtonTex || 'Cancel'}</Button>
-          )}
-          <Button onClick={onClickConfirm} autoFocus>
-            {confirmButtonText || 'Confirm'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    <Dialog
+      open={open}
+      onClose={onClickCancel}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      className="modal"
+    >
+      {title && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
+      <DialogContent sx={{ overflowY: 'initial' }}>{content}</DialogContent>
+      <DialogActions>
+        {!onlyConfirmButton && (
+          <Button onClick={onClickCancel}>{cancelButtonText || 'Cancel'}</Button>
+        )}
+        <Button onClick={onClickConfirm} autoFocus>
+          {confirmButtonText || 'Confirm'}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
