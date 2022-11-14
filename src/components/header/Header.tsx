@@ -19,6 +19,7 @@ const Header = () => {
   const navigate = useNavigate();
   const goHome = () => navigate('/');
   const goBoards = () => navigate('/boards');
+  const goBetaBoard = () => navigate('/boards/1');
   const goProfile = () => navigate('/profile');
   const goSignIn = () => navigate('/login');
   const goSignUp = () => navigate('/registration');
@@ -53,25 +54,23 @@ const Header = () => {
               <Button color="inherit" onClick={onClickAddBoard}>
                 Add board
               </Button>
+              <Button color="inherit" onClick={goBetaBoard}>
+                Beta Board
+              </Button>
               <Button color="inherit" onClick={goProfile}>
                 Profile
               </Button>
             </ButtonGroup>
             {!user.loggedIn && (
-              <ButtonGroup
-                variant="outlined"
-                aria-label="outlined button group"
-                sx={{ ml: 'auto' }}
-              >
-                <Button color="inherit" onClick={goSignIn}>
-                  Sign in
-                </Button>
-                <Button color="inherit" onClick={goSignUp}>
-                  Sign up
-                </Button>
-              </ButtonGroup>
-            )}
-
+            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
+              <Button color="inherit" onClick={goSignIn}>
+                Sign in
+              </Button>
+              <Button color="inherit" onClick={goSignUp}>
+                Sign up
+              </Button>
+            </ButtonGroup>
+                )}
             <FormControl>
               <NativeSelect
                 defaultValue={'en'}

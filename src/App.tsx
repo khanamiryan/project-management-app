@@ -1,3 +1,4 @@
+import Board from 'pages/board/Board';
 import Boards from 'pages/boards/Boards';
 import Layout from 'pages/layout/Layout';
 import MainPage from 'pages/mailPage/MainPage';
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<MainPage />} />
           <Route path="boards" element={<Boards />} />
+          <Route path="boards/:id" element={<Board />} />
           <Route path="profile" element={<Profile />} />
           <Route path="login" element={<SignIn />} />
           <Route path="registration" element={<SignUp />} />
@@ -27,12 +29,5 @@ function App() {
 }
 
 export default App;
-/* 
-          
-          <Route path="boards/:id" element={<Board />} />
-          
-
-          
-
-
-          <Route path="*" element={<NotFoundRoute />} />*/
+/*  
+           <Route path="*" element={<NotFoundRoute />} />*/
