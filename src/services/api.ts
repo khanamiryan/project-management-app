@@ -15,6 +15,13 @@ enum Endpoint {
   BOARDS = 'boards/',
   BOARDS_SET = 'boardsSet/',
 }
+
+enum HTTPMethod {
+  DELETE = 'DELETE',
+  GET = 'GET',
+  PATCH = 'PATCH',
+  POST = 'POST',
+}
 const decodedToket: DecodedToken = jwt_decode(token);
 
 // Define a service using a base URL and expected endpoints
@@ -28,6 +35,13 @@ export const api = createApi({
         headers: { Authorization: `Bearer ${token}` },
       }),
     }),
+    deleteBoard: builder.mutation<Board, string>({
+      query: (id) => ({
+        url: `${Endpoint.BOARDS}${id}`,
+        method: HTTPMethod.DELETE,
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    }),
     getBoardsSetByUserId: builder.query<Board[], string>({
       query: () => ({
         url: `${Endpoint.BOARDS_SET}${decodedToket.id}`,
@@ -37,4 +51,4 @@ export const api = createApi({
   }),
 });
 
-export const { useGetBoardsQuery, useGetBoardsSetByUserIdQuery } = api;
+export const { useGetBoardsQuery, useGetBoardsSetByUserIdQuery, useDeleteBoardMutation } = api;

@@ -13,6 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import { isBoardOwner } from 'utils/isBoardOwner';
 import Modal from 'components/Modal/Modal';
+import { useDeleteBoardMutation } from 'services/api';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -21,6 +22,7 @@ const BoardCard = ({ board }: { board: Board }) => {
   const modalText = `It's irreversible. If you ${
     isOwner ? 'delete' : 'leave'
   } this board, you won't be able to restore it.`;
+  const [deleteBoard, result] = useDeleteBoardMutation();
 
   const onClickDelete = () => {
     setModalOpen(true);
@@ -28,6 +30,7 @@ const BoardCard = ({ board }: { board: Board }) => {
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {
     //TODO dispatch action for delete or leave board
+    deleteBoard(board._id);
     onModalClose();
   };
 
