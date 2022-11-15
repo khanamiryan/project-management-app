@@ -1,5 +1,6 @@
-import { currentUser } from 'mocks/mocks';
+// import { currentUser } from 'mocks/mocks';
+import { decodedToken } from 'services/api';
 
 export const isBoardOwner = (id: string) => {
-  return id === currentUser._id;
+  return id === decodedToken.id;
 };

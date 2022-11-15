@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Board } from 'types/types';
+import { Board, User } from 'types/types';
 import jwt_decode from 'jwt-decode';
 
 type DecodedToken = {
@@ -11,11 +11,12 @@ type DecodedToken = {
 const BASE_URL = 'http://localhost:3000/';
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg0OTUxNzksImV4cCI6MTY2ODUzODM3OX0.UnwKv3tMhiYa_4792uM1YQhQz6-vswTgP27ehZX_21s';
-const decodedToken: DecodedToken = jwt_decode(token);
+export const decodedToken: DecodedToken = jwt_decode(token);
 
 enum Endpoint {
   BOARDS = 'boards/',
   BOARDS_SET = 'boardsSet/',
+  USERS = 'users/',
 }
 
 enum HTTPMethod {
@@ -78,6 +79,12 @@ export const api = createApi({
             ]
           : [{ type: 'Boards', id: 'LIST' }],
     }),
+    getUsers: builder.query<User[], string>({
+      query: () => ({
+        url: Endpoint.USERS,
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    }),
   }),
 });
 
@@ -86,4 +93,5 @@ export const {
   useGetBoardsSetByUserIdQuery,
   useDeleteBoardMutation,
   useCreateBoardMutation,
+  useGetUsersQuery,
 } = api;

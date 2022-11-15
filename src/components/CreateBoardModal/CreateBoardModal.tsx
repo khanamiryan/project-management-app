@@ -19,6 +19,7 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   });
 
   const onSubmit: SubmitHandler<CreateBoardFormFields> = (data) => {
+    console.log({ ...data, users });
     createBoard({ ...data, users });
     onModalClose();
   };
