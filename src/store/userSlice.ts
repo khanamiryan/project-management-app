@@ -1,11 +1,18 @@
 import {
   createAsyncThunk,
   createSlice,
+  isFulfilled,
   isPending,
-  isRejectedWithValue,
+  isRejected,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { getUserService, signInService, signUpService } from '../services/UserService';
+import {
+  getUserService,
+  signInService,
+  signUpService,
+  deleteUserService,
+  setUserInfoService,
+} from '../services/UserService';
 import { RootState } from './store';
 
 export type UserState = {
@@ -36,59 +43,57 @@ export interface ISignUpForm {
   login: string;
   password: string;
 }
-
+export interface IUserInfo {
+  name: string;
+  login: string;
+  password: string;
+}
+export interface IUserResponse {
+  name: string;
+  _id: string;
+  login: string;
+}
 export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
   'user/signIn',
-  async function ({ login, password }, { rejectWithValue, dispatch }) {
-    try {
-      const res = await signInService({ login, password });
-      if (res.token && res.token.length > 0) {
-        const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
-        const user = await dispatch(getUser(id));
-        if (user) {
-          return res;
-        }
+  async function ({ login, password }, { dispatch }) {
+    const res = await signInService({ login, password });
+    if (res.token && res.token.length > 0) {
+      const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
+      const user = await dispatch(getUser(id));
+      if (user) {
+        return res;
       }
-    } catch (e) {
-      if (e instanceof Error) {
-        return rejectWithValue(e.message);
-      }
-      return e;
     }
   }
 );
 export const signUp = createAsyncThunk<{ _id: string }, ISignUpForm>(
   'user/signUp',
-  async function ({ name, login, password }, { dispatch, rejectWithValue }) {
-    try {
-      const res = await signUpService({ name, login, password });
-      if (res._id) {
-        //if registered
-        await dispatch(signIn({ login, password }));
-        return res;
-      }
-      // throw Error('Not knowing error with Sign Up');
-      // return res;
-    } catch (e) {
-      if (e instanceof Error) {
-        return rejectWithValue(e.message);
-      }
-      return e;
+  async function ({ name, login, password }, { dispatch }) {
+    const res = await signUpService({ name, login, password });
+    if (res._id) {
+      //if registered
+      await dispatch(signIn({ login, password }));
+      return res;
     }
   }
 );
 
-export const getUser = createAsyncThunk<{ name: string; _id: string }, string>(
-  'user/getUser',
-  async function (id, { rejectWithValue }) {
-    try {
-      return await getUserService(id);
-    } catch (e) {
-      if (e instanceof Error) {
-        return rejectWithValue(e.message);
-      }
-      return e;
-    }
+export const getUser = createAsyncThunk<IUserResponse, string>('user/getUser', async function (id) {
+  return await getUserService(id);
+});
+export const setUserInfo = createAsyncThunk<
+  IUserResponse,
+  IUserInfo,
+  { state: { user: UserState } }
+>('user/setUserInfo', async function (userInfo, { getState }) {
+  const { id } = getState().user;
+  return await setUserInfoService(id, userInfo);
+});
+
+export const deleteUser = createAsyncThunk<{ name: string }, string>(
+  'user/deleteUser',
+  async function (id) {
+    return await deleteUserService(id);
   }
 );
 
@@ -103,8 +108,8 @@ export const userSlice = createSlice({
     setUser: (state: UserState, action: PayloadAction<UserState['login']>) => {
       state.login = action.payload;
     },
-
     signOut: () => {
+      //remove also from localstorage
       return defaultUserState;
     },
     editUserInfo: () => {},
@@ -123,18 +128,28 @@ export const userSlice = createSlice({
           state.loggedIn = token.length > 0;
           state.login = meta.arg.login;
         }
-
         //   may be  jwt decode to prove login?
       })
 
       .addCase(getUser.fulfilled, (state, action) => {
         state.name = action.payload.name;
         state.id = action.payload._id;
+        state.login = action.payload.login;
       })
-
-      .addMatcher(isRejectedWithValue, (state, action) => {
+      .addCase(setUserInfo.fulfilled, (state, action) => {
+        state.name = action.payload.name;
+        state.login = action.payload.login;
+        state.id = action.payload._id;
+      })
+      .addMatcher(isFulfilled, (state) => {
+        //for all fullfilled
         state.loading = false;
-        state.error = <string>action.payload;
+        state.error = '';
+      })
+      .addMatcher(isRejected, (state, action) => {
+        state.loading = false;
+        console.log(action);
+        state.error = <string>action.error.message;
       })
       .addMatcher(isPending, (state) => {
         state.loading = true;
