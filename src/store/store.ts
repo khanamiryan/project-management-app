@@ -6,8 +6,10 @@ import {
   combineReducers,
 } from '@reduxjs/toolkit';
 import { api } from 'services/api';
+import userReducer from './userSlice';
 
 export const reducersList = {
+  user: userReducer,
   [api.reducerPath]: api.reducer,
 };
 
