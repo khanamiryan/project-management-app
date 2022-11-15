@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import jwt_decode from 'jwt-decode';
 import { Board } from 'types/types';
+import jwt_decode from 'jwt-decode';
 
 type DecodedToken = {
   id: string;
@@ -10,7 +10,7 @@ type DecodedToken = {
 };
 const BASE_URL = 'http://localhost:3000/';
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg0MzQzODEsImV4cCI6MTY2ODQ3NzU4MX0.Mums_mazx3pYqqJ2iJR4FNFhJR515B1xSR3boIA-bvs';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg0OTUxNzksImV4cCI6MTY2ODUzODM3OX0.UnwKv3tMhiYa_4792uM1YQhQz6-vswTgP27ehZX_21s';
 const decodedToken: DecodedToken = jwt_decode(token);
 
 enum Endpoint {
@@ -27,7 +27,12 @@ enum HTTPMethod {
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: BASE_URL,
+    prepareHeaders: (headers) => {
+      headers.set('authorization', `Bearer ${token}`);
+    },
+  }),
   tagTypes: ['Boards'],
   endpoints: (builder) => ({
     getBoards: builder.query<Board[], string>({
@@ -47,7 +52,6 @@ export const api = createApi({
       query: (id) => ({
         url: `${Endpoint.BOARDS}${id}`,
         method: HTTPMethod.DELETE,
-        headers: { Authorization: `Bearer ${token}` },
       }),
       invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
@@ -57,7 +61,6 @@ export const api = createApi({
         return {
           url: `${Endpoint.BOARDS}`,
           method: HTTPMethod.POST,
-          headers: { Authorization: `Bearer ${token}` },
           body: { ...boardData, owner: decodedToken.id },
         };
       },
@@ -66,7 +69,6 @@ export const api = createApi({
     getBoardsSetByUserId: builder.query<Board[], string>({
       query: () => ({
         url: `${Endpoint.BOARDS_SET}${decodedToken.id}`,
-        headers: { Authorization: `Bearer ${token}` },
       }),
       providesTags: (result) =>
         result
