@@ -5,8 +5,11 @@ import {
   PreloadedState,
   combineReducers,
 } from '@reduxjs/toolkit';
+import userReducer from './userSlice';
 
-export const reducersList = {};
+export const reducersList = {
+  user: userReducer,
+};
 
 export const rootReducer = combineReducers(reducersList);
 
