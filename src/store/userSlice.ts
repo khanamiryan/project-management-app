@@ -14,6 +14,7 @@ import {
   setUserInfoService,
 } from '../services/UserService';
 import { RootState } from './store';
+import jwt_decode from 'jwt-decode';
 
 export type UserState = {
   login: string;
@@ -53,12 +54,19 @@ export interface IUserResponse {
   _id: string;
   login: string;
 }
+type DecodedToken = {
+  id: string;
+  login: string;
+  iat: number;
+  exp: number;
+};
 export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
   'user/signIn',
   async function ({ login, password }, { dispatch }) {
     const res = await signInService({ login, password });
     if (res.token && res.token.length > 0) {
-      const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
+      // const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
+      const id = (jwt_decode(res.token) as DecodedToken).id;
       const user = await dispatch(getUser(id));
       if (user) {
         return res;

@@ -11,15 +11,16 @@ import {
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
-import { isBoardOwner } from 'utils/isBoardOwner';
 import Modal from 'components/Modal/Modal';
-import { decodedToken } from 'services/api';
 import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
+import { useAppSelector } from 'store/redux.hooks';
+import { selectUser } from 'store/userSlice';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const isOwner = isBoardOwner(board.owner);
+  const { id: currentUserId } = useAppSelector(selectUser);
+  const isOwner = currentUserId === board.owner;
   const modalTitle = `${isOwner ? 'Delete' : 'Leave'} the board ${board.title}?`;
   const modalText = `It's irreversible. If you ${
     isOwner ? 'delete' : 'leave'
@@ -32,11 +33,10 @@ const BoardCard = ({ board }: { board: Board }) => {
   };
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {
-    //TODO dispatch action for delete or leave board
     if (isOwner) {
       deleteBoard(board._id);
     } else {
-      const users = board.users.filter((id) => id !== decodedToken.id);
+      const users = board.users.filter((id) => id !== currentUserId);
       updateBoard({ ...board, users });
     }
     onModalClose();

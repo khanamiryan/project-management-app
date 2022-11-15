@@ -3,9 +3,17 @@ import React from 'react';
 import BoardCard from './BoardCard/BoardCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useGetBoardsSetByUserIdQuery } from 'services/boards.api';
+import { useAppSelector } from 'store/redux.hooks';
+import { selectUser } from 'store/userSlice';
 
 const BoardsList = () => {
-  const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery('');
+  const { loggedIn, id } = useAppSelector(selectUser);
+  const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery(id);
+
+  if (!loggedIn) {
+    //TODO Redirect
+    return <p>redirect to welcome page</p>;
+  }
 
   return (
     <>
@@ -21,7 +29,7 @@ const BoardsList = () => {
         )}
       </Box>
       <Grid container spacing={2}>
-        {data?.length &&
+        {data &&
           data.map((board) => {
             return (
               <Grid item xs={12} sm={6} md={4} key={board._id}>

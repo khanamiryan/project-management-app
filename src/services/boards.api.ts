@@ -1,11 +1,12 @@
 import { Board } from 'types/types';
-import { api, decodedToken, Endpoint, HTTPMethod } from './api';
+import { api } from './api';
+import { Endpoint, HTTPMethod } from './api.constants';
 
 export const boardsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getBoardsSetByUserId: builder.query<Board[], string>({
-      query: () => ({
-        url: `${Endpoint.BOARDS_SET}${decodedToken.id}`,
+      query: (id) => ({
+        url: `${Endpoint.BOARDS_SET}${id}`,
       }),
       providesTags: (result) =>
         result
@@ -22,11 +23,11 @@ export const boardsApi = api.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
-    createBoard: builder.mutation<Board, Omit<Board, '_id' | 'owner'>>({
+    createBoard: builder.mutation<Board, Omit<Board, '_id'>>({
       query: (boardData) => ({
         url: `${Endpoint.BOARDS}`,
         method: HTTPMethod.POST,
-        body: { ...boardData, owner: decodedToken.id },
+        body: { ...boardData },
       }),
       invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),

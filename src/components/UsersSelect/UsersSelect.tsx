@@ -7,10 +7,10 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { decodedToken } from 'services/api';
 import { User } from 'types/types';
 import { useGetUsersQuery } from 'services/users.api';
-// import { users } from 'mocks/mocks';
+import { useAppSelector } from 'store/redux.hooks';
+import { selectUser } from 'store/userSlice';
 
 type UsersSelectProps = { onUserSelect: (logins: string[]) => void };
 
@@ -42,6 +42,7 @@ export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
   const theme = useTheme();
   const [personName, setPersonName] = React.useState<string[]>([]);
   const { data: users } = useGetUsersQuery('');
+  const { id: currentUserId } = useAppSelector(selectUser);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
@@ -81,8 +82,7 @@ export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
         >
           {users &&
             users.map(({ _id, login }) => {
-              //TODO apply value from state for this
-              if (_id === decodedToken.id) return null;
+              if (_id === currentUserId) return null;
               return (
                 <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
                   {login}
