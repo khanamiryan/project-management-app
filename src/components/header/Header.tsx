@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
 import { selectUser, signOut } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import i18n from '../../i18n';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -35,6 +36,9 @@ const Header = () => {
   const logOut = () => {
     dispatch(signOut());
     navigate('/');
+  };
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
   };
   return (
     <>
@@ -92,6 +96,8 @@ const Header = () => {
                 <option value={'en'}>en</option>
                 <option value={'ru'}>ru</option>
               </NativeSelect>
+              <button onClick={() => changeLanguage('ru')}>ru</button>
+              <button onClick={() => changeLanguage('en')}>en</button>
             </FormControl>
             {user.loggedIn && (
               <Button color="inherit" onClick={logOut}>

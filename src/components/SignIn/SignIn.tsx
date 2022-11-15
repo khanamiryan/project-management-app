@@ -9,6 +9,8 @@ import { ISignInForm, selectUser, signIn } from '../../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../Toast/Toast';
 
+import { useTranslation } from 'react-i18next';
+
 const SignIn = () => {
   const { handleSubmit, control, clearErrors, setError } = useForm<ISignInForm>({
     defaultValues: {
@@ -16,7 +18,7 @@ const SignIn = () => {
       password: '',
     },
   });
-
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const dispatch = useAppDispatch();
@@ -56,7 +58,7 @@ const SignIn = () => {
       <div>
         <InputText
           name="login"
-          label="Login"
+          label={t('login')}
           autoComplete="login"
           control={control}
           rules={{
@@ -80,18 +82,19 @@ const SignIn = () => {
             },
           }}
           margin="normal"
-          label="Password"
+          label={t('password')}
           type="password"
           autoComplete="password"
         />
       </div>
 
       <Button type="submit" variant="contained" disabled={loading}>
-        Sign In {loading && '...'}
+        {t('signin')}
+        {loading && '...'}
       </Button>
       <div>
         <Link href="/registration" margin="normal">
-          Dont have an account? Sign Up
+          {t('noAccount')}
         </Link>
       </div>
     </Box>
