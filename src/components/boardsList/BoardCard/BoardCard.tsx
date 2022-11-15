@@ -13,8 +13,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import { isBoardOwner } from 'utils/isBoardOwner';
 import Modal from 'components/Modal/Modal';
-import { decodedToken, useDeleteBoardMutation, useUpdateBoardMutation } from 'services/api';
+import { decodedToken } from 'services/api';
 import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
+import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -36,7 +37,6 @@ const BoardCard = ({ board }: { board: Board }) => {
       deleteBoard(board._id);
     } else {
       const users = board.users.filter((id) => id !== decodedToken.id);
-      console.log({ ...board, users });
       updateBoard({ ...board, users });
     }
     onModalClose();

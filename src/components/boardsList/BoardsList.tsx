@@ -1,8 +1,8 @@
 import { Alert, Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 import BoardCard from './BoardCard/BoardCard';
-import { useGetBoardsSetByUserIdQuery } from 'services/api';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useGetBoardsSetByUserIdQuery } from 'services/boards.api';
 
 const BoardsList = () => {
   const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery('');

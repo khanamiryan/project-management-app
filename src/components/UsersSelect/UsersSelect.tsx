@@ -7,8 +7,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { decodedToken, useGetUsersQuery } from 'services/api';
+import { decodedToken } from 'services/api';
 import { User } from 'types/types';
+import { useGetUsersQuery } from 'services/users.api';
 // import { users } from 'mocks/mocks';
 
 type UsersSelectProps = { onUserSelect: (logins: string[]) => void };

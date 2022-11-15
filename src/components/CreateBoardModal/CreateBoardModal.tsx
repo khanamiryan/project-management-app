@@ -3,8 +3,8 @@ import InputText from 'components/InputText/InputText';
 import Modal from 'components/Modal/Modal';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useCreateBoardMutation } from 'services/api';
 import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
+import { useCreateBoardMutation } from 'services/boards.api';
 
 type CreateBoardFormFields = { title: string; users: string[] };
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
@@ -19,7 +19,6 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   });
 
   const onSubmit: SubmitHandler<CreateBoardFormFields> = (data) => {
-    console.log({ ...data, users });
     createBoard({ ...data, users });
     onModalClose();
   };
