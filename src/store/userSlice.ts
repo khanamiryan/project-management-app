@@ -48,6 +48,11 @@ export interface IUserInfo {
   login: string;
   password: string;
 }
+export interface IUserResponse {
+  name: string;
+  _id: string;
+  login: string;
+}
 export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
   'user/signIn',
   async function ({ login, password }, { dispatch }) {
@@ -70,24 +75,15 @@ export const signUp = createAsyncThunk<{ _id: string }, ISignUpForm>(
       await dispatch(signIn({ login, password }));
       return res;
     }
-    // throw Error('Not knowing error with Sign Up');
-    // return res;
   }
 );
 
-export const getUser = createAsyncThunk<{ name: string; _id: string }, string>(
-  'user/getUser',
-  async function (id) {
-    return await getUserService(id);
-  }
-);
+export const getUser = createAsyncThunk<IUserResponse, string>('user/getUser', async function (id) {
+  return await getUserService(id);
+});
 export const setUserInfo = createAsyncThunk<
-  never,
-  {
-    name: string;
-    login: string;
-    password: string;
-  },
+  IUserResponse,
+  IUserInfo,
   { state: { user: UserState } }
 >('user/setUserInfo', async function (userInfo, { getState }) {
   const { id } = getState().user;
@@ -132,23 +128,28 @@ export const userSlice = createSlice({
           state.loggedIn = token.length > 0;
           state.login = meta.arg.login;
         }
-
         //   may be  jwt decode to prove login?
       })
 
       .addCase(getUser.fulfilled, (state, action) => {
         state.name = action.payload.name;
         state.id = action.payload._id;
+        state.login = action.payload.login;
       })
-
+      .addCase(setUserInfo.fulfilled, (state, action) => {
+        state.name = action.payload.name;
+        state.login = action.payload.login;
+        state.id = action.payload._id;
+      })
+      .addMatcher(isFulfilled, (state) => {
+        //for all fullfilled
+        state.loading = false;
+        state.error = '';
+      })
       .addMatcher(isRejected, (state, action) => {
         state.loading = false;
         console.log(action);
         state.error = <string>action.error.message;
-      })
-      .addMatcher(isFulfilled, (state) => {
-        state.loading = false;
-        state.error = '';
       })
       .addMatcher(isPending, (state) => {
         state.loading = true;

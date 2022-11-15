@@ -4,7 +4,7 @@ import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box } from '@mui/system';
 import { deleteUser, getUser, selectUser, setUserInfo } from '../../store/userSlice';
-import { Alert, Button } from '@mui/material';
+import { Alert, AlertColor, Button } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
@@ -42,9 +42,12 @@ const Profile = () => {
   }, []);
 
   const onSubmit: SubmitHandler<IProfile> = (data) => {
-    dispatch(setUserInfo(data)).then(() => {
-      alert('ok');
-    });
+    dispatch(setUserInfo(data))
+      .unwrap()
+      .then(() => {
+        setToastMessage('Success!!!');
+        setToastType('success');
+      });
   };
 
   const handleDeleteUser = () => {
@@ -55,27 +58,30 @@ const Profile = () => {
 
   const [open, setOpen] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<AlertColor>('error');
 
   useEffect(() => {
-    if (user.error.length) {
-      setToastOpen(true);
-    } else {
-      setToastOpen(false);
+    if (user.error.length > 0) {
+      setToastMessage(user.error);
+      setToastType('error');
     }
   }, [user.error]);
+  useEffect(() => {
+    setToastOpen(toastMessage.length > 0);
+  }, [toastMessage]);
   return (
-    <Box component={'form'} autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
-      {user.error && <Alert severity={'error'}>{user.error}</Alert>}
-      {user.error && (
-        <Toast
-          open={toastOpen}
-          onClose={() => {
-            setToastOpen(false);
-          }}
-        >
-          {user.error}
-        </Toast>
-      )}
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
+      {user.error && <Alert severity="error">{user.error}</Alert>}
+      <Toast
+        open={toastOpen}
+        onClose={() => {
+          setToastOpen(false);
+        }}
+        type={toastType}
+      >
+        {toastMessage}
+      </Toast>
 
       <Modal
         confirmButtonText={user.loading ? 'Deleting...' : 'Confirm'}
@@ -87,7 +93,7 @@ const Profile = () => {
       >
         <>
           <Warning color="error" />
-          Вы уверены, что хотите удалить?
+          Are you sure to delete user?
         </>
       </Modal>
 
@@ -164,7 +170,7 @@ const Profile = () => {
           name="password"
           control={control}
           rules={{
-            required: 'Current password is required for approve changes',
+            required: 'New password is required',
             //if it's empty, we should not change the password
             minLength: {
               value: 3,
@@ -172,7 +178,7 @@ const Profile = () => {
             },
           }}
           margin="normal"
-          label="Current Password"
+          label="New password"
           type="password"
           autoComplete="new-password"
         />
