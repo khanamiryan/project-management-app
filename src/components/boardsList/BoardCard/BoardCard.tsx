@@ -13,7 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import { isBoardOwner } from 'utils/isBoardOwner';
 import Modal from 'components/Modal/Modal';
-import { useDeleteBoardMutation } from 'services/api';
+import { decodedToken, useDeleteBoardMutation, useUpdateBoardMutation } from 'services/api';
 import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 
 const BoardCard = ({ board }: { board: Board }) => {
@@ -24,6 +24,7 @@ const BoardCard = ({ board }: { board: Board }) => {
     isOwner ? 'delete' : 'leave'
   } this board, you won't be able to restore it.`;
   const [deleteBoard, result] = useDeleteBoardMutation();
+  const [updateBoard] = useUpdateBoardMutation();
 
   const onClickDelete = () => {
     setModalOpen(true);
@@ -31,7 +32,13 @@ const BoardCard = ({ board }: { board: Board }) => {
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {
     //TODO dispatch action for delete or leave board
-    deleteBoard(board._id);
+    if (isOwner) {
+      deleteBoard(board._id);
+    } else {
+      const users = board.users.filter((id) => id !== decodedToken.id);
+      console.log({ ...board, users });
+      updateBoard({ ...board, users });
+    }
     onModalClose();
   };
 

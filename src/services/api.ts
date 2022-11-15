@@ -10,6 +10,7 @@ type DecodedToken = {
 };
 const BASE_URL = 'http://localhost:3000/';
 const token =
+  // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzM5NGZmMGRlZmQxMTAzMmM3Mjg4MyIsImxvZ2luIjoiU3R1ZGVudDEiLCJpYXQiOjE2Njg1MTk0OTMsImV4cCI6MTY2ODU2MjY5M30.n_RAvkSf1EZYWLr_8PiMVCPciOx4ZAs2q5HEThf2H-I';
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg0OTUxNzksImV4cCI6MTY2ODUzODM3OX0.UnwKv3tMhiYa_4792uM1YQhQz6-vswTgP27ehZX_21s';
 export const decodedToken: DecodedToken = jwt_decode(token);
 
@@ -24,6 +25,7 @@ enum HTTPMethod {
   GET = 'GET',
   PATCH = 'PATCH',
   POST = 'POST',
+  PUT = 'PUT',
 }
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
@@ -67,6 +69,17 @@ export const api = createApi({
       },
       invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
     }),
+    updateBoard: builder.mutation<Board, Board>({
+      query: (board) => {
+        const { _id, ...rest } = board;
+        return {
+          url: `${Endpoint.BOARDS}${_id}`,
+          method: HTTPMethod.PUT,
+          body: rest,
+        };
+      },
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
+    }),
     getBoardsSetByUserId: builder.query<Board[], string>({
       query: () => ({
         url: `${Endpoint.BOARDS_SET}${decodedToken.id}`,
@@ -93,5 +106,6 @@ export const {
   useGetBoardsSetByUserIdQuery,
   useDeleteBoardMutation,
   useCreateBoardMutation,
+  useUpdateBoardMutation,
   useGetUsersQuery,
 } = api;
