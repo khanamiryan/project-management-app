@@ -8,12 +8,14 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import './header.scss';
 import { useNavigate } from 'react-router-dom';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
 import { selectUser, signOut } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -32,9 +34,15 @@ const Header = () => {
 
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
+
+  const { t } = useTranslation();
   const logOut = () => {
     dispatch(signOut());
     navigate('/');
+  };
+
+  const changeLanguage = (e: ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(e.target.value);
   };
   return (
     <>
@@ -46,7 +54,7 @@ const Header = () => {
             </Typography>
             <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
               <Button color="inherit" onClick={goHome}>
-                Main Page
+                {t('menu.mainPage')}
               </Button>
               <Button color="inherit" onClick={goBoards}>
                 Boards
@@ -58,7 +66,7 @@ const Header = () => {
                 Beta Board
               </Button>
               <Button color="inherit" onClick={goProfile}>
-                Profile
+                {t('menu.profilePage')}
               </Button>
             </ButtonGroup>
             {!user.loggedIn && (
@@ -68,16 +76,17 @@ const Header = () => {
                 sx={{ ml: 'auto' }}
               >
                 <Button color="inherit" onClick={goSignIn}>
-                  Sign in
+                  {t('menu.signIn')}
                 </Button>
                 <Button color="inherit" onClick={goSignUp}>
-                  Sign up
+                  {t('menu.signUp')}
                 </Button>
               </ButtonGroup>
             )}
             <FormControl>
               <NativeSelect
-                defaultValue={'en'}
+                onChange={changeLanguage}
+                defaultValue={i18n.language}
                 inputProps={{
                   name: 'lang',
                   id: 'uncontrolled-native',
@@ -95,7 +104,7 @@ const Header = () => {
             </FormControl>
             {user.loggedIn && (
               <Button color="inherit" onClick={logOut}>
-                Log out
+                {t('menu.signOut')}
               </Button>
             )}
           </Container>
