@@ -6,9 +6,10 @@ import {
   combineReducers,
 } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
-
+import { apiBoard } from './../services/apiBoard/apiBoard';
 export const reducersList = {
   user: userReducer,
+  [apiBoard.reducerPath]: apiBoard.reducer,
 };
 
 export const rootReducer = combineReducers(reducersList);
@@ -17,6 +18,7 @@ const setupStore = (preloadedState?: PreloadedState<RootState>) => {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiBoard.middleware),
   });
 };
 
