@@ -12,10 +12,10 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import Modal from 'components/Modal/Modal';
-import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,8 +25,9 @@ const BoardCard = ({ board }: { board: Board }) => {
   const modalText = `It's irreversible. If you ${
     isOwner ? 'delete' : 'leave'
   } this board, you won't be able to restore it.`;
-  const [deleteBoard, result] = useDeleteBoardMutation();
-  const [updateBoard] = useUpdateBoardMutation();
+  const [deleteBoard, deleteResult] = useDeleteBoardMutation();
+  const [updateBoard, updateResult] = useUpdateBoardMutation();
+  const isLoading = deleteResult.isLoading || updateResult.isLoading;
 
   const onClickDelete = () => {
     setModalOpen(true);
@@ -42,13 +43,10 @@ const BoardCard = ({ board }: { board: Board }) => {
     onModalClose();
   };
 
-  if (result.isLoading) {
-    return <LoadingBackdrop />;
-  }
-
   return (
     <>
       <Card sx={{ position: 'relative' }}>
+        {isLoading && <LoadingShadow />}
         <CardContent>
           <Typography variant="h5" component="div">
             {board.title}
