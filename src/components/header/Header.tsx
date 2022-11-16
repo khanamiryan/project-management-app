@@ -19,7 +19,7 @@ const Header = () => {
   const navigate = useNavigate();
   const goHome = () => navigate('/');
   const goBoards = () => navigate('/boards');
-  const goBetaBoard = () => navigate('/boards/1');
+  const goBetaBoard = () => navigate('/boards/636cd10e96274bebf760a073');
   const goProfile = () => navigate('/profile');
   const goSignIn = () => navigate('/login');
   const goSignUp = () => navigate('/registration');

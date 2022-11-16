@@ -53,8 +53,8 @@ export const apiBoard = createApi({
           : [{ type: 'Boards', id: 'LIST' }],
     }),
     getColumns: builder.query<IColumn[], string>({
-      query: (id) => ({
-        url: `${Endpoint.BOARDS}${id}/columns`,
+      query: (idBoard) => ({
+        url: `${Endpoint.BOARDS}${idBoard}/columns`,
         headers: { Authorization: `Bearer ${token}` },
       }),
       providesTags: (result) =>
@@ -65,24 +65,24 @@ export const apiBoard = createApi({
             ]
           : [{ type: 'Columns', id: 'LIST' }], /// ???
     }),
-    addColumn: builder.mutation<IColumn, Omit<IColumn, '_id' | 'boardId'>>({
+    addColumn: builder.mutation<IColumn, Omit<IColumn, '_id'>>({
       query: (columnData) => ({
         url: `${Endpoint.BOARDS}${temporaryBoardId}${Endpoint.COLUMNS}`,
         method: HTTPMethod.POST,
-        body: { ...columnData },
+        body: { title: columnData.title, order: columnData.order },
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     deleteColumn: builder.mutation<IColumn, string>({
-      query: (id) => ({
-        url: `${Endpoint.BOARDS}${temporaryBoardId}${Endpoint.COLUMNS}${id}`,
+      query: (idColumn) => ({
+        url: `${Endpoint.BOARDS}${temporaryBoardId}${Endpoint.COLUMNS}${idColumn}`,
         method: HTTPMethod.DELETE,
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateColumn: builder.mutation<IColumn, Omit<IColumn, 'boardId'>>({
       query: (columnData) => ({
-        url: `${Endpoint.BOARDS}${temporaryBoardId}${Endpoint.COLUMNS}${columnData._id}`,
+        url: `${Endpoint.BOARDS}${columnData._id}/${Endpoint.COLUMNS}${columnData._id}`,
         method: HTTPMethod.PUT,
         body: { title: columnData.title, order: columnData.order },
       }),

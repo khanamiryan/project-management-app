@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from '@mui/material';
 import { Box, Stack } from '@mui/system';
-import React from 'react';
+import React, { useEffect } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
 import {
@@ -9,37 +9,38 @@ import {
   useAddColumnMutation,
   useDeleteColumnMutation,
 } from './../../services/apiBoard/apiBoard';
+import { useNavigate, useParams } from 'react-router-dom';
 
-let title = 'объект 3';
-let order = 1;
+let titleMock = 'объект 3';
+let orderMock = 1;
+const boardIdMock = '6373d01c79506c3311ac4db0';
 
 export default function BoardItem(): JSX.Element {
+  const { id: idBoard } = useParams();
+
+  //todo renavigate
+  /*
+    const navigate = useNavigate();
+  const goHome = () => navigate('/', { replace: true });
+  useEffect(() => {
+    if (!dataColumns) {
+      goHome();
+    }
+  }, []);*/
+  //как получить дату
+
   const handleEditBoard = () => {};
   const handleDeleteBoard = () => {};
 
-  /*const { data, isError, isLoading } = useGetBoardsQuery('');
-
-  let boardId = '';
-  if (data) {
-    boardId = data[0]._id;
-    console.log('все доски', data[0]._id);
-  }*/
-
-  //как получить дату
-  const { data: dataColumns } = useGetColumnsQuery('636cd10e96274bebf760a073');
-  console.log('данные столбца', dataColumns);
+  const { data: dataColumns, isLoading, isError } = useGetColumnsQuery(idBoard || '');
 
   const [addColumn, {}] = useAddColumnMutation();
-  const [deleteColumn, {}] = useDeleteColumnMutation();
+
   const handleAddColumn = () => {
-    addColumn({ title: title, order: order });
-    order += 1;
-    title += order;
+    addColumn({ title: titleMock, order: orderMock, boardId: idBoard || '' }); // todo: check  || ""
+    orderMock += 1;
+    titleMock += orderMock;
   };
-  const handleDelColumn = () => {
-    deleteColumn('6373d01c79506c3311ac4db0');
-  };
-  const handleGetColumns = () => {};
 
   return (
     <>

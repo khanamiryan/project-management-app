@@ -15,7 +15,7 @@ interface ITaskListProps {
 
 export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
   const [editTitle, setEditTitle] = useState(false);
-  const [newColumnTitle, setNewColumnTitle] = useState(dataColumn?.title || '');
+  const [newColumnTitle, setNewColumnTitle] = useState(dataColumn?.title || ''); // todo check || ''
 
   const [deleteColumn, {}] = useDeleteColumnMutation();
   const [updateColumn, {}] = useUpdateColumnMutation();
@@ -23,6 +23,7 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
   const handleAddTask = () => {};
 
   const { _id, title, order, boardId } = dataColumn;
+
   const handleDeleteColumn = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     deleteColumn(_id);
