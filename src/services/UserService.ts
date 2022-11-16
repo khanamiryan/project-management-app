@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ISignInForm, ISignUpForm, IUserInfo } from '../store/userSlice';
-// const BASE_URL = 'https://final-task-backend-production-8f5b.up.railway.app/';
-const BASE_URL = 'http://localhost:3001/';
+import { BASE_URL } from './api.constants';
+
 export const authApi = axios.create({
   baseURL: BASE_URL,
   // withCredentials: true,
