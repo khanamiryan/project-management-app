@@ -7,6 +7,8 @@ import { ISignUpForm, selectUser, signUp } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../Toast/Toast';
+import { rules } from '../../utils/validation.utils';
+import { useTranslation } from 'react-i18next';
 
 const SignUp = () => {
   const { handleSubmit, control, setError } = useForm<ISignUpForm>({
@@ -41,6 +43,7 @@ const SignUp = () => {
   const onSubmit: SubmitHandler<ISignUpForm> = async (data) => {
     await dispatch(signUp(data));
   };
+  const { t } = useTranslation();
   return (
     <Box component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
       <Toast
@@ -56,33 +59,21 @@ const SignUp = () => {
         <InputText
           control={control}
           margin="normal"
-          label="Name"
+          label={t('form.fields.name')}
           name="name"
           autoComplete="name"
           autoFocus
-          rules={{
-            required: 'Name is required',
-            minLength: {
-              value: 3,
-              message: 'Name is too short',
-            },
-          }}
+          rules={rules.name}
         />
       </div>
       <div>
         <InputText
           control={control}
           margin="normal"
-          label="Login"
+          label={t('form.fields.login')}
           name="login"
           autoComplete="login"
-          rules={{
-            required: 'Login is required',
-            minLength: {
-              value: 3,
-              message: 'Login is too short',
-            },
-          }}
+          rules={rules.login}
         />
       </div>
       <div>
@@ -90,24 +81,18 @@ const SignUp = () => {
           control={control}
           margin="normal"
           name="password"
-          label="Password"
+          label={t('form.fields.password')}
           type="password"
           autoComplete="current-password"
-          rules={{
-            required: 'Password is required',
-            minLength: {
-              value: 8,
-              message: 'Password is too short',
-            },
-          }}
+          rules={rules.password}
         />
       </div>
       <Button type="submit" variant="contained" disabled={loading}>
-        Sign Up {loading && '...'}
+        {t('form.fields.signup')} {loading && '...'}
       </Button>
       <div>
         <Link href="/login" margin="normal">
-          Have an account? Sign in
+          {t('form.haveAccount')}
         </Link>
       </div>
     </Box>

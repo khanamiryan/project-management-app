@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import Toast from '../Toast/Toast';
 
 import { useTranslation } from 'react-i18next';
+import { rules } from '../../utils/validation.utils';
 
 const SignIn = () => {
-  const { handleSubmit, control, clearErrors, setError } = useForm<ISignInForm>({
+  const { handleSubmit, control, setError } = useForm<ISignInForm>({
     defaultValues: {
       login: '',
       password: '',
@@ -58,43 +59,31 @@ const SignIn = () => {
       <div>
         <InputText
           name="login"
-          label={t('login')}
+          label={t('form.fields.login')}
           autoComplete="login"
           control={control}
-          rules={{
-            required: 'Login is required',
-            minLength: {
-              value: 3,
-              message: 'Login is too short',
-            },
-          }}
+          rules={rules.login}
         />
       </div>
       <div>
         <InputText
           name="password"
           control={control}
-          rules={{
-            required: 'Password is required',
-            minLength: {
-              value: 3,
-              message: 'Password is too short',
-            },
-          }}
+          rules={rules.password}
           margin="normal"
-          label={t('password')}
+          label={t('form.fields.password')}
           type="password"
           autoComplete="password"
         />
       </div>
 
       <Button type="submit" variant="contained" disabled={loading}>
-        {t('signin')}
+        {t('form.fields.signIn')}
         {loading && '...'}
       </Button>
       <div>
         <Link href="/registration" margin="normal">
-          {t('noAccount')}
+          {t('form.noAccount')}
         </Link>
       </div>
     </Box>

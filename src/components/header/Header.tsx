@@ -8,12 +8,13 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import './header.scss';
 import { useNavigate } from 'react-router-dom';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
 import { selectUser, signOut } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 
 const Header = () => {
@@ -33,12 +34,15 @@ const Header = () => {
 
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
+
+  const { t } = useTranslation();
   const logOut = () => {
     dispatch(signOut());
     navigate('/');
   };
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+
+  const changeLanguage = (e: ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(e.target.value);
   };
   return (
     <>
@@ -50,7 +54,7 @@ const Header = () => {
             </Typography>
             <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
               <Button color="inherit" onClick={goHome}>
-                Main Page
+                {t('menu.mainPage')}
               </Button>
               <Button color="inherit" onClick={goBoards}>
                 Boards
@@ -62,7 +66,7 @@ const Header = () => {
                 Beta Board
               </Button>
               <Button color="inherit" onClick={goProfile}>
-                Profile
+                {t('menu.profilePage')}
               </Button>
             </ButtonGroup>
             {!user.loggedIn && (
@@ -81,7 +85,8 @@ const Header = () => {
             )}
             <FormControl>
               <NativeSelect
-                defaultValue={'en'}
+                onChange={changeLanguage}
+                defaultValue={i18n.language}
                 inputProps={{
                   name: 'lang',
                   id: 'uncontrolled-native',
@@ -96,12 +101,10 @@ const Header = () => {
                 <option value={'en'}>en</option>
                 <option value={'ru'}>ru</option>
               </NativeSelect>
-              <button onClick={() => changeLanguage('ru')}>ru</button>
-              <button onClick={() => changeLanguage('en')}>en</button>
             </FormControl>
             {user.loggedIn && (
               <Button color="inherit" onClick={logOut}>
-                Log out
+                {t('logOut')}
               </Button>
             )}
           </Container>
