@@ -4,10 +4,7 @@ import React, { useState } from 'react';
 import { IColumn } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
-import {
-  useDeleteColumnMutation,
-  useUpdateColumnMutation,
-} from './../../../services/apiBoard/apiBoard';
+import { useDeleteColumnMutation, useUpdateColumnMutation } from '../../../services/board.api';
 
 interface ITaskListProps {
   dataColumn: IColumn;

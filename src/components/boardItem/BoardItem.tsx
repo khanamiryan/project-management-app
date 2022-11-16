@@ -8,7 +8,7 @@ import {
   useGetColumnsQuery,
   useAddColumnMutation,
   useDeleteColumnMutation,
-} from './../../services/apiBoard/apiBoard';
+} from '../../services/board.api';
 import { useNavigate, useParams } from 'react-router-dom';
 
 let titleMock = 'объект 3';

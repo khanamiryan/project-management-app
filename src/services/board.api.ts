@@ -1,6 +1,7 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import jwt_decode from 'jwt-decode';
+import { api } from './api';
 import { Board, IColumn } from 'types/types';
+import jwt_decode from 'jwt-decode';
+import { token } from './api';
 
 type DecodedToken = {
   id: string;
@@ -9,10 +10,6 @@ type DecodedToken = {
   exp: number;
 };
 
-const BASE_URL = 'http://localhost:3000/';
-
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg1ODUxMDEsImV4cCI6MTY2ODYyODMwMX0.ItAlUUc_Ah6lqpVDnHBByy-FnLEZ00EcSlcYDxkPzIU';
 const temporaryBoardId = '636cd10e96274bebf760a073/';
 const decodedToken: DecodedToken = jwt_decode(token);
 enum Endpoint {
@@ -29,15 +26,7 @@ enum HTTPMethod {
   PUT = 'PUT',
 }
 
-export const apiBoard = createApi({
-  reducerPath: 'apiBoard',
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: (headers) => {
-      headers.set('authorization', `Bearer ${token}`);
-    },
-  }),
-  tagTypes: ['Boards', 'Columns'],
+export const boardApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getBoards: builder.query<Board[], string>({
       query: () => ({
@@ -92,9 +81,9 @@ export const apiBoard = createApi({
 });
 
 export const {
-  useGetBoardsQuery,
-  useGetColumnsQuery,
   useAddColumnMutation,
   useDeleteColumnMutation,
+  useGetColumnsQuery,
   useUpdateColumnMutation,
-} = apiBoard;
+  useGetBoardsQuery,
+} = boardApi;
