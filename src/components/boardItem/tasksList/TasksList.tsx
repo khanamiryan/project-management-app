@@ -22,10 +22,10 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
 
   const handleAddTask = () => {};
 
-  const { _id, title } = dataColumn;
+  const { _id, title, boardId } = dataColumn;
 
   const confirmDeleteColumn = () => {
-    deleteColumn(_id);
+    deleteColumn({ _id: _id, boardId: boardId });
     setOpenModal(false);
   };
   const cancelDeleteColumn = () => {

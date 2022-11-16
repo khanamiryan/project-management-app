@@ -7,7 +7,10 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { users } from 'mocks/mocks';
+import { User } from 'types/types';
+import { useGetUsersQuery } from 'services/users.api';
+import { useAppSelector } from 'store/redux.hooks';
+import { selectUser } from 'store/userSlice';
 
 type UsersSelectProps = { onUserSelect: (logins: string[]) => void };
 
@@ -31,11 +34,15 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   };
 }
 
-const getUserIdByLogin = (login: string) => users.find((user) => user.login === login)?._id;
+const getUserIdByLogin = (login: string, users: User[]) => {
+  return users.find((user) => user.login === login)?._id;
+};
 
 export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
   const theme = useTheme();
   const [personName, setPersonName] = React.useState<string[]>([]);
+  const { data: users } = useGetUsersQuery('');
+  const { id: currentUserId } = useAppSelector(selectUser);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
@@ -46,10 +53,10 @@ export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
       typeof value === 'string' ? value.split(',') : value
     );
 
-    if (typeof value === 'string') {
-      onUserSelect(value.split(',').map((login) => getUserIdByLogin(login)) as string[]);
-    } else {
-      onUserSelect(value.map((login) => getUserIdByLogin(login)) as string[]);
+    if (typeof value === 'string' && users?.length) {
+      onUserSelect(value.split(',').map((login) => getUserIdByLogin(login, users)) as string[]);
+    } else if (Array.isArray(value) && users?.length) {
+      onUserSelect(value.map((login) => getUserIdByLogin(login, users)) as string[]);
     }
   };
 
@@ -73,11 +80,15 @@ export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
           )}
           MenuProps={MenuProps}
         >
-          {users.map(({ _id, login }) => (
-            <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
-              {login}
-            </MenuItem>
-          ))}
+          {users &&
+            users.map(({ _id, login }) => {
+              if (_id === currentUserId) return null;
+              return (
+                <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
+                  {login}
+                </MenuItem>
+              );
+            })}
         </Select>
       </FormControl>
     </div>
