@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { buildQueries } from '@testing-library/react';
 import jwt_decode from 'jwt-decode';
-import { Board, IColumn, ITask } from 'types/types';
+import { Board, IColumn } from 'types/types';
 
 type DecodedToken = {
   id: string;
@@ -13,12 +12,11 @@ type DecodedToken = {
 const BASE_URL = 'http://localhost:3000/';
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg1Mzg4NTUsImV4cCI6MTY2ODU4MjA1NX0.-f3YCUR3V7nehYxhWxIYkYGtirNspuYb84RSNqS6FiA';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmNkMDc0OTYyNzRiZWJmNzYwYTA3MCIsImxvZ2luIjoiSU1hc2siLCJpYXQiOjE2Njg1ODUxMDEsImV4cCI6MTY2ODYyODMwMX0.ItAlUUc_Ah6lqpVDnHBByy-FnLEZ00EcSlcYDxkPzIU';
 const temporaryBoardId = '636cd10e96274bebf760a073/';
 const decodedToken: DecodedToken = jwt_decode(token);
-
 enum Endpoint {
-  BOARDS = 'boards/', /// могут быть query параметры лучше добавлять в начале /
+  BOARDS = 'boards/',
   BOARDS_SET = 'boardsSet/',
   COLUMNS = 'columns/',
 }
@@ -28,6 +26,7 @@ enum HTTPMethod {
   GET = 'GET',
   PATCH = 'PATCH',
   POST = 'POST',
+  PUT = 'PUT',
 }
 
 export const apiBoard = createApi({
@@ -81,6 +80,14 @@ export const apiBoard = createApi({
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
+    updateColumn: builder.mutation<IColumn, Omit<IColumn, 'boardId'>>({
+      query: (columnData) => ({
+        url: `${Endpoint.BOARDS}${temporaryBoardId}${Endpoint.COLUMNS}${columnData._id}`,
+        method: HTTPMethod.PUT,
+        body: { title: columnData.title, order: columnData.order },
+      }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+    }),
   }),
 });
 
@@ -89,4 +96,5 @@ export const {
   useGetColumnsQuery,
   useAddColumnMutation,
   useDeleteColumnMutation,
+  useUpdateColumnMutation,
 } = apiBoard;
