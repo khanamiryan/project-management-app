@@ -48,9 +48,11 @@ const Header = () => {
               <Button color="inherit" onClick={goHome}>
                 Main Page
               </Button>
-              <Button color="inherit" onClick={goBoards}>
-                Boards
-              </Button>
+              {user.loggedIn && (
+                <Button color="inherit" onClick={goBoards}>
+                  Boards
+                </Button>
+              )}
               <Button color="inherit" onClick={onClickAddBoard}>
                 Add board
               </Button>
