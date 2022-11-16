@@ -12,11 +12,14 @@ i18n
         translation: {
           signUpTitle: 'Sign Up',
           signInTitle: 'Sign In',
-          logOut: 'Log out',
+
           sureDeleteUser: 'Are you sure to delete user?',
           menu: {
             mainPage: 'Main Page',
-            profilePage: 'Профиль',
+            profilePage: 'Profile',
+            signIn: 'Sign In',
+            signUp: 'Sign Up',
+            signOut: 'Sign Out',
           },
           form: {
             noAccount: "Don't have an account? Sign Up",
@@ -45,13 +48,16 @@ i18n
       ru: {
         translation: {
           signUpTitle: 'Регистрация',
-          signInTitle: 'Регистрация',
-          logOut: 'Выйти',
+          signInTitle: 'Вход',
+
           sureDeleteUser: 'Вы уверены, что хотите удалить пользователя?',
 
           menu: {
             mainPage: 'Главная',
             profilePage: 'Профиль',
+            signIn: 'Вход',
+            signUp: 'Регистрация',
+            signOut: 'Выйти',
           },
           form: {
             noAccount: 'Нет аккаунта? Зарегистрируйтесь',

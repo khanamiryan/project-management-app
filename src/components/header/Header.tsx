@@ -76,10 +76,10 @@ const Header = () => {
                 sx={{ ml: 'auto' }}
               >
                 <Button color="inherit" onClick={goSignIn}>
-                  Sign in
+                  {t('menu.signIn')}
                 </Button>
                 <Button color="inherit" onClick={goSignUp}>
-                  Sign up
+                  {t('menu.signUp')}
                 </Button>
               </ButtonGroup>
             )}
@@ -104,7 +104,7 @@ const Header = () => {
             </FormControl>
             {user.loggedIn && (
               <Button color="inherit" onClick={logOut}>
-                {t('logOut')}
+                {t('menu.signOut')}
               </Button>
             )}
           </Container>
