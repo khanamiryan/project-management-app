@@ -1,23 +1,15 @@
 import { Button, ButtonGroup } from '@mui/material';
 import { Box, Stack } from '@mui/system';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
-import {
-  useGetBoardsQuery,
-  useGetColumnsQuery,
-  useAddColumnMutation,
-  useDeleteColumnMutation,
-} from '../../services/board.api';
-import { useNavigate, useParams } from 'react-router-dom';
-
-let titleMock = 'объект 3';
-let orderMock = 1;
-const boardIdMock = '6373d01c79506c3311ac4db0';
+import { useGetColumnsQuery } from '../../services/board.api';
+import { useParams } from 'react-router-dom';
+import ModalCreate from './ModalCreate/ModalCreate';
 
 export default function BoardItem(): JSX.Element {
   const { id: idBoard } = useParams();
-
+  const [openModalCreate, setOpenModalCreate] = useState(false);
   //todo renavigate
   /*
     const navigate = useNavigate();
@@ -27,19 +19,14 @@ export default function BoardItem(): JSX.Element {
       goHome();
     }
   }, []);*/
-  //как получить дату
 
   const handleEditBoard = () => {};
   const handleDeleteBoard = () => {};
-
+  // todo: loader
   const { data: dataColumns, isLoading, isError } = useGetColumnsQuery(idBoard || '');
 
-  const [addColumn, {}] = useAddColumnMutation();
-
   const handleAddColumn = () => {
-    addColumn({ title: titleMock, order: orderMock, boardId: idBoard || '' }); // todo: check  || ""
-    orderMock += 1;
-    titleMock += orderMock;
+    setOpenModalCreate(true);
   };
 
   return (
@@ -83,6 +70,12 @@ export default function BoardItem(): JSX.Element {
           </Button>
         </Box>
       </Stack>
+      <ModalCreate
+        boardId={idBoard || ''}
+        countColumns={dataColumns?.length || 0}
+        openModal={openModalCreate}
+        closeModal={() => setOpenModalCreate(false)}
+      ></ModalCreate>
     </>
   );
 }

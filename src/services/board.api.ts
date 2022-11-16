@@ -1,17 +1,10 @@
 import { api } from './api';
 import { Board, IColumn } from 'types/types';
-import jwt_decode from 'jwt-decode';
+
 import { token } from './api';
 
-type DecodedToken = {
-  id: string;
-  login: string;
-  iat: number;
-  exp: number;
-};
-
 const temporaryBoardId = '636cd10e96274bebf760a073/';
-const decodedToken: DecodedToken = jwt_decode(token);
+
 enum Endpoint {
   BOARDS = 'boards/',
   BOARDS_SET = 'boardsSet/',
@@ -37,7 +30,7 @@ export const boardApi = api.injectEndpoints({
         result
           ? [
               ...result.map(({ _id }) => ({ type: 'Boards' as const, _id })), // откуда берется тип result (что такое as const)
-              { type: 'Boards', id: 'LIST' }, /// что такое лист
+              { type: 'Boards', id: 'LIST' },
             ]
           : [{ type: 'Boards', id: 'LIST' }],
     }),
@@ -50,9 +43,9 @@ export const boardApi = api.injectEndpoints({
         result
           ? [
               ...result.map(({ _id }) => ({ type: 'Columns' as const, _id })),
-              { type: 'Columns', id: 'LIST' }, /// ???
+              { type: 'Columns', id: 'LIST' },
             ]
-          : [{ type: 'Columns', id: 'LIST' }], /// ???
+          : [{ type: 'Columns', id: 'LIST' }],
     }),
     addColumn: builder.mutation<IColumn, Omit<IColumn, '_id'>>({
       query: (columnData) => ({
