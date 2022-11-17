@@ -13,9 +13,12 @@
     .column-title{
       display:flex;
       justify-content: space-between;
+      max-height: 30px;
       h3{
         text-transform: uppercase;
         line-height: 32px;
+        max-width: 200px;
+        overflow:hidden;
       }
     }
 

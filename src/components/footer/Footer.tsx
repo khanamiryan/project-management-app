@@ -1,4 +1,4 @@
-import { Box, Container, Link } from '@mui/material';
+import { Box, Link } from '@mui/material';
 import React from 'react';
 import './footer.scss';
 
