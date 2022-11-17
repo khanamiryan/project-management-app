@@ -73,15 +73,7 @@ const Profile = () => {
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
       {user.error && <Alert severity="error">{user.error}</Alert>}
-      <Toast
-        open={toastOpen}
-        onClose={() => {
-          setToastOpen(false);
-        }}
-        type={toastType}
-      >
-        {toastMessage}
-      </Toast>
+      <Toast open={toastOpen} message={toastMessage} type={toastType}></Toast>
 
       <Modal
         confirmButtonText={user.loading ? 'Deleting...' : 'Confirm'}

@@ -13,13 +13,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import Modal from 'components/Modal/Modal';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
-import { useAppSelector } from 'store/redux.hooks';
+import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
+import { hideToast, showToast } from 'store/toastSlice';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { id: currentUserId } = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
   const isOwner = currentUserId === board.owner;
   const modalTitle = `${isOwner ? 'Delete' : 'Leave'} the board ${board.title}?`;
   const modalText = `It's irreversible. If you ${
@@ -31,6 +33,8 @@ const BoardCard = ({ board }: { board: Board }) => {
 
   const onClickDelete = () => {
     setModalOpen(true);
+    dispatch(showToast({ message: 'testtesttest' }));
+    setTimeout(() => dispatch(hideToast()), 2000);
   };
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {

@@ -1,28 +1,23 @@
 import React from 'react';
 import './Toast.styles.scss';
-import { Alert, AlertColor, Snackbar } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
+import { ToastState } from 'store/toastSlice';
 
-const Toast = ({
-  open,
-  onClose,
-  children,
-  type = 'error',
-}: {
-  open: boolean;
-  onClose: () => void;
-  children: string;
-  type?: AlertColor;
-}) => {
+const Toast = ({ open, message, type = 'error' }: ToastState) => {
   return (
-    <Snackbar open={open} autoHideDuration={3000} onClose={onClose}>
+    <Snackbar
+      open={open}
+      autoHideDuration={3000}
+      // onClose={onClose}
+    >
       <Alert
         elevation={6}
         variant="filled"
-        onClose={onClose}
+        // onClose={onClose}
         severity={type}
         sx={{ width: '100%' }}
       >
-        {children}
+        {message}
       </Alert>
     </Snackbar>
   );

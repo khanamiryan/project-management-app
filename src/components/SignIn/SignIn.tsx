@@ -44,14 +44,7 @@ const SignIn = () => {
 
   return (
     <Box component="form" className={'SignInForm'} onSubmit={handleSubmit(onSubmit)}>
-      <Toast
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
-      >
-        {message}
-      </Toast>
+      <Toast open={open} message={message}></Toast>
 
       <div>
         <InputText
