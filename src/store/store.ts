@@ -6,7 +6,8 @@ import {
   combineReducers,
 } from '@reduxjs/toolkit';
 import userReducer from './userSlice';
-import { api } from '../services/api';import toastReducer from './toastSlice';
+import { api } from '../services/api';
+import toastReducer from './toastSlice';
 
 export const reducersList = {
   user: userReducer,
