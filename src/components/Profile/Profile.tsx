@@ -65,7 +65,6 @@ const Profile = () => {
     }
   }, [user.error]);
 
-
   const { t } = useTranslation();
 
   return (
