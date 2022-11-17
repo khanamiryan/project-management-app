@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import { ISignInForm, selectUser, signIn } from '../../store/userSlice';
 
 import { useNavigate } from 'react-router-dom';
-import Toast from '../Toast/Toast';
+import { showToast } from 'store/toastSlice';
 
 const SignIn = () => {
   const { handleSubmit, control, clearErrors, setError } = useForm<ISignInForm>({
@@ -17,7 +17,6 @@ const SignIn = () => {
     },
   });
 
-  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -34,7 +33,7 @@ const SignIn = () => {
       setMessage(error);
       setError('login', { type: 'custom', message: '' });
       setError('password', { type: 'custom', message: '' });
-      setOpen(true);
+      dispatch(showToast({ message: error }));
     }
   }, [error]);
 
@@ -44,8 +43,6 @@ const SignIn = () => {
 
   return (
     <Box component="form" className={'SignInForm'} onSubmit={handleSubmit(onSubmit)}>
-      <Toast open={open} message={message}></Toast>
-
       <div>
         <InputText
           name="login"
