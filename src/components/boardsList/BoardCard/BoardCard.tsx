@@ -16,8 +16,11 @@ import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const BoardCard = ({ board }: { board: Board }) => {
+  const navigate = useNavigate();
+  const goBoard = () => navigate(`/boards/${board._id}`);
   const [modalOpen, setModalOpen] = useState(false);
   const { id: currentUserId } = useAppSelector(selectUser);
   const isOwner = currentUserId === board.owner;
@@ -63,7 +66,7 @@ const BoardCard = ({ board }: { board: Board }) => {
           </Typography>
         </CardContent>
         <CardActions sx={{ pt: 0 }}>
-          <Button variant="contained" href={`/boards/${board._id}`}>
+          <Button variant="contained" onClick={goBoard}>
             OPEN BOARD
           </Button>
         </CardActions>
