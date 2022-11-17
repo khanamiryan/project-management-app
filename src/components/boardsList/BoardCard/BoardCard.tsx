@@ -16,7 +16,7 @@ import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.
 import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
-import { hideToast, showToast } from 'store/toastSlice';
+import { showToast } from 'store/toastSlice';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -34,7 +34,6 @@ const BoardCard = ({ board }: { board: Board }) => {
   const onClickDelete = () => {
     setModalOpen(true);
     dispatch(showToast({ message: 'testtesttest' }));
-    setTimeout(() => dispatch(hideToast()), 2000);
   };
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {
