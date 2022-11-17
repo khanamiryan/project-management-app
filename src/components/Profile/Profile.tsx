@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
 import { Warning } from '@mui/icons-material';
 import { showToast } from 'store/toastSlice';
+import { rules } from '../../utils/validation.utils';
+import { useTranslation } from 'react-i18next';
 
 interface IProfile {
   name: string;
@@ -63,6 +65,9 @@ const Profile = () => {
     }
   }, [user.error]);
 
+
+  const { t } = useTranslation();
+
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
       {user.error && <Alert severity="error">{user.error}</Alert>}
@@ -78,101 +83,44 @@ const Profile = () => {
       >
         <>
           <Warning color="error" />
-          Are you sure to delete user?
+          {t('sureDeleteUser')}
         </>
       </Modal>
 
       <div>
         <InputText
           name="name"
-          label="Name"
+          label={t('form.fields.name')}
           autoComplete="off"
           control={control}
-          rules={{
-            required: 'Name is required',
-            minLength: {
-              value: 3,
-              message: 'Login is too short',
-            },
-          }}
+          rules={rules.name}
         />
       </div>
       <div>
         <InputText
           name="login"
-          label="Login"
+          label={t('form.fields.login')}
           autoComplete="off"
           control={control}
-          rules={{
-            required: 'Login is required',
-            minLength: {
-              value: 3,
-              message: 'Login is too short',
-            },
-          }}
+          rules={rules.login}
         />
       </div>
-      {/*<div>*/}
-      {/*  <InputText*/}
-      {/*    name="new_password"*/}
-      {/*    autoComplete="new-password"*/}
-      {/*    control={control}*/}
-      {/*    rules={{*/}
-      {/*      //if it's empty, we should not change the password*/}
-      {/*      minLength: {*/}
-      {/*        value: 3,*/}
-      {/*        message: 'Password is too short',*/}
-      {/*      },*/}
-      {/*    }}*/}
-      {/*    margin="normal"*/}
-      {/*    label="New Password"*/}
-      {/*    type="password"*/}
-      {/*    // autoComplete="password"*/}
-      {/*  />*/}
-      {/*</div>*/}
-      {/*<div>*/}
-      {/*  <InputText*/}
-      {/*    name="confirm_password"*/}
-      {/*    control={control}*/}
-      {/*    rules={{*/}
-      {/*      //if it's empty, we should not change the password*/}
-      {/*      minLength: {*/}
-      {/*        value: 3,*/}
-      {/*        message: 'Password is too short',*/}
-      {/*      },*/}
-      {/*    }}*/}
-      {/*    margin="normal"*/}
-      {/*    label="Confirm Password"*/}
-      {/*    type="password"*/}
-      {/*    // autoComplete="password"*/}
-      {/*  />*/}
-      {/*</div>*/}
-
-      {/*<Divider variant="fullWidth" />*/}
-
       <div>
         <InputText
           name="password"
           control={control}
-          rules={{
-            required: 'New password is required',
-            //if it's empty, we should not change the password
-            minLength: {
-              value: 3,
-              message: 'Password is too short',
-            },
-          }}
+          rules={rules.password}
           margin="normal"
-          label="New password"
+          label={t('form.fields.newPassword')}
           type="password"
           autoComplete="new-password"
         />
       </div>
 
       <Button variant={'contained'} type="submit" disabled={!isDirty || user.loading}>
-        Submit {user.loading && '...'}
+        {t('form.fields.save')} {user.loading && '...'}
       </Button>
-      <Button onClick={() => setOpen(true)}>Delete User</Button>
+      <Button onClick={() => setOpen(true)}>{t('form.fields.deleteUser')}</Button>
     </Box>
   );
 };

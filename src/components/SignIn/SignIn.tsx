@@ -9,14 +9,17 @@ import { ISignInForm, selectUser, signIn } from '../../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from 'store/toastSlice';
 
+import { useTranslation } from 'react-i18next';
+import { rules } from '../../utils/validation.utils';
+
 const SignIn = () => {
-  const { handleSubmit, control, clearErrors, setError } = useForm<ISignInForm>({
+  const { handleSubmit, control, setError } = useForm<ISignInForm>({
     defaultValues: {
       login: '',
       password: '',
     },
   });
-
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -46,42 +49,31 @@ const SignIn = () => {
       <div>
         <InputText
           name="login"
-          label="Login"
+          label={t('form.fields.login')}
           autoComplete="login"
           control={control}
-          rules={{
-            required: 'Login is required',
-            minLength: {
-              value: 3,
-              message: 'Login is too short',
-            },
-          }}
+          rules={rules.login}
         />
       </div>
       <div>
         <InputText
           name="password"
           control={control}
-          rules={{
-            required: 'Password is required',
-            minLength: {
-              value: 3,
-              message: 'Password is too short',
-            },
-          }}
+          rules={rules.password}
           margin="normal"
-          label="Password"
+          label={t('form.fields.password')}
           type="password"
           autoComplete="password"
         />
       </div>
 
       <Button type="submit" variant="contained" disabled={loading}>
-        Sign In {loading && '...'}
+        {t('form.fields.signIn')}
+        {loading && '...'}
       </Button>
       <div>
         <Link href="/registration" margin="normal">
-          Dont have an account? Sign Up
+          {t('form.noAccount')}
         </Link>
       </div>
     </Box>
