@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -30,10 +30,10 @@ const BoardCard = ({ board }: { board: Board }) => {
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
+  const isSucces = deleteResult.isSuccess || updateResult.isSuccess;
 
   const onClickDelete = () => {
     setModalOpen(true);
-    dispatch(showToast({ message: 'testtesttest' }));
   };
   const onModalClose = () => setModalOpen(false);
   const onBoardDelete = () => {
@@ -45,6 +45,17 @@ const BoardCard = ({ board }: { board: Board }) => {
     }
     onModalClose();
   };
+
+  useEffect(() => {
+    if (isSucces) {
+      dispatch(
+        showToast({
+          message: `You ${isOwner ? 'deleted' : 'left'} the board`,
+          type: 'success',
+        })
+      );
+    }
+  }, [dispatch, isOwner, isSucces]);
 
   return (
     <>

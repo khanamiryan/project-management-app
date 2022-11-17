@@ -19,7 +19,7 @@ const toastSlice = createSlice({
   reducers: {
     showToast: (state: ToastState, action: PayloadAction<Omit<ToastState, 'open'>>) => {
       state.message = action.payload.message;
-      if (state.type) state.type = action.payload.type;
+      if (action.payload.type) state.type = action.payload.type;
       state.open = true;
     },
     hideToast: (state: ToastState) => {
