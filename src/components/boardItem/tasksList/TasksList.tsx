@@ -15,7 +15,7 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
 
   const [editTitle, setEditTitle] = useState(false);
-  const [newColumnTitle, setNewColumnTitle] = useState(dataColumn?.title || ''); // todo check || ''
+  const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
   const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
