@@ -8,6 +8,8 @@ import { selectUser } from 'store/userSlice';
 
 const BoardsList = () => {
   const { loggedIn, id } = useAppSelector(selectUser);
+  console.log('userId', id);
+  console.log('userId', localStorage.getItem('userId'));
   const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery(id);
 
   if (!loggedIn) {
