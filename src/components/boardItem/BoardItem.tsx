@@ -1,12 +1,33 @@
 import { Button, ButtonGroup } from '@mui/material';
 import { Box, Stack } from '@mui/system';
-import React from 'react';
+import React, { useState } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
+import { useGetColumnsQuery } from '../../services/board.api';
+import { useParams } from 'react-router-dom';
+import ModalCreate from './ModalCreate/ModalCreate';
 
 export default function BoardItem(): JSX.Element {
+  const { id: idBoard } = useParams();
+  const [openModalCreate, setOpenModalCreate] = useState(false);
+  //todo renavigate
+  /*
+    const navigate = useNavigate();
+  const goHome = () => navigate('/', { replace: true });
+  useEffect(() => {
+    if (!dataColumns) {
+      goHome();
+    }
+  }, []);*/
+
   const handleEditBoard = () => {};
   const handleDeleteBoard = () => {};
+  // todo: loader
+  const { data: dataColumns, isLoading, isError } = useGetColumnsQuery(idBoard || '');
+
+  const handleAddColumn = () => {
+    setOpenModalCreate(true);
+  };
 
   return (
     <>
@@ -33,18 +54,28 @@ export default function BoardItem(): JSX.Element {
         </Stack>
       </Box>
       <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
-        <TasksList></TasksList>
-        <TasksList></TasksList>
-        <TasksList></TasksList>
-        <TasksList></TasksList>
-        <TasksList></TasksList>
+        {dataColumns &&
+          dataColumns.map((dataColumn) => (
+            <TasksList key={dataColumn._id} dataColumn={dataColumn} />
+          ))}
 
         <Box className="board-add-list board-column">
-          <Button className="button-add-list" variant="contained" fullWidth>
+          <Button
+            className="button-add-list"
+            variant="contained"
+            fullWidth
+            onClick={handleAddColumn}
+          >
             Add List
           </Button>
         </Box>
       </Stack>
+      <ModalCreate
+        boardId={idBoard || ''}
+        countColumns={dataColumns?.length || 0}
+        openModal={openModalCreate}
+        closeModal={() => setOpenModalCreate(false)}
+      ></ModalCreate>
     </>
   );
 }

@@ -5,12 +5,14 @@ import {
   PreloadedState,
   combineReducers,
 } from '@reduxjs/toolkit';
-import { api } from 'services/api';
 import userReducer from './userSlice';
+import { api } from '../services/api';
+import toastReducer from './toastSlice';
 
 export const reducersList = {
   user: userReducer,
   [api.reducerPath]: api.reducer,
+  toast: toastReducer,
 };
 
 export const rootReducer = combineReducers(reducersList);

@@ -6,7 +6,7 @@ import InputText from '../InputText/InputText';
 import { ISignUpForm, selectUser, signUp } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import { useNavigate } from 'react-router-dom';
-import Toast from '../Toast/Toast';
+import { showToast } from 'store/toastSlice';
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +19,6 @@ const SignUp = () => {
     },
   });
 
-  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -35,8 +34,8 @@ const SignUp = () => {
       setError('name', { type: 'custom', message: '' });
       setError('login', { type: 'custom', message: '' });
       setError('password', { type: 'custom', message: '' });
-      setOpen(true);
       setMessage(error);
+      dispatch(showToast({ message: error }));
     }
   }, [error]);
 
@@ -46,15 +45,6 @@ const SignUp = () => {
   const { t } = useTranslation();
   return (
     <Box component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
-      <Toast
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
-      >
-        {message}
-      </Toast>
-
       <div>
         <InputText
           control={control}

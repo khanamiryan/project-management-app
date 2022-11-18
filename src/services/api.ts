@@ -11,6 +11,6 @@ export const api = createApi({
       headers.set('authorization', `Bearer ${token}`);
     },
   }),
-  tagTypes: ['Boards'],
+  tagTypes: ['Boards', 'Columns'],
   endpoints: () => ({}),
 });

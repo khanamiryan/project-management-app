@@ -21,7 +21,7 @@ const Header = () => {
   const navigate = useNavigate();
   const goHome = () => navigate('/');
   const goBoards = () => navigate('/boards');
-  const goBetaBoard = () => navigate('/boards/1');
+  const goBetaBoard = () => navigate('/boards/636cd10e96274bebf760a073');
   const goProfile = () => navigate('/profile');
   const goSignIn = () => navigate('/login');
   const goSignUp = () => navigate('/registration');
@@ -56,9 +56,11 @@ const Header = () => {
               <Button color="inherit" onClick={goHome}>
                 {t('menu.mainPage')}
               </Button>
-              <Button color="inherit" onClick={goBoards}>
-                Boards
-              </Button>
+              {user.loggedIn && (
+                <Button color="inherit" onClick={goBoards}>
+                  Boards
+                </Button>
+              )}
               <Button color="inherit" onClick={onClickAddBoard}>
                 Add board
               </Button>

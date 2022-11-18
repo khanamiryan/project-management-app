@@ -25,9 +25,11 @@ export type UserState = {
   name: string;
   id: string;
 };
+
+const tokenLocalStor = localStorage.getItem('token');
 export const defaultUserState: UserState = {
   login: '',
-  token: '',
+  token: tokenLocalStor || '',
   loggedIn: false,
   loading: false,
   error: '',
@@ -66,6 +68,7 @@ export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
     const res = await signInService({ login, password });
     if (res.token && res.token.length > 0) {
       // const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
+      localStorage.setItem('token', res.token);
       const id = (jwt_decode(res.token) as DecodedToken).id;
       const user = await dispatch(getUser(id));
       if (user) {

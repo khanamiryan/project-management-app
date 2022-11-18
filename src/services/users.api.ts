@@ -2,7 +2,7 @@ import { User } from 'types/types';
 import { api } from './api';
 import { Endpoint } from './api.constants';
 
-export const postApi = api.injectEndpoints({
+export const usersApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query<User[], string>({
       query: () => ({
@@ -12,4 +12,4 @@ export const postApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetUsersQuery } = postApi;
+export const { useGetUsersQuery } = usersApi;

@@ -1,28 +1,17 @@
 import React from 'react';
 import './Toast.styles.scss';
-import { Alert, AlertColor, Snackbar } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
+import { hideToast, ToastState } from 'store/toastSlice';
+import { useAppDispatch } from 'store/redux.hooks';
 
-const Toast = ({
-  open,
-  onClose,
-  children,
-  type = 'error',
-}: {
-  open: boolean;
-  onClose: () => void;
-  children: string;
-  type?: AlertColor;
-}) => {
+const Toast = ({ open, message, type = 'error' }: ToastState) => {
+  const dispatch = useAppDispatch();
+  const onClose = () => dispatch(hideToast());
+
   return (
     <Snackbar open={open} autoHideDuration={3000} onClose={onClose}>
-      <Alert
-        elevation={6}
-        variant="filled"
-        onClose={onClose}
-        severity={type}
-        sx={{ width: '100%' }}
-      >
-        {children}
+      <Alert elevation={6} variant="filled" severity={type} sx={{ width: '100%' }}>
+        {message}
       </Alert>
     </Snackbar>
   );
