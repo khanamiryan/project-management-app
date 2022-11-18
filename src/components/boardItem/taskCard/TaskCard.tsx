@@ -1,21 +1,50 @@
 import { Button, ButtonGroup, Card, Typography } from '@mui/material';
-import React from 'react';
+import Modal from 'components/Modal/Modal';
+import React, { useState } from 'react';
+import { useDeleteTaskMutation } from 'services/board.api';
+import { ITask } from 'types/types';
 import './taskCard.scss';
 
-export default function TaskCard(): JSX.Element {
+type taskCardProps = {
+  dataTask: ITask;
+};
+export default function TaskCard({ dataTask }: taskCardProps): JSX.Element {
+  const [openModal, setOpenModal] = useState(false);
+
+  const { title, description, _id, boardId, columnId, order } = dataTask;
+  const [deleteTask] = useDeleteTaskMutation();
+
   const handleEditTask = () => {};
-  const handleDeleteTask = () => {};
+  const handleDeleteTask = () => {
+    setOpenModal(true);
+  };
+  const confirmDeleteTask = () => {
+    deleteTask({ _id: _id, boardId: boardId, columnId: columnId });
+    setOpenModal(false);
+  };
+  const cancelDeleteTask = () => {
+    setOpenModal(false);
+  };
 
   return (
     <>
       <Card className="task-card" variant="outlined">
-        <Typography component="h3"> Task name</Typography>
-        <Typography component="p"> Task description</Typography>
+        <Typography component="h3"> {title}</Typography>
+        <Typography component="p"> {description}</Typography>
+        <Typography component="p"> Order:{order}</Typography>
         <ButtonGroup>
           <Button onClick={handleEditTask}> Edit</Button>
           <Button onClick={handleDeleteTask}> Del</Button>
         </ButtonGroup>
       </Card>
+      <Modal
+        open={openModal}
+        title={`do you really want to remove "${title}" task?`}
+        onClickConfirm={confirmDeleteTask}
+        onClickCancel={cancelDeleteTask}
+      >
+        if you delete this list you will not be able to restore it
+      </Modal>
     </>
   );
 }

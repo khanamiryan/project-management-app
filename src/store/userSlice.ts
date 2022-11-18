@@ -62,6 +62,7 @@ type DecodedToken = {
   iat: number;
   exp: number;
 };
+
 export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
   'user/signIn',
   async function ({ login, password }, { dispatch }) {

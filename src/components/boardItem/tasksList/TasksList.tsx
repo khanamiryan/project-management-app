@@ -1,18 +1,28 @@
 import { Box, Button, ButtonGroup, Card, Input } from '@mui/material';
 import { Stack } from '@mui/system';
 import React, { useState } from 'react';
-import { IColumn } from 'types/types';
+import { IColumn, ITask } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
-import { useDeleteColumnMutation, useUpdateColumnMutation } from '../../../services/board.api';
+import {
+  useDeleteColumnMutation,
+  useUpdateColumnMutation,
+  //useAddTaskMutation,
+  //useGetTasksByColumnQuery,
+} from './../../../services/board.api';
 import Modal from 'components/Modal/Modal';
+import ModalCreate from '../ModalCreate/ModalCreate';
 
 interface ITaskListProps {
   dataColumn: IColumn;
+  dataTasks: ITask[] | undefined;
 }
 
-export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
+export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JSX.Element {
+  const { _id: columnId, title, boardId } = dataColumn;
+
   const [openModal, setOpenModal] = useState(false);
+  const [openModalCreate, setOpenModalCreate] = useState(false);
 
   const [editTitle, setEditTitle] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
@@ -20,12 +30,8 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
   const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
 
-  const handleAddTask = () => {};
-
-  const { _id, title, boardId } = dataColumn;
-
   const confirmDeleteColumn = () => {
-    deleteColumn({ _id: _id, boardId: boardId });
+    deleteColumn({ _id: columnId, boardId: boardId });
     setOpenModal(false);
   };
   const cancelDeleteColumn = () => {
@@ -37,10 +43,11 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
     setOpenModal(true);
   };
   const handleUpdateColumn = () => {
-    const newColumnData = { _id: _id, title: newColumnTitle, order: 4 };
+    const newColumnData = { _id: columnId, title: newColumnTitle, order: 4 }; // todo: order
     updateColumn(newColumnData);
     setEditTitle(!editTitle);
   };
+
   return (
     <>
       <Card className="board-column" variant="outlined">
@@ -73,15 +80,12 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
         </Box>
 
         <Stack className="tasks-list" direction={'column'} spacing={1}>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
+          {dataTasks &&
+            dataTasks.map((task) => {
+              return <TaskCard key={task._id} dataTask={task}></TaskCard>;
+            })}
         </Stack>
-        <Button variant="contained" fullWidth onClick={handleAddTask}>
+        <Button variant="contained" fullWidth onClick={() => setOpenModalCreate(true)}>
           Add task
         </Button>
       </Card>
@@ -93,6 +97,16 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
       >
         if you delete this list you will not be able to restore it
       </Modal>
+      {dataTasks && (
+        <ModalCreate
+          type="Task"
+          boardId={boardId || ''}
+          currentLength={dataTasks.length}
+          openModal={openModalCreate}
+          closeModal={() => setOpenModalCreate(false)}
+          columnId={columnId}
+        ></ModalCreate>
+      )}
     </>
   );
 }

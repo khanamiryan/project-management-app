@@ -6,6 +6,7 @@ export enum Endpoint {
   BOARDS_SET = 'boardsSet/',
   USERS = 'users/',
   COLUMNS = 'columns/',
+  TASKS_SET = 'tasksSet',
 }
 
 export enum HTTPMethod {

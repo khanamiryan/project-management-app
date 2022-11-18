@@ -3,14 +3,12 @@ import { Box, Stack } from '@mui/system';
 import React, { useState } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
-import { useGetColumnsQuery } from '../../services/board.api';
+import { useGetColumnsQuery, useGetTasksByBoardIdQuery } from './../../services/board.api';
 import { useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
 
 export default function BoardItem(): JSX.Element {
-  const { id: idBoard } = useParams();
-  const [openModalCreate, setOpenModalCreate] = useState(false);
-  //todo renavigate
+  // todo: loader, toaster,renavigate
   /*
     const navigate = useNavigate();
   const goHome = () => navigate('/', { replace: true });
@@ -19,12 +17,15 @@ export default function BoardItem(): JSX.Element {
       goHome();
     }
   }, []);*/
+  const { id: idBoard } = useParams();
+  const [openModalCreate, setOpenModalCreate] = useState(false);
+
+  const { data: dataTasksByBoardId } = useGetTasksByBoardIdQuery(idBoard || '');
+
+  const { data: dataColumns } = useGetColumnsQuery(idBoard as string);
 
   const handleEditBoard = () => {};
   const handleDeleteBoard = () => {};
-  // todo: loader
-  const { data: dataColumns, isLoading, isError } = useGetColumnsQuery(idBoard || '');
-
   const handleAddColumn = () => {
     setOpenModalCreate(true);
   };
@@ -55,9 +56,14 @@ export default function BoardItem(): JSX.Element {
       </Box>
       <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
         {dataColumns &&
-          dataColumns.map((dataColumn) => (
-            <TasksList key={dataColumn._id} dataColumn={dataColumn} />
-          ))}
+          dataColumns.map((dataColumn) => {
+            const tasksByColumn = dataTasksByBoardId?.filter(
+              (item) => item.columnId === dataColumn._id
+            );
+            return (
+              <TasksList key={dataColumn._id} dataColumn={dataColumn} dataTasks={tasksByColumn} />
+            );
+          })}
 
         <Box className="board-add-list board-column">
           <Button
@@ -70,12 +76,15 @@ export default function BoardItem(): JSX.Element {
           </Button>
         </Box>
       </Stack>
-      <ModalCreate
-        boardId={idBoard || ''}
-        countColumns={dataColumns?.length || 0}
-        openModal={openModalCreate}
-        closeModal={() => setOpenModalCreate(false)}
-      ></ModalCreate>
+      {dataColumns && (
+        <ModalCreate
+          type="List"
+          boardId={idBoard || ''}
+          currentLength={dataColumns.length}
+          openModal={openModalCreate}
+          closeModal={() => setOpenModalCreate(false)}
+        ></ModalCreate>
+      )}
     </>
   );
 }
