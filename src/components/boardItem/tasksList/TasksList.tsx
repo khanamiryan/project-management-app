@@ -23,8 +23,10 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
 
   const [openModal, setOpenModal] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [actionModalCreate, setActionModalCreate] = useState<'Add' | 'Edit'>('Add');
+  const [currentTaskData, setCurrentTaskData] = useState<ITask | null>(null);
 
-  const [editTitle, setEditTitle] = useState(false);
+  const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
   const [deleteColumn] = useDeleteColumnMutation();
@@ -38,42 +40,61 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
     setOpenModal(false);
   };
 
+  const editTask = (taskData: ITask) => {
+    setCurrentTaskData(taskData);
+    setActionModalCreate('Edit');
+    setOpenModalCreate(true);
+  };
+
+  const closeModalCreate = () => {
+    setOpenModalCreate(false);
+    setCurrentTaskData(null);
+    //setActionModalCreate('Add');
+  };
+
+  const handleAddTask = () => {
+    setActionModalCreate('Add');
+    setOpenModalCreate(true);
+  };
   const handleDeleteColumn = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     setOpenModal(true);
   };
   const handleUpdateColumn = () => {
-    const newColumnData = { _id: columnId, title: newColumnTitle, order: 4 }; // todo: order
-    updateColumn(newColumnData);
-    setEditTitle(!editTitle);
+    const newColumnData = { _id: columnId, title: newColumnTitle, order: 4 };
+    if (newColumnTitle !== dataColumn.title) {
+      updateColumn(newColumnData);
+    }
+    // todo: order
+
+    setEditTitleColumn(!editTitleColumn);
   };
 
   return (
     <>
       <Card className="board-column" variant="outlined">
         <Box className="column-name">
-          {!editTitle && (
+          {!editTitleColumn && (
             <Stack
               className="column-title"
               direction="row"
               spacing={2}
-              onClick={() => setEditTitle(!editTitle)}
+              onClick={() => setEditTitleColumn(!editTitleColumn)}
             >
               <h3>{title}</h3> <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
             </Stack>
           )}
-          {editTitle && (
+          {editTitleColumn && (
             <Stack className="column-title-edit" direction="row" spacing={2}>
               <Input
                 onChange={(e) => {
                   setNewColumnTitle(e.currentTarget.value);
-                  console.log(newColumnTitle);
                 }}
                 value={newColumnTitle}
               ></Input>
               <ButtonGroup>
                 <Button onClick={handleUpdateColumn}>update</Button>
-                <Button onClick={() => setEditTitle(!editTitle)}>no</Button>
+                <Button onClick={() => setEditTitleColumn(!editTitleColumn)}>no</Button>
               </ButtonGroup>
             </Stack>
           )}
@@ -82,10 +103,10 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
         <Stack className="tasks-list" direction={'column'} spacing={1}>
           {dataTasks &&
             dataTasks.map((task) => {
-              return <TaskCard key={task._id} dataTask={task}></TaskCard>;
+              return <TaskCard key={task._id} dataTask={task} editTask={editTask}></TaskCard>;
             })}
         </Stack>
-        <Button variant="contained" fullWidth onClick={() => setOpenModalCreate(true)}>
+        <Button variant="contained" fullWidth onClick={handleAddTask}>
           Add task
         </Button>
       </Card>
@@ -100,11 +121,13 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
       {dataTasks && (
         <ModalCreate
           type="Task"
+          action={actionModalCreate}
           boardId={boardId || ''}
           currentLength={dataTasks.length}
           openModal={openModalCreate}
-          closeModal={() => setOpenModalCreate(false)}
+          closeModal={closeModalCreate}
           columnId={columnId}
+          taskData={currentTaskData}
         ></ModalCreate>
       )}
     </>

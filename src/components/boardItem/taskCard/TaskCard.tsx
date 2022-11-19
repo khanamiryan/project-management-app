@@ -7,17 +7,22 @@ import './taskCard.scss';
 
 type taskCardProps = {
   dataTask: ITask;
+  editTask: (taskData: ITask) => void;
 };
-export default function TaskCard({ dataTask }: taskCardProps): JSX.Element {
+export default function TaskCard({ dataTask, editTask }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
+  //const [openEditModal, setOpenEditModal] = useState(false);
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
   const [deleteTask] = useDeleteTaskMutation();
 
-  const handleEditTask = () => {};
+  const handleEditTask = () => {
+    editTask(dataTask);
+  };
   const handleDeleteTask = () => {
     setOpenModal(true);
   };
+
   const confirmDeleteTask = () => {
     deleteTask({ _id: _id, boardId: boardId, columnId: columnId });
     setOpenModal(false);

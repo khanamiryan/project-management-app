@@ -6,6 +6,9 @@ import TasksList from './tasksList/TasksList';
 import { useGetColumnsQuery, useGetTasksByBoardIdQuery } from './../../services/board.api';
 import { useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
+import { useAppSelector } from 'store/redux.hooks';
+import { selectUser } from 'store/userSlice';
+import { useGetBoardsSetByUserIdQuery } from 'services/boards.api';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toaster,renavigate
@@ -19,10 +22,12 @@ export default function BoardItem(): JSX.Element {
   }, []);*/
   const { id: idBoard } = useParams();
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const { id } = useAppSelector(selectUser);
 
-  const { data: dataTasksByBoardId } = useGetTasksByBoardIdQuery(idBoard || '');
+  const { data: dataBoards } = useGetBoardsSetByUserIdQuery(id);
 
   const { data: dataColumns } = useGetColumnsQuery(idBoard as string);
+  const { data: dataTasksByBoardId } = useGetTasksByBoardIdQuery(idBoard || '');
 
   const handleEditBoard = () => {};
   const handleDeleteBoard = () => {};
@@ -79,6 +84,7 @@ export default function BoardItem(): JSX.Element {
       {dataColumns && (
         <ModalCreate
           type="List"
+          action="Add"
           boardId={idBoard || ''}
           currentLength={dataColumns.length}
           openModal={openModalCreate}
