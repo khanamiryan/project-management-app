@@ -3,12 +3,18 @@ import { Box, Stack } from '@mui/system';
 import React, { useState } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
-import { useGetColumnsQuery, useGetTasksByBoardIdQuery } from './../../services/board.api';
+import {
+  useDeleteColumnMutation,
+  useGetColumnsQuery,
+  useGetTasksByBoardIdQuery,
+  useUpdateColumnsSetMutation,
+} from './../../services/board.api';
 import { useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
-import { useGetBoardsSetByUserIdQuery } from 'services/boards.api';
+import { useGetBoardByIdQuery, useGetBoardsSetByUserIdQuery } from 'services/boards.api';
+import { IColumn } from 'types/types';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toaster,renavigate
@@ -23,10 +29,12 @@ export default function BoardItem(): JSX.Element {
   const { id: idBoard } = useParams();
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const { id } = useAppSelector(selectUser);
+  const [deleteColumn] = useDeleteColumnMutation();
+  const [updateColumsSet] = useUpdateColumnsSetMutation();
 
-  const { data: dataBoards } = useGetBoardsSetByUserIdQuery(id);
-  const dataCurrentBoard = dataBoards?.find((item) => item._id === idBoard);
-
+  // const { data: dataBoards } = useGetBoardsSetByUserIdQuery(id);
+  // const dataCurrentBoard = dataBoards?.find((item) => item._id === idBoard);
+  const { data: dataCurrentBoard } = useGetBoardByIdQuery(idBoard as string);
   const { data: dataColumns } = useGetColumnsQuery(idBoard as string);
   const { data: dataTasksByBoardId } = useGetTasksByBoardIdQuery(idBoard || '');
 
@@ -34,6 +42,27 @@ export default function BoardItem(): JSX.Element {
   const handleDeleteBoard = () => {};
   const handleAddColumn = () => {
     setOpenModalCreate(true);
+  };
+
+  const onDeleteColumn = (selectedColumn: IColumn) => {
+    deleteColumn(selectedColumn);
+    if (dataColumns && selectedColumn.order !== dataColumns?.length) {
+      const filteredColumns = dataColumns.filter(({ _id }) => _id !== selectedColumn._id);
+      const set = filteredColumns.map((column) => {
+        if (column.order < selectedColumn.order) {
+          return {
+            _id: column._id,
+            order: column.order,
+          };
+        } else {
+          return {
+            _id: column._id,
+            order: column.order - 1,
+          };
+        }
+      });
+      updateColumsSet(set);
+    }
   };
 
   return (
@@ -69,7 +98,12 @@ export default function BoardItem(): JSX.Element {
               (item) => item.columnId === dataColumn._id
             );
             return (
-              <TasksList key={dataColumn._id} dataColumn={dataColumn} dataTasks={tasksByColumn} />
+              <TasksList
+                key={dataColumn._id}
+                dataColumn={dataColumn}
+                dataTasks={tasksByColumn}
+                onDeleteColumn={onDeleteColumn}
+              />
             );
           })}
 

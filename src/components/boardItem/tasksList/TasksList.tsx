@@ -5,7 +5,6 @@ import { IColumn, ITask } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
 import {
-  useDeleteColumnMutation,
   useDeleteTaskMutation,
   useUpdateColumnMutation,
   useUpdateTasksSetMutation,
@@ -18,9 +17,14 @@ import ModalCreate from '../ModalCreate/ModalCreate';
 interface ITaskListProps {
   dataColumn: IColumn;
   dataTasks: ITask[] | undefined;
+  onDeleteColumn: (selectedColumn: IColumn) => void;
 }
 
-export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JSX.Element {
+export default function TasksList({
+  dataColumn,
+  dataTasks,
+  onDeleteColumn,
+}: ITaskListProps): JSX.Element {
   const { _id: columnId, title, boardId } = dataColumn;
 
   const [openModal, setOpenModal] = useState(false);
@@ -31,13 +35,13 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  const [deleteColumn] = useDeleteColumnMutation();
+  // const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
 
   const confirmDeleteColumn = () => {
-    deleteColumn({ _id: columnId, boardId: boardId });
+    onDeleteColumn(dataColumn);
     setOpenModal(false);
   };
   const cancelDeleteColumn = () => {
@@ -75,19 +79,8 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
   };
 
   const onDeleteTask = (selectedTask: ITask) => {
-    console.log('delete');
     deleteTask(selectedTask);
-    if (selectedTask.order === dataTasks?.length) {
-      console.log('it was last task at column');
-    } else if (dataTasks) {
-      //TODO change tasks order
-      //       [
-      //   {
-      //     "_id": "string",
-      //     "order": 0,
-      //     "columnId": "string"
-      //   }
-      // ]
+    if (dataTasks && selectedTask.order !== dataTasks?.length) {
       const filteredTasks = dataTasks.filter(({ _id }) => _id !== selectedTask._id);
       const set = filteredTasks.map((task) => {
         if (task.order < selectedTask.order) {
