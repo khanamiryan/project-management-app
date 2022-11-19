@@ -4,12 +4,12 @@ import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box } from '@mui/system';
 import { deleteUser, getUser, selectUser, setUserInfo } from '../../store/userSlice';
-import { Alert, AlertColor, Button } from '@mui/material';
+import { Alert, Button } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
 import { Warning } from '@mui/icons-material';
-import Toast from '../Toast/Toast';
+import { showToast } from 'store/toastSlice';
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
 
@@ -47,8 +47,7 @@ const Profile = () => {
     dispatch(setUserInfo(data))
       .unwrap()
       .then(() => {
-        setToastMessage('Success!!!');
-        setToastType('success');
+        dispatch(showToast({ type: 'success', message: 'Success!' }));
       });
   };
 
@@ -59,34 +58,19 @@ const Profile = () => {
   };
 
   const [open, setOpen] = useState(false);
-  const [toastOpen, setToastOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<AlertColor>('error');
 
   useEffect(() => {
     if (user.error.length > 0) {
-      setToastMessage(user.error);
-      setToastType('error');
+      dispatch(showToast({ message: user.error }));
     }
   }, [user.error]);
-  useEffect(() => {
-    setToastOpen(toastMessage.length > 0);
-  }, [toastMessage]);
 
   const { t } = useTranslation();
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
       {user.error && <Alert severity="error">{user.error}</Alert>}
-      <Toast
-        open={toastOpen}
-        onClose={() => {
-          setToastOpen(false);
-        }}
-        type={toastType}
-      >
-        {toastMessage}
-      </Toast>
+      {/* <Toast open={toastOpen} message={toastMessage} type={toastType}></Toast> */}
 
       <Modal
         confirmButtonText={user.loading ? 'Deleting...' : 'Confirm'}
