@@ -25,6 +25,7 @@ export default function BoardItem(): JSX.Element {
   const { id } = useAppSelector(selectUser);
 
   const { data: dataBoards } = useGetBoardsSetByUserIdQuery(id);
+  const dataCurrentBoard = dataBoards?.find((item) => item._id === idBoard);
 
   const { data: dataColumns } = useGetColumnsQuery(idBoard as string);
   const { data: dataTasksByBoardId } = useGetTasksByBoardIdQuery(idBoard || '');
@@ -43,7 +44,9 @@ export default function BoardItem(): JSX.Element {
           direction={{ xs: 'column', sm: 'row' }}
           spacing={{ xs: 1, sm: 2, md: 4 }}
         >
-          <h1 className="board-title">Beta Board Item</h1>
+          <h1 className="board-title">
+            {dataCurrentBoard?.title || '***** - You do not own this board'}
+          </h1>
           <Button variant="contained" color="warning">
             Description
           </Button>

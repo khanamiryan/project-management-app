@@ -61,7 +61,7 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
     setOpenModal(true);
   };
   const handleUpdateColumn = () => {
-    const newColumnData = { _id: columnId, title: newColumnTitle, order: 4 };
+    const newColumnData = { _id: columnId, title: newColumnTitle, order: dataColumn.order };
     if (newColumnTitle !== dataColumn.title) {
       updateColumn(newColumnData);
     }
@@ -82,6 +82,7 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
               onClick={() => setEditTitleColumn(!editTitleColumn)}
             >
               <h3>{title}</h3> <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
+              <p>order: {dataColumn.order}</p>
             </Stack>
           )}
           {editTitleColumn && (
