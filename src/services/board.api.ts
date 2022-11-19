@@ -16,6 +16,14 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Tasks', id: 'LIST' }],
     }),
+    updateTasksSet: builder.mutation<ITask[], Pick<ITask, '_id' | 'order' | 'columnId'>[]>({
+      query: (set) => ({
+        url: Endpoint.TASKS_SET,
+        method: HTTPMethod.PATCH,
+        body: set,
+      }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+    }),
     /*getTasksByColumn: builder.query<ITask[], { boardId: string; columnId: string }>({
       query: ({ boardId, columnId }) => ({
         url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks`,
@@ -127,5 +135,6 @@ export const {
   useDeleteTaskMutation,
   useGetTasksByBoardIdQuery,
   useUpdateTaskMutation,
+  useUpdateTasksSetMutation,
   //useGetTasksByColumnQuery,
 } = boardApi;

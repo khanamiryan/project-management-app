@@ -6,7 +6,9 @@ import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
 import {
   useDeleteColumnMutation,
+  useDeleteTaskMutation,
   useUpdateColumnMutation,
+  useUpdateTasksSetMutation,
   //useAddTaskMutation,
   //useGetTasksByColumnQuery,
 } from './../../../services/board.api';
@@ -31,6 +33,8 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
 
   const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
+  const [deleteTask] = useDeleteTaskMutation();
+  const [updateTasksSet] = useUpdateTasksSetMutation();
 
   const confirmDeleteColumn = () => {
     deleteColumn({ _id: columnId, boardId: boardId });
@@ -70,6 +74,40 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
     setEditTitleColumn(!editTitleColumn);
   };
 
+  const onDeleteTask = (selectedTask: ITask) => {
+    console.log('delete');
+    deleteTask(selectedTask);
+    if (selectedTask.order === dataTasks?.length) {
+      console.log('it was last task at column');
+    } else if (dataTasks) {
+      //TODO change tasks order
+      //       [
+      //   {
+      //     "_id": "string",
+      //     "order": 0,
+      //     "columnId": "string"
+      //   }
+      // ]
+      const filteredTasks = dataTasks.filter(({ _id }) => _id !== selectedTask._id);
+      const set = filteredTasks.map((task) => {
+        if (task.order < selectedTask.order) {
+          return {
+            _id: task._id,
+            order: task.order,
+            columnId: task.columnId,
+          };
+        } else {
+          return {
+            _id: task._id,
+            order: task.order - 1,
+            columnId: task.columnId,
+          };
+        }
+      });
+      updateTasksSet(set);
+    }
+  };
+
   return (
     <>
       <Card className="board-column" variant="outlined">
@@ -104,7 +142,14 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
         <Stack className="tasks-list" direction={'column'} spacing={1}>
           {dataTasks &&
             dataTasks.map((task) => {
-              return <TaskCard key={task._id} dataTask={task} editTask={editTask}></TaskCard>;
+              return (
+                <TaskCard
+                  key={task._id}
+                  dataTask={task}
+                  editTask={editTask}
+                  onDelete={onDeleteTask}
+                ></TaskCard>
+              );
             })}
         </Stack>
         <Button variant="contained" fullWidth onClick={handleAddTask}>
