@@ -1,12 +1,95 @@
 import { api } from './api';
-import { IColumn } from 'types/types';
+import { IColumn, ITask } from 'types/types';
 import { Endpoint, HTTPMethod } from './api.constants';
 
 export const boardApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    getTasks: builder.query<ITask[], string>({
+      query: (columnsIdList) => ({
+        url: `${Endpoint.TASKS_SET}?ids=${columnsIdList}`,
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
+              { type: 'Tasks', id: 'LIST' },
+            ]
+          : [{ type: 'Tasks', id: 'LIST' }],
+    }),
+    updateTasksSet: builder.mutation<ITask[], Pick<ITask, '_id' | 'order' | 'columnId'>[]>({
+      query: (set) => ({
+        url: Endpoint.TASKS_SET,
+        method: HTTPMethod.PATCH,
+        body: set,
+      }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+    }),
+    /*getTasksByColumn: builder.query<ITask[], { boardId: string; columnId: string }>({
+      query: ({ boardId, columnId }) => ({
+        url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks`,
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
+              { type: 'Tasks', id: 'LIST' },
+            ]
+          : [{ type: 'Tasks', id: 'LIST' }],
+    }),
+    getTasksSetByColumnIds: builder.query<ITask[], string>({
+      query: (columnsIdList) => ({
+        url: `${Endpoint.TASKS_SET}?ids=${columnsIdList}`,
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
+              { type: 'Tasks', id: 'LIST' },
+            ]
+          : [{ type: 'Tasks', id: 'LIST' }],
+    }),*/
+    getTasksByBoardId: builder.query<ITask[], string>({
+      query: (boardId) => ({
+        url: `${Endpoint.TASKS_SET}/${boardId}`,
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ _id }) => ({ type: 'Tasks' as const, _id })),
+              { type: 'Tasks', id: 'LIST' },
+            ]
+          : [{ type: 'Tasks', id: 'LIST' }],
+    }),
+
+    addTask: builder.mutation<ITask, Omit<ITask, '_id'>>({
+      query: ({ boardId, columnId, ...rest }) => ({
+        url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks`,
+        method: HTTPMethod.POST,
+        body: { ...rest },
+      }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+    }),
+    updateTask: builder.mutation<ITask, ITask>({
+      query: ({ boardId, columnId, _id, ...rest }) => ({
+        url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks/${_id}`,
+        method: HTTPMethod.PUT,
+        body: { columnId: columnId, ...rest },
+      }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+    }),
+    deleteTask: builder.mutation<
+      ITask,
+      Omit<ITask, 'title' | 'order' | 'description' | 'userId' | 'users'>
+    >({
+      query: ({ boardId, columnId, _id }) => ({
+        url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks/${_id}`,
+        method: HTTPMethod.DELETE,
+      }),
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+    }),
     getColumns: builder.query<IColumn[], string>({
-      query: (idBoard) => ({
-        url: `${Endpoint.BOARDS}${idBoard}/columns`,
+      query: (boardId) => ({
+        url: `${Endpoint.BOARDS}${boardId}/columns`,
       }),
       providesTags: (result) =>
         result
@@ -16,6 +99,14 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Columns', id: 'LIST' }],
     }),
+    updateColumnsSet: builder.mutation<IColumn[], Pick<IColumn, '_id' | 'order'>[]>({
+      query: (set) => ({
+        url: Endpoint.COLUMNS_SET,
+        method: HTTPMethod.PATCH,
+        body: set,
+      }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+    }),
     addColumn: builder.mutation<IColumn, Omit<IColumn, '_id'>>({
       query: ({ boardId, ...rest }) => ({
         url: `${Endpoint.BOARDS}${boardId}/${Endpoint.COLUMNS}`,
@@ -24,7 +115,7 @@ export const boardApi = api.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
-    deleteColumn: builder.mutation<IColumn, Omit<IColumn, 'title' | 'order'>>({
+    deleteColumn: builder.mutation<IColumn, Pick<IColumn, 'boardId' | '_id'>>({
       query: ({ boardId, _id }) => ({
         url: `${Endpoint.BOARDS}${boardId}/${Endpoint.COLUMNS}${_id}`,
         method: HTTPMethod.DELETE,
@@ -47,4 +138,12 @@ export const {
   useDeleteColumnMutation,
   useGetColumnsQuery,
   useUpdateColumnMutation,
+  useUpdateColumnsSetMutation,
+  useGetTasksQuery,
+  useAddTaskMutation,
+  useDeleteTaskMutation,
+  useGetTasksByBoardIdQuery,
+  useUpdateTaskMutation,
+  useUpdateTasksSetMutation,
+  //useGetTasksByColumnQuery,
 } = boardApi;

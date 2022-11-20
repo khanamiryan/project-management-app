@@ -25,16 +25,16 @@ export type UserState = {
   name: string;
   id: string;
 };
-
+const userId = localStorage.getItem('userId');
 const tokenLocalStor = localStorage.getItem('token');
 export const defaultUserState: UserState = {
   login: '',
   token: tokenLocalStor || '',
-  loggedIn: false,
+  loggedIn: userId && tokenLocalStor ? true : false,
   loading: false,
   error: '',
   name: '',
-  id: '',
+  id: userId || '',
 };
 
 export interface ISignInForm {
@@ -62,6 +62,7 @@ type DecodedToken = {
   iat: number;
   exp: number;
 };
+
 export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
   'user/signIn',
   async function ({ login, password }, { dispatch }) {
@@ -70,6 +71,7 @@ export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
       // const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
       localStorage.setItem('token', res.token);
       const id = (jwt_decode(res.token) as DecodedToken).id;
+      localStorage.setItem('userId', id);
       const user = await dispatch(getUser(id));
       if (user) {
         return res;

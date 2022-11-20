@@ -1,85 +1,149 @@
 import { Box, Button, ButtonGroup, Card, Input } from '@mui/material';
 import { Stack } from '@mui/system';
 import React, { useState } from 'react';
-import { IColumn } from 'types/types';
+import { IColumn, ITask } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
-import { useDeleteColumnMutation, useUpdateColumnMutation } from '../../../services/board.api';
+import {
+  useDeleteTaskMutation,
+  useUpdateColumnMutation,
+  useUpdateTasksSetMutation,
+  //useAddTaskMutation,
+  //useGetTasksByColumnQuery,
+} from './../../../services/board.api';
 import Modal from 'components/Modal/Modal';
+import ModalCreate from '../ModalCreate/ModalCreate';
 
 interface ITaskListProps {
   dataColumn: IColumn;
+  dataTasks: ITask[] | undefined;
+  onDeleteColumn: (selectedColumn: IColumn) => void;
 }
 
-export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
-  const [openModal, setOpenModal] = useState(false);
+export default function TasksList({
+  dataColumn,
+  dataTasks,
+  onDeleteColumn,
+}: ITaskListProps): JSX.Element {
+  const { _id: columnId, title, boardId } = dataColumn;
 
-  const [editTitle, setEditTitle] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [actionModalCreate, setActionModalCreate] = useState<'Add' | 'Edit'>('Add');
+  const [currentTaskData, setCurrentTaskData] = useState<ITask | null>(null);
+
+  const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  const [deleteColumn] = useDeleteColumnMutation();
+  // const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
-
-  const handleAddTask = () => {};
-
-  const { _id, title, boardId } = dataColumn;
+  const [deleteTask] = useDeleteTaskMutation();
+  const [updateTasksSet] = useUpdateTasksSetMutation();
 
   const confirmDeleteColumn = () => {
-    deleteColumn({ _id: _id, boardId: boardId });
+    onDeleteColumn(dataColumn);
     setOpenModal(false);
   };
   const cancelDeleteColumn = () => {
     setOpenModal(false);
   };
 
+  const editTask = (taskData: ITask) => {
+    setCurrentTaskData(taskData);
+    setActionModalCreate('Edit');
+    setOpenModalCreate(true);
+  };
+
+  const closeModalCreate = () => {
+    setOpenModalCreate(false);
+    setCurrentTaskData(null);
+    //setActionModalCreate('Add');
+  };
+
+  const handleAddTask = () => {
+    setActionModalCreate('Add');
+    setOpenModalCreate(true);
+  };
   const handleDeleteColumn = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     setOpenModal(true);
   };
   const handleUpdateColumn = () => {
-    const newColumnData = { _id: _id, title: newColumnTitle, order: 4 };
-    updateColumn(newColumnData);
-    setEditTitle(!editTitle);
+    const newColumnData = { _id: columnId, title: newColumnTitle, order: dataColumn.order };
+    if (newColumnTitle !== dataColumn.title) {
+      updateColumn(newColumnData);
+    }
+    // todo: order
+
+    setEditTitleColumn(!editTitleColumn);
   };
+
+  const onDeleteTask = (selectedTask: ITask) => {
+    deleteTask(selectedTask);
+    if (dataTasks && selectedTask.order !== dataTasks?.length) {
+      const filteredTasks = dataTasks.filter(({ _id }) => _id !== selectedTask._id);
+      const set = filteredTasks.map((task) => {
+        if (task.order < selectedTask.order) {
+          return {
+            _id: task._id,
+            order: task.order,
+            columnId: task.columnId,
+          };
+        } else {
+          return {
+            _id: task._id,
+            order: task.order - 1,
+            columnId: task.columnId,
+          };
+        }
+      });
+      updateTasksSet(set);
+    }
+  };
+
   return (
     <>
       <Card className="board-column" variant="outlined">
         <Box className="column-name">
-          {!editTitle && (
+          {!editTitleColumn && (
             <Stack
               className="column-title"
               direction="row"
               spacing={2}
-              onClick={() => setEditTitle(!editTitle)}
+              onClick={() => setEditTitleColumn(!editTitleColumn)}
             >
               <h3>{title}</h3> <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
+              <p>order: {dataColumn.order}</p>
             </Stack>
           )}
-          {editTitle && (
+          {editTitleColumn && (
             <Stack className="column-title-edit" direction="row" spacing={2}>
               <Input
                 onChange={(e) => {
                   setNewColumnTitle(e.currentTarget.value);
-                  console.log(newColumnTitle);
                 }}
                 value={newColumnTitle}
               ></Input>
               <ButtonGroup>
                 <Button onClick={handleUpdateColumn}>update</Button>
-                <Button onClick={() => setEditTitle(!editTitle)}>no</Button>
+                <Button onClick={() => setEditTitleColumn(!editTitleColumn)}>no</Button>
               </ButtonGroup>
             </Stack>
           )}
         </Box>
 
         <Stack className="tasks-list" direction={'column'} spacing={1}>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
-          <TaskCard></TaskCard>
+          {dataTasks &&
+            dataTasks.map((task) => {
+              return (
+                <TaskCard
+                  key={task._id}
+                  dataTask={task}
+                  editTask={editTask}
+                  onDelete={onDeleteTask}
+                ></TaskCard>
+              );
+            })}
         </Stack>
         <Button variant="contained" fullWidth onClick={handleAddTask}>
           Add task
@@ -93,6 +157,18 @@ export default function TasksList({ dataColumn }: ITaskListProps): JSX.Element {
       >
         if you delete this list you will not be able to restore it
       </Modal>
+      {dataTasks && (
+        <ModalCreate
+          type="Task"
+          action={actionModalCreate}
+          boardId={boardId || ''}
+          currentLength={dataTasks.length}
+          openModal={openModalCreate}
+          closeModal={closeModalCreate}
+          columnId={columnId}
+          taskData={currentTaskData}
+        ></ModalCreate>
+      )}
     </>
   );
 }
