@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:3000/';
+export const BASE_URL = process.env.REACT_APP_BASE_URL;
 // export const BASE_URL = 'https://final-task-backend-production-8f5b.up.railway.app/';
 
 export enum Endpoint {
@@ -6,6 +6,7 @@ export enum Endpoint {
   BOARDS_SET = 'boardsSet/',
   USERS = 'users/',
   COLUMNS = 'columns/',
+  AUTH = 'auth/',
 }
 
 export enum HTTPMethod {

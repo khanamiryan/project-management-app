@@ -3,12 +3,16 @@ import './SignUp.scss';
 import { Box, Button, Link } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
-import { ISignUpForm, selectUser, signUp } from '../../store/userSlice';
+import { ISignUpForm, selectUser } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import { useNavigate } from 'react-router-dom';
-import { showToast } from 'store/toastSlice';
+
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
+import { useSignUpUserMutation } from '../../services/users.api';
+import { showToast } from '../../store/toastSlice';
+import { useUser } from '../../store/useUser';
+import { IProfile } from '../Profile/Profile';
 
 const SignUp = () => {
   const { handleSubmit, control, setError } = useForm<ISignUpForm>({
@@ -19,28 +23,26 @@ const SignUp = () => {
     },
   });
 
-  const [message, setMessage] = useState('');
+  const [signUpUser, { isLoading }] = useSignUpUserMutation();
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { login, loggedIn, error, loading } = useAppSelector(selectUser);
-
-  useEffect(() => {
-    if (login.length) {
-      navigate('/boards');
-    }
-  }, [login, loggedIn]);
-  useEffect(() => {
-    if (error.length) {
-      setError('name', { type: 'custom', message: '' });
-      setError('login', { type: 'custom', message: '' });
-      setError('password', { type: 'custom', message: '' });
-      setMessage(error);
-      dispatch(showToast({ message: error }));
-    }
-  }, [error]);
 
   const onSubmit: SubmitHandler<ISignUpForm> = async (data) => {
-    await dispatch(signUp(data));
+    await signUpUser(data)
+      .unwrap()
+      .then(({ login }) => {
+        if (login.length) {
+          dispatch(showToast({ message: 'Success to Sign Up', type: 'success' }));
+          navigate('/boards');
+        }
+      })
+      .catch((e) => {
+        setError('name', { type: 'custom', message: '' });
+        setError('login', { type: 'custom', message: '' });
+        setError('password', { type: 'custom', message: '' });
+        dispatch(showToast({ message: e.data.message }));
+      });
   };
   const { t } = useTranslation();
   return (
@@ -77,8 +79,8 @@ const SignUp = () => {
           rules={rules.password}
         />
       </div>
-      <Button type="submit" variant="contained" disabled={loading}>
-        {t('form.fields.signup')} {loading && '...'}
+      <Button type="submit" variant="contained" disabled={isLoading}>
+        {t('form.fields.signup')} {isLoading && '...'}
       </Button>
       <div>
         <Link href="/login" margin="normal">
