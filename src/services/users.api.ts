@@ -13,7 +13,6 @@ import jwt_decode from 'jwt-decode';
 import { IProfile } from '../components/Profile/Profile';
 
 export const usersApi = api.injectEndpoints({
-  // providesTags: ['Users'],
   endpoints: (builder) => ({
     getUsers: builder.query<User[], string>({
       query: () => ({
@@ -25,10 +24,11 @@ export const usersApi = api.injectEndpoints({
       query: (id) => ({
         url: `${Endpoint.USERS}${id}`,
       }),
+
       providesTags: [{ type: 'Users', id: 'LIST' }],
 
-      transformResponse: (response: IUserResponse, meta, arg) => {
-        const { _id, ...rest } = response;
+      transformResponse: ({ _id, ...rest }: IUserResponse, meta, arg) => {
+        console.log('t');
         return { ...rest, id: _id };
       },
     }),
@@ -48,8 +48,9 @@ export const usersApi = api.injectEndpoints({
           await dispatch(usersApi.endpoints.getUser.initiate(id));
         } catch (error) {}
       },
-      invalidatesTags: ['Users'],
+      invalidatesTags: [{ type: 'Users', id: 'LIST' }],
     }),
+
     signUpUser: builder.mutation<IUserResponse, ISignUpForm>({
       query: (user) => ({
         url: `${Endpoint.AUTH}signup`,
@@ -70,12 +71,12 @@ export const usersApi = api.injectEndpoints({
         method: HTTPMethod.PUT,
         body: user,
       }),
-      invalidatesTags: ['Users'], //todo optimistic query
+      invalidatesTags: [{ type: 'Users', id: 'LIST' }], //todo optimistic query
 
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           usersApi.util.updateQueryData('getUser', id, (draft) => {
-            console.log(draft, patch, 'fff');
+            console.log('draft and patch', draft, patch);
             //need to understand why not updates the state
             //it's should work, if we find the way get rid of user state or do really sync of state and cache.
             Object.assign(draft, patch);
@@ -83,9 +84,9 @@ export const usersApi = api.injectEndpoints({
         );
         try {
           await queryFulfilled;
+          // dispatch();
         } catch {
           patchResult.undo();
-
           /**
            * Alternatively, on failure you can invalidate the corresponding cache tags
            * to trigger a re-fetch:
@@ -100,26 +101,21 @@ export const usersApi = api.injectEndpoints({
         method: HTTPMethod.DELETE,
       }),
       async onQueryStarted(args, { queryFulfilled, dispatch, getState }) {
-        const { data } = await queryFulfilled;
-        if (data) {
-          console.log('deleted', data);
-          localStorage.removeItem('token');
-          dispatch(api.util.resetApiState());
-          dispatch(signOut());
-          //await dispatch(usersApi.endpoints.signInUser.initiate({ login, password }));
+        try {
+          const { data } = await queryFulfilled;
+          if (data) {
+            console.log('deleted', data);
+            dispatch(api.util.resetApiState());
+            dispatch(signOut());
+            //await dispatch(usersApi.endpoints.signInUser.initiate({ login, password }));
+          }
+        } catch {
+          console.log('Unknown error with user delete');
         }
       },
     }),
   }),
 });
-
-// export const signInService = async (user: ISignInForm) => {
-//   const response = await authApi.post('auth/signin', user);
-//   //////
-//   addBearer(response.data.token); //definetly need to change the place
-//   ///////
-//   return response.data;
-// };
 
 export const {
   useGetUsersQuery,

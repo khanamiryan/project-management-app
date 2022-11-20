@@ -3,7 +3,6 @@ import './Profile.scss';
 import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box } from '@mui/system';
-import { selectUser } from '../../store/userSlice';
 import { Alert, Button } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
@@ -24,9 +23,10 @@ export interface IProfile {
 
 const Profile = () => {
   const user = useUser();
+
   const dispatch = useAppDispatch();
-  const [setUserInfo, { isLoading, isError, error }] = useSetUserInfoMutation();
-  const [deleteUser] = useDeleteUserMutation();
+  const [setUserInfo, { isLoading }] = useSetUserInfoMutation();
+  const [deleteUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -41,11 +41,11 @@ const Profile = () => {
   });
 
   const onSubmit: SubmitHandler<IProfile> = (data) => {
-    setUserInfo({ ...data, id: user.id })
+    setUserInfo({ ...data, id: user.id }) //I don't like this :)
       .unwrap()
       .then(() => {
         dispatch(showToast({ type: 'success', message: 'Success!' }));
-        navigate('/boards');
+        // navigate('/boards');
       })
       .catch((error) => {
         dispatch(showToast({ message: error.data.message }));
@@ -57,6 +57,8 @@ const Profile = () => {
       .unwrap()
       .then(() => {
         setOpen(false);
+        dispatch(showToast({ message: 'Success to delete user', type: 'success' }));
+        navigate('/');
       })
       .catch((error) => {
         dispatch(showToast({ message: error.data.message }));
@@ -72,7 +74,7 @@ const Profile = () => {
       {/*{isError && <Alert severity="error">{error!.data!.message}</Alert>}*/}
 
       <Modal
-        confirmButtonText={isLoading ? 'Deleting...' : 'Confirm'}
+        confirmButtonText={isDeleteLoading ? 'Deleting...' : 'Confirm'}
         open={open}
         onClickCancel={() => {
           setOpen(false);

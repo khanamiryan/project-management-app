@@ -1,23 +1,9 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  isFulfilled,
-  isPending,
-  isRejected,
-  PayloadAction,
-} from '@reduxjs/toolkit';
-import {
-  getUserService,
-  signInService,
-  signUpService,
-  deleteUserService,
-  setUserInfoService,
-} from '../services/UserService';
-import { RootState } from './store';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import setupStore, { RootState } from './store';
 import jwt_decode from 'jwt-decode';
 
 import { usersApi } from '../services/users.api';
-import { api } from '../services/api';
 
 export type UserState = {
   login: string;
@@ -28,18 +14,26 @@ export type UserState = {
 };
 
 const tokenLocalStore = localStorage.getItem('token');
-
-const userId = localStorage.getItem('userId');
+const userId = tokenLocalStore ? (jwt_decode(tokenLocalStore) as DecodedToken).id : '';
+const name = usersApi.endpoints.getUser.select(userId);
 
 export const defaultUserState: UserState = {
   login: '',
-  token: tokenLocalStore || '',
-  // loggedIn: tokenLocalStore !== null && tokenLocalStore.length > 0,
-  loggedIn: userId && tokenLocalStore ? true : false,
+  token: '',
+  loggedIn: false,
   name: '',
-  id: userId || '',
+  id: '',
 };
-//for future export type LoginInput = TypeOf<typeof loginSchema>;
+
+// export const defaultUserState: UserState = {
+//   login: '',
+//   token: tokenLocalStore || '',
+//   // loggedIn: tokenLocalStore !== null && tokenLocalStore.length > 0,
+//   loggedIn: userId && tokenLocalStore ? true : false,
+//   name: '',
+//   id: userId || '',
+// };
+
 export interface ISignInForm {
   login: string;
   password: string;
@@ -66,51 +60,6 @@ export type DecodedToken = {
   iat: number;
   exp: number;
 };
-// export const signIn = createAsyncThunk<{ token: string }, ISignInForm>(
-//   'user/signIn',
-//   async function ({ login, password }, { dispatch }) {
-//     const res = await signInService({ login, password });
-//     if (res.token && res.token.length > 0) {
-//       // const id = JSON.parse(atob(res.token.split('.')[1]))['id']; //temporary, will use instead jwt-decode
-//       localStorage.setItem('token', res.token);
-//       const id = (jwt_decode(res.token) as DecodedToken).id;
-//       const user = await dispatch(getUser(id));
-//       if (user) {
-//         return res;
-//       }
-//     }
-//   }
-// );
-// export const signUp = createAsyncThunk<{ _id: string }, ISignUpForm>(
-//   'user/signUp',
-//   async function ({ name, login, password }, { dispatch }) {
-//     const res = await signUpService({ name, login, password });
-//     if (res._id) {
-//       //if registered
-//       await dispatch(signIn({ login, password }));
-//       return res;
-//     }
-//   }
-// );
-
-// export const getUser = createAsyncThunk<IUserResponse, string>('user/getUser', async function (id) {
-//   return await getUserService(id);
-// });
-// export const setUserInfo = createAsyncThunk<
-//   IUserResponse,
-//   IUserInfo,
-//   { state: { user: UserState } }
-// >('user/setUserInfo', async function (userInfo, { getState }) {
-//   const { id } = getState().user;
-//   return await setUserInfoService(id, userInfo);
-// });
-
-// export const deleteUser = createAsyncThunk<{ name: string }, string>(
-//   'user/deleteUser',
-//   async function (id) {
-//     return await deleteUserService(id);
-//   }
-// );
 
 export const userSlice = createSlice({
   name: 'user',
@@ -118,23 +67,32 @@ export const userSlice = createSlice({
   reducers: {
     signOut: () => {
       localStorage.removeItem('token');
-      localStorage.removeItem('id');
-      // dispatch(api.util.resetApiState());
+      console.log('logout', defaultUserState);
       return defaultUserState;
+    },
+    setToken: (state: UserState, action: PayloadAction<UserState['token']>) => {
+      state.token = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
       .addMatcher(usersApi.endpoints.getUser.matchFulfilled, (state, { payload }) => {
+        console.log('here', payload);
+        return { ...state, ...payload, loggedIn: state.token.length > 0 };
+      })
+      .addMatcher(usersApi.endpoints.setUserInfo.matchFulfilled, (state, { payload }) => {
+        console.log('setUserInfo is Fulfilled', payload);
+        // return payload;
         return { ...state, ...payload, loggedIn: state.token.length > 0 };
       })
       .addMatcher(usersApi.endpoints.signInUser.matchFulfilled, (state, { payload: { token } }) => {
+        console.log('mayeb');
         state.token = token;
       });
   },
 });
 
-export const { signOut } = userSlice.actions;
+export const { signOut, setToken } = userSlice.actions;
 export default userSlice.reducer;
 
 export const selectUser = (state: RootState) => state.user;
