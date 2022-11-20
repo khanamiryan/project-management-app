@@ -37,6 +37,7 @@ const Header = () => {
 
   const { t } = useTranslation();
   const logOut = () => {
+    localStorage.clear();
     dispatch(signOut());
     navigate('/');
   };

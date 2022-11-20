@@ -6,6 +6,8 @@ export enum Endpoint {
   BOARDS_SET = 'boardsSet/',
   USERS = 'users/',
   COLUMNS = 'columns/',
+  COLUMNS_SET = 'columnsSet/',
+  TASKS_SET = 'tasksSet',
   AUTH = 'auth/',
 }
 

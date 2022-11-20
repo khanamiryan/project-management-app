@@ -29,13 +29,15 @@ export type UserState = {
 
 const tokenLocalStore = localStorage.getItem('token');
 
+const userId = localStorage.getItem('userId');
+
 export const defaultUserState: UserState = {
   login: '',
   token: tokenLocalStore || '',
   // loggedIn: tokenLocalStore !== null && tokenLocalStore.length > 0,
-  loggedIn: false,
+  loggedIn: userId && tokenLocalStore ? true : false,
   name: '',
-  id: '',
+  id: userId || '',
 };
 //for future export type LoginInput = TypeOf<typeof loginSchema>;
 export interface ISignInForm {
@@ -85,7 +87,7 @@ export type DecodedToken = {
 //     const res = await signUpService({ name, login, password });
 //     if (res._id) {
 //       //if registered
-//       // await dispatch(signIn({ login, password }));
+//       await dispatch(signIn({ login, password }));
 //       return res;
 //     }
 //   }
@@ -116,6 +118,7 @@ export const userSlice = createSlice({
   reducers: {
     signOut: () => {
       localStorage.removeItem('token');
+      localStorage.removeItem('id');
       // dispatch(api.util.resetApiState());
       return defaultUserState;
     },

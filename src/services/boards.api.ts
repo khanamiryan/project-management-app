@@ -16,6 +16,11 @@ export const boardsApi = api.injectEndpoints({
             ]
           : [{ type: 'Boards', id: 'LIST' }],
     }),
+    getBoardById: builder.query<Board, string>({
+      query: (id) => ({
+        url: `${Endpoint.BOARDS}${id}`,
+      }),
+    }),
     deleteBoard: builder.mutation<Board, string>({
       query: (id) => ({
         url: `${Endpoint.BOARDS}${id}`,
@@ -47,4 +52,5 @@ export const {
   useDeleteBoardMutation,
   useCreateBoardMutation,
   useUpdateBoardMutation,
+  useGetBoardByIdQuery,
 } = boardsApi;
