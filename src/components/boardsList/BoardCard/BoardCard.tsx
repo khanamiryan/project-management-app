@@ -18,6 +18,7 @@ import { selectUser } from 'store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 import { showToast } from 'store/toastSlice';
+import { useTranslation } from 'react-i18next';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const navigate = useNavigate();
@@ -25,11 +26,12 @@ const BoardCard = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const { id: currentUserId } = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const isOwner = currentUserId === board.owner;
-  const modalTitle = `${isOwner ? 'Delete' : 'Leave'} the board ${board.title}?`;
-  const modalText = `It's irreversible. If you ${
-    isOwner ? 'delete' : 'leave'
-  } this board, you won't be able to restore it.`;
+  const modalTitle =
+    t(isOwner ? 'modal.board.onDeleteTitle' : 'modal.board.onLeaveTitle') + ` ${board.title}?`;
+  const modalText = t(isOwner ? 'modal.board.onDeleteText' : 'modal.board.onLeaveText');
+
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
@@ -53,7 +55,7 @@ const BoardCard = ({ board }: { board: Board }) => {
     if (isSucces) {
       dispatch(
         showToast({
-          message: `You ${isOwner ? 'deleted' : 'left'} the board`,
+          message: t(isOwner ? 'boards.toast.onSuccesDelete' : 'boards.toast.onSuccesLeave'),
           type: 'success',
         })
       );
@@ -69,7 +71,7 @@ const BoardCard = ({ board }: { board: Board }) => {
             {board.title}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Role: {isOwner ? 'owner' : 'contributor'}
+            {t(isOwner ? 'boards.roleIsOwner' : 'boards.roleIsContributor')}
           </Typography>
           <Typography variant="body2">
             <Badge badgeContent={board.users.length + 1} color="primary">
@@ -79,7 +81,7 @@ const BoardCard = ({ board }: { board: Board }) => {
         </CardContent>
         <CardActions sx={{ pt: 0 }}>
           <Button variant="contained" onClick={goBoard}>
-            OPEN BOARD
+            {t('boards.open')}
           </Button>
         </CardActions>
         <IconButton
