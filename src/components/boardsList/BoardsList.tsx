@@ -5,10 +5,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useGetBoardsSetByUserIdQuery } from 'services/boards.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
+import { useTranslation } from 'react-i18next';
 
 const BoardsList = () => {
   const { loggedIn, id } = useAppSelector(selectUser);
   const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery(id);
+  const { t } = useTranslation();
 
   if (!loggedIn) {
     //TODO Redirect
@@ -18,13 +20,13 @@ const BoardsList = () => {
   return (
     <>
       <Typography variant="h4" sx={{ mb: '1rem' }}>
-        My boards
+        {t('boards.myBoards')}
       </Typography>
       <Box textAlign={'center'}>
         {isLoading && <CircularProgress size={80} />}
         {isError && (
           <Alert variant="outlined" severity="error">
-            Oops! A Server error occurred.
+            {t('boards.serverError')}
           </Alert>
         )}
       </Box>

@@ -11,6 +11,7 @@ import { User } from 'types/types';
 import { useGetUsersQuery } from 'services/users.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
+import { useTranslation } from 'react-i18next';
 
 type UsersSelectProps = { onUserSelect: (logins: string[]) => void };
 
@@ -39,6 +40,7 @@ const getUserIdByLogin = (login: string, users: User[]) => {
 };
 
 export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const [personName, setPersonName] = React.useState<string[]>([]);
   const { data: users } = useGetUsersQuery('');
@@ -63,7 +65,7 @@ export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
   return (
     <div>
       <FormControl sx={{ m: 0, width: 300 }}>
-        <InputLabel id="demo-multiple-chip-label">Share</InputLabel>
+        <InputLabel id="demo-multiple-chip-label">{t('modal.board.share')}</InputLabel>
         <Select
           labelId="demo-multiple-chip-label"
           id="demo-multiple-chip"
