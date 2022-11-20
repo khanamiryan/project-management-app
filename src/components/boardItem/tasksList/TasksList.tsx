@@ -5,8 +5,9 @@ import { IColumn, ITask } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
 import {
-  useDeleteColumnMutation,
+  useDeleteTaskMutation,
   useUpdateColumnMutation,
+  useUpdateTasksSetMutation,
   //useAddTaskMutation,
   //useGetTasksByColumnQuery,
 } from './../../../services/board.api';
@@ -16,9 +17,14 @@ import ModalCreate from '../ModalCreate/ModalCreate';
 interface ITaskListProps {
   dataColumn: IColumn;
   dataTasks: ITask[] | undefined;
+  onDeleteColumn: (selectedColumn: IColumn) => void;
 }
 
-export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JSX.Element {
+export default function TasksList({
+  dataColumn,
+  dataTasks,
+  onDeleteColumn,
+}: ITaskListProps): JSX.Element {
   const { _id: columnId, title, boardId } = dataColumn;
 
   const [openModal, setOpenModal] = useState(false);
@@ -29,11 +35,13 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  const [deleteColumn] = useDeleteColumnMutation();
+  // const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
+  const [deleteTask] = useDeleteTaskMutation();
+  const [updateTasksSet] = useUpdateTasksSetMutation();
 
   const confirmDeleteColumn = () => {
-    deleteColumn({ _id: columnId, boardId: boardId });
+    onDeleteColumn(dataColumn);
     setOpenModal(false);
   };
   const cancelDeleteColumn = () => {
@@ -70,6 +78,29 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
     setEditTitleColumn(!editTitleColumn);
   };
 
+  const onDeleteTask = (selectedTask: ITask) => {
+    deleteTask(selectedTask);
+    if (dataTasks && selectedTask.order !== dataTasks?.length) {
+      const filteredTasks = dataTasks.filter(({ _id }) => _id !== selectedTask._id);
+      const set = filteredTasks.map((task) => {
+        if (task.order < selectedTask.order) {
+          return {
+            _id: task._id,
+            order: task.order,
+            columnId: task.columnId,
+          };
+        } else {
+          return {
+            _id: task._id,
+            order: task.order - 1,
+            columnId: task.columnId,
+          };
+        }
+      });
+      updateTasksSet(set);
+    }
+  };
+
   return (
     <>
       <Card className="board-column" variant="outlined">
@@ -104,7 +135,14 @@ export default function TasksList({ dataColumn, dataTasks }: ITaskListProps): JS
         <Stack className="tasks-list" direction={'column'} spacing={1}>
           {dataTasks &&
             dataTasks.map((task) => {
-              return <TaskCard key={task._id} dataTask={task} editTask={editTask}></TaskCard>;
+              return (
+                <TaskCard
+                  key={task._id}
+                  dataTask={task}
+                  editTask={editTask}
+                  onDelete={onDeleteTask}
+                ></TaskCard>
+              );
             })}
         </Stack>
         <Button variant="contained" fullWidth onClick={handleAddTask}>

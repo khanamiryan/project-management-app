@@ -8,13 +8,14 @@ import './taskCard.scss';
 type taskCardProps = {
   dataTask: ITask;
   editTask: (taskData: ITask) => void;
+  onDelete: (task: ITask) => void;
 };
-export default function TaskCard({ dataTask, editTask }: taskCardProps): JSX.Element {
+export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   //const [openEditModal, setOpenEditModal] = useState(false);
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
-  const [deleteTask] = useDeleteTaskMutation();
+  // const [deleteTask] = useDeleteTaskMutation();
 
   const handleEditTask = () => {
     editTask(dataTask);
@@ -24,7 +25,9 @@ export default function TaskCard({ dataTask, editTask }: taskCardProps): JSX.Ele
   };
 
   const confirmDeleteTask = () => {
-    deleteTask({ _id: _id, boardId: boardId, columnId: columnId });
+    //TODO переписать поднять в тасклист вызов deleteTask const [deleteTask] = useDeleteTaskMutation();
+    // deleteTask({ _id: _id, boardId: boardId, columnId: columnId });
+    onDelete(dataTask);
     setOpenModal(false);
   };
   const cancelDeleteTask = () => {
