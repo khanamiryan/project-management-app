@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './SignUp.scss';
 import { Box, Button, Link } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
-import { ISignUpForm, selectUser } from '../../store/userSlice';
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+
+import { useAppDispatch } from '../../store/redux.hooks';
 import { useNavigate } from 'react-router-dom';
 
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
-import { useSignUpUserMutation } from '../../services/users.api';
+import { useSignUpUserMutation } from '../../services/auth.api';
 import { showToast } from '../../store/toastSlice';
-import { useUser } from '../../store/useUser';
-import { IProfile } from '../Profile/Profile';
+import { ISignUpForm } from '../../types/types';
 
 const SignUp = () => {
   const { handleSubmit, control, setError } = useForm<ISignUpForm>({

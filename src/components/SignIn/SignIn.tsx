@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './SignIn.scss';
 import { Box, Button, Link } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
-import { ISignInForm, selectUser } from '../../store/userSlice';
+import { useAppDispatch } from '../../store/redux.hooks';
 
 import { useNavigate } from 'react-router-dom';
 import { showToast } from 'store/toastSlice';
 
 import { useTranslation } from 'react-i18next';
 import { rules } from '../../utils/validation.utils';
-import { useSignInUserMutation } from '../../services/users.api';
-import { useUser } from '../../store/useUser';
+import { useSignInUserMutation } from '../../services/auth.api';
+import { useUser } from '../../hooks/useUser';
+import { ISignInForm } from '../../types/types';
 
 const SignIn = () => {
   const [signInUser, { isLoading }] = useSignInUserMutation();

@@ -6,21 +6,9 @@ import NotFound from 'pages/notFound/NotFound';
 import Profile from 'pages/profile/Profile';
 import SignIn from 'pages/signIn/SignIn';
 import SignUp from 'pages/signUp/SignUp';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Routes } from 'react-router';
-import { getToken } from './utils/getToken';
-import jwt_decode from 'jwt-decode';
-import { DecodedToken, setToken } from './store/userSlice';
-import { usersApi } from './services/users.api';
-import { useAppDispatch } from './store/redux.hooks';
-
-const useUserInit = () => {
-  const dispatch = useAppDispatch();
-  const tokenLocalStore = getToken();
-  const userId = tokenLocalStore ? (jwt_decode(tokenLocalStore) as DecodedToken).id : '';
-  dispatch(usersApi.endpoints.getUser.initiate(userId));
-  dispatch(setToken(tokenLocalStore));
-};
+import { useUserInit } from './hooks/useUserInit';
 
 function App() {
   useUserInit(); //may be some memo or useeffect or change the place?

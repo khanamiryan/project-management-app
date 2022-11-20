@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { DecodedToken, IUserInfo, selectUser, UserState } from './userSlice';
-import { useAppDispatch, useAppSelector } from './redux.hooks';
+import { selectUser } from '../store/userSlice';
+import { useAppSelector } from '../store/redux.hooks';
+import { UserState } from '../types/types';
 
 export const useUser = (): UserState => {
   const user = useAppSelector(selectUser);

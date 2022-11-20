@@ -1,15 +1,7 @@
-import { User } from 'types/types';
+import { IUserInfo, IUserResponse, User } from 'types/types';
 import { api } from './api';
 import { Endpoint, HTTPMethod } from './api.constants';
-import {
-  DecodedToken,
-  ISignInForm,
-  ISignUpForm,
-  IUserInfo,
-  IUserResponse,
-  signOut,
-} from '../store/userSlice';
-import jwt_decode from 'jwt-decode';
+import { signOutReducer } from '../store/userSlice';
 import { IProfile } from '../components/Profile/Profile';
 
 export const usersApi = api.injectEndpoints({
@@ -24,43 +16,16 @@ export const usersApi = api.injectEndpoints({
       query: (id) => ({
         url: `${Endpoint.USERS}${id}`,
       }),
-
       providesTags: [{ type: 'Users', id: 'LIST' }],
-
-      transformResponse: ({ _id, ...rest }: IUserResponse, meta, arg) => {
-        console.log('t');
+      transformResponse: ({ _id, ...rest }: IUserResponse) => {
         return { ...rest, id: _id };
       },
-    }),
-
-    signInUser: builder.mutation<{ token: string }, ISignInForm>({
-      query: (user) => ({
-        url: `${Endpoint.AUTH}signin`,
-        method: HTTPMethod.POST,
-        body: user,
-      }),
-
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
-          const { data } = await queryFulfilled;
-          const id = (jwt_decode(data.token) as DecodedToken).id;
-          localStorage.setItem('token', data.token);
-          await dispatch(usersApi.endpoints.getUser.initiate(id));
-        } catch (error) {}
-      },
-      invalidatesTags: [{ type: 'Users', id: 'LIST' }],
-    }),
-
-    signUpUser: builder.mutation<IUserResponse, ISignUpForm>({
-      query: (user) => ({
-        url: `${Endpoint.AUTH}signup`,
-        method: HTTPMethod.POST,
-        body: user,
-      }),
-      async onQueryStarted({ login, password }, { queryFulfilled, dispatch }) {
-        const { data } = await queryFulfilled;
-        if (data._id) {
-          await dispatch(usersApi.endpoints.signInUser.initiate({ login, password }));
+          await queryFulfilled;
+        } catch (e) {
+          console.log('may be here we need to catch expired token ');
+          console.log(e);
         }
       },
     }),
@@ -71,7 +36,7 @@ export const usersApi = api.injectEndpoints({
         method: HTTPMethod.PUT,
         body: user,
       }),
-      invalidatesTags: [{ type: 'Users', id: 'LIST' }], //todo optimistic query
+      // invalidatesTags: [{ type: 'Users', id: 'LIST' }], //todo optimistic query
 
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
@@ -100,13 +65,12 @@ export const usersApi = api.injectEndpoints({
         url: `${Endpoint.USERS}${id}`,
         method: HTTPMethod.DELETE,
       }),
-      async onQueryStarted(args, { queryFulfilled, dispatch, getState }) {
+      async onQueryStarted(args, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled;
           if (data) {
-            console.log('deleted', data);
             dispatch(api.util.resetApiState());
-            dispatch(signOut());
+            dispatch(signOutReducer());
             //await dispatch(usersApi.endpoints.signInUser.initiate({ login, password }));
           }
         } catch {
@@ -117,11 +81,5 @@ export const usersApi = api.injectEndpoints({
   }),
 });
 
-export const {
-  useGetUsersQuery,
-  useGetUserQuery,
-  useDeleteUserMutation,
-  useSignInUserMutation,
-  useSignUpUserMutation,
-  useSetUserInfoMutation,
-} = usersApi;
+export const { useGetUsersQuery, useGetUserQuery, useDeleteUserMutation, useSetUserInfoMutation } =
+  usersApi;

@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Profile.scss';
 import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box } from '@mui/system';
-import { Alert, Button } from '@mui/material';
+import { Button } from '@mui/material';
 
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import { useAppDispatch } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
 import { Warning } from '@mui/icons-material';
 import { showToast } from 'store/toastSlice';
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
 import { useDeleteUserMutation, useSetUserInfoMutation } from '../../services/users.api';
-import { useUser } from '../../store/useUser';
+import { useUser } from '../../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 
 export interface IProfile {
@@ -23,7 +23,6 @@ export interface IProfile {
 
 const Profile = () => {
   const user = useUser();
-
   const dispatch = useAppDispatch();
   const [setUserInfo, { isLoading }] = useSetUserInfoMutation();
   const [deleteUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();
@@ -41,11 +40,11 @@ const Profile = () => {
   });
 
   const onSubmit: SubmitHandler<IProfile> = (data) => {
-    setUserInfo({ ...data, id: user.id }) //I don't like this :)
+    setUserInfo({ ...data, id: user.id })
       .unwrap()
       .then(() => {
         dispatch(showToast({ type: 'success', message: 'Success!' }));
-        // navigate('/boards');
+        navigate('/boards');
       })
       .catch((error) => {
         dispatch(showToast({ message: error.data.message }));
