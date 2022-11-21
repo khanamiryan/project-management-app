@@ -59,11 +59,11 @@ const Header = () => {
               </Button>
               {user.loggedIn && (
                 <Button color="inherit" onClick={goBoards}>
-                  Boards
+                  {t('menu.boards')}
                 </Button>
               )}
               <Button color="inherit" onClick={onClickAddBoard}>
-                Add board
+                {t('menu.addBoard')}
               </Button>
               <Button color="inherit" onClick={goBetaBoard}>
                 Beta Board

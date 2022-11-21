@@ -7,11 +7,13 @@ import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 import { useCreateBoardMutation } from 'services/boards.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
+import { useTranslation } from 'react-i18next';
 
 type CreateBoardFormFields = { title: string; users: string[] };
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
 
 const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
+  const { t } = useTranslation();
   let users: string[] = [];
   const { id } = useAppSelector(selectUser);
   const [createBoard, result] = useCreateBoardMutation();
@@ -39,11 +41,11 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
       <>
         <InputText
           name="title"
-          label="title"
+          label={t('modal.board.onCreateTitle')}
           autoComplete="title"
           control={control}
           rules={{
-            required: 'title is required',
+            required: t('modal.board.errorTitleMessage') as string,
           }}
           inputProps={{
             style: { fontSize: '1.2rem' },

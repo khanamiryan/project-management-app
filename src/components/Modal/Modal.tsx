@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ModalProps } from './Modal.types';
+import { useTranslation } from 'react-i18next';
 
 export default function Modal({
   open,
@@ -17,6 +18,7 @@ export default function Modal({
   onClickConfirm,
   onClickCancel,
 }: ModalProps) {
+  const { t } = useTranslation();
   const content =
     typeof children === 'string' ? (
       <DialogContentText id="alert-dialog-description">{children}</DialogContentText>
@@ -36,10 +38,10 @@ export default function Modal({
       <DialogContent sx={{ overflowY: 'initial' }}>{content}</DialogContent>
       <DialogActions>
         {!onlyConfirmButton && (
-          <Button onClick={onClickCancel}>{cancelButtonText || 'Cancel'}</Button>
+          <Button onClick={onClickCancel}>{cancelButtonText || t('modal.cancel')}</Button>
         )}
         <Button onClick={onClickConfirm} autoFocus>
-          {confirmButtonText || 'Confirm'}
+          {confirmButtonText || t('modal.confirm')}
         </Button>
       </DialogActions>
     </Dialog>
