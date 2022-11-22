@@ -20,6 +20,7 @@ export const boardsApi = api.injectEndpoints({
       query: (id) => ({
         url: `${Endpoint.BOARDS}${id}`,
       }),
+      providesTags: ['Board'],
     }),
     deleteBoard: builder.mutation<Board, string>({
       query: (id) => ({
@@ -42,7 +43,7 @@ export const boardsApi = api.injectEndpoints({
         method: HTTPMethod.PUT,
         body: rest,
       }),
-      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }, 'Board'],
     }),
   }),
 });
