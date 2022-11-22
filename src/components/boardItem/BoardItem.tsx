@@ -1,6 +1,6 @@
 import { Alert, Button, ButtonGroup, CircularProgress } from '@mui/material';
 import { Box, Stack } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
 import {
@@ -9,7 +9,7 @@ import {
   useGetTasksByBoardIdQuery,
   useUpdateColumnsSetMutation,
 } from './../../services/board.api';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
@@ -19,18 +19,11 @@ import { t } from 'i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 
 export default function BoardItem(): JSX.Element {
-  // todo: loader, toaster,renavigate
-  /*
-    const navigate = useNavigate();
-  const goHome = () => navigate('/', { replace: true });
-  useEffect(() => {
-    if (!dataColumns) {
-      goHome();
-    }
-  }, []);*/
+  // todo: loader, toast
+  const navigate = useNavigate();
   const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const { id } = useAppSelector(selectUser);
+  const { id: userId } = useAppSelector(selectUser);
   const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumsSet] = useUpdateColumnsSetMutation();
 
@@ -50,8 +43,6 @@ export default function BoardItem(): JSX.Element {
     isError: isTasksError,
   } = useGetTasksByBoardIdQuery(idBoard);
 
-  // const handleEditBoard = () => {};
-  // const handleDeleteBoard = () => {};
   const handleAddColumn = () => {
     setOpenModalCreate(true);
   };
@@ -76,6 +67,18 @@ export default function BoardItem(): JSX.Element {
       updateColumsSet(set);
     }
   };
+
+  useEffect(() => {
+    const isMember = () => {
+      return (
+        dataCurrentBoard?.owner === userId || dataCurrentBoard?.users.some((id) => id === userId)
+      );
+    };
+
+    if (dataCurrentBoard === null || (dataCurrentBoard && !isMember())) {
+      navigate('/boards/');
+    }
+  });
 
   return (
     <>

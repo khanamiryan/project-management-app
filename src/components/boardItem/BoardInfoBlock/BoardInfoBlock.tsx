@@ -9,13 +9,11 @@ import { useAppSelector, useAppDispatch } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { showToast } from 'store/toastSlice';
 import Modal from 'components/Modal/Modal';
-import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
-  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'delete' | 'edit'>('delete');
   const { id: currentUserId } = useAppSelector(selectUser);
@@ -55,7 +53,7 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
-  const isSucces = deleteResult.isSuccess;
+  const isSuccess = deleteResult.isSuccess;
 
   const onClickDelete = () => {
     setModalType('delete');
@@ -77,24 +75,20 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     onModalClose();
   };
   const onBoardEdit: SubmitHandler<BoardFormFields> = (data) => {
-    console.log('onBoardEdit');
-    console.log(data);
-    console.log(users);
     updateBoard({ ...board, users, title: data.title });
     onModalClose();
   };
 
   useEffect(() => {
-    if (isSucces) {
+    if (isSuccess) {
       dispatch(
         showToast({
           message: t(isOwner ? 'boards.toast.onSuccesDelete' : 'boards.toast.onSuccesLeave'),
           type: 'success',
         })
       );
-      navigate('/boards/');
     }
-  }, [dispatch, isOwner, isSucces]);
+  }, [dispatch, isOwner, isSuccess]);
 
   return (
     <>

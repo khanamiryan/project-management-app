@@ -27,7 +27,7 @@ export const boardsApi = api.injectEndpoints({
         url: `${Endpoint.BOARDS}${id}`,
         method: HTTPMethod.DELETE,
       }),
-      invalidatesTags: [{ type: 'Boards', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Boards', id: 'LIST' }, 'Board'],
     }),
     createBoard: builder.mutation<Board, Omit<Board, '_id'>>({
       query: (boardData) => ({
