@@ -8,8 +8,8 @@ import { useCreateBoardMutation } from 'services/boards.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { useTranslation } from 'react-i18next';
+import { BoardFormFields } from 'types/types';
 
-type CreateBoardFormFields = { title: string; users: string[] };
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
 
 const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
@@ -17,13 +17,13 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   let users: string[] = [];
   const { id } = useAppSelector(selectUser);
   const [createBoard, result] = useCreateBoardMutation();
-  const { handleSubmit, control } = useForm<CreateBoardFormFields>({
+  const { handleSubmit, control } = useForm<BoardFormFields>({
     defaultValues: {
       title: '',
     },
   });
 
-  const onSubmit: SubmitHandler<CreateBoardFormFields> = (data) => {
+  const onSubmit: SubmitHandler<BoardFormFields> = (data) => {
     createBoard({ ...data, owner: id, users });
     onModalClose();
   };

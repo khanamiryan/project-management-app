@@ -1,3 +1,4 @@
+import { Container } from '@mui/material';
 import Footer from 'components/footer';
 import Header from 'components/header';
 import Toast from 'components/Toast/Toast';
@@ -13,8 +14,10 @@ export default function Layout(): JSX.Element {
     <>
       <Header />
       <main>
-        <Outlet />
-        <Toast {...state} />
+        <Container maxWidth="lg">
+          <Outlet />
+          <Toast {...state} />
+        </Container>
       </main>
       <Footer />
     </>
