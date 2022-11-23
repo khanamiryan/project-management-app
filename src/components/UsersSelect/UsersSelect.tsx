@@ -71,7 +71,6 @@ export default function UsersSelect({ selectedUsersId = [], onUserSelect }: User
     const {
       target: { value },
     } = event;
-    console.log(value);
     setPersonName(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value
@@ -106,7 +105,11 @@ export default function UsersSelect({ selectedUsersId = [], onUserSelect }: User
         >
           {users &&
             users.map(({ _id, login }) => {
-              if (_id === currentUserId) return null;
+              if (_id === currentUserId) {
+                console.log(_id);
+                return null;
+              }
+              console.log(_id);
               return (
                 <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
                   {login}

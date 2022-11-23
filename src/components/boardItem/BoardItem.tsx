@@ -82,7 +82,7 @@ export default function BoardItem(): JSX.Element {
 
   return (
     <>
-      <Box className="board-header">
+      <Stack className="board-header">
         {isBoardLoading && <CircularProgress size={80} />}
         {isBoardError && (
           <Alert variant="outlined" severity="error">
@@ -90,7 +90,7 @@ export default function BoardItem(): JSX.Element {
           </Alert>
         )}
         {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
-      </Box>
+      </Stack>
 
       <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
         {dataColumns &&

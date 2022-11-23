@@ -1,10 +1,11 @@
-import { Stack, ButtonGroup, IconButton } from '@mui/material';
+import { Stack, ButtonGroup, IconButton, Avatar, Chip, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import React, { useEffect, useState } from 'react';
 import { Board, BoardFormFields } from 'types/types';
 import { useTranslation } from 'react-i18next';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
+import { useGetUsersQuery } from 'services/users.api';
 import { useAppSelector, useAppDispatch } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { showToast } from 'store/toastSlice';
@@ -12,11 +13,14 @@ import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
+import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
+import FaceIcon from '@mui/icons-material/Face';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'delete' | 'edit'>('delete');
   const { id: currentUserId } = useAppSelector(selectUser);
+  const { data: allUsers } = useGetUsersQuery('');
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const isOwner = currentUserId === board.owner;
@@ -90,6 +94,11 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     }
   }, [dispatch, isOwner, isSuccess]);
 
+  const ownerObj = allUsers?.find(({ _id }) => _id === board.owner);
+  const contributors = board.users.map((contributorId) =>
+    allUsers?.find(({ _id }) => contributorId === _id)
+  );
+
   return (
     <>
       <Stack
@@ -97,7 +106,9 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
         direction={{ xs: 'column', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
       >
-        <h1 className="board-title">{board.title}</h1>
+        <Typography variant="h4" className="board-title">
+          {board.title}
+        </Typography>
         <ButtonGroup>
           <IconButton onClick={onClickEdit}>
             <EditIcon fontSize="large" />
@@ -107,6 +118,33 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
           </IconButton>
         </ButtonGroup>
       </Stack>
+
+      {/* //TODO  вынести в отдельный компонент*/}
+      {ownerObj && (
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
+          <Chip
+            icon={<FaceRetouchingNaturalIcon />}
+            label={ownerObj.login}
+            color="primary"
+            variant="outlined"
+          />
+          {contributors.length &&
+            contributors.map((contributor) => {
+              if (contributor) {
+                return (
+                  <Chip
+                    key={contributor._id}
+                    icon={<FaceIcon />}
+                    label={contributor.login}
+                    color="primary"
+                    variant="outlined"
+                  />
+                );
+              }
+            })}
+        </Stack>
+      )}
+
       <Modal
         open={modalOpen}
         title={modalType === 'delete' ? modalDeleteTitle : 'Edit board'}
