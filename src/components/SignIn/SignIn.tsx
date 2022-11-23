@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './SignIn.scss';
 import { Box, Button, Link } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
-import { ISignInForm, selectUser, signIn } from '../../store/userSlice';
+import { useAppDispatch } from '../../store/redux.hooks';
 
 import { useNavigate } from 'react-router-dom';
 import { showToast } from 'store/toastSlice';
 
 import { useTranslation } from 'react-i18next';
 import { rules } from '../../utils/validation.utils';
+import { useSignInUserMutation } from '../../services/auth.api';
+import { useUser } from '../../hooks/useUser';
+import { ISignInForm } from '../../types/types';
 
 const SignIn = () => {
+  const [signInUser, { isLoading }] = useSignInUserMutation();
+
   const { handleSubmit, control, setError } = useForm<ISignInForm>({
     defaultValues: {
       login: '',
@@ -20,28 +24,26 @@ const SignIn = () => {
     },
   });
   const { t } = useTranslation();
-  const [message, setMessage] = useState('');
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { login, loggedIn, error, loading } = useAppSelector(selectUser);
+  const { loggedIn } = useUser();
 
   useEffect(() => {
-    if (login.length) {
-      navigate('/boards');
+    if (loggedIn) {
+      dispatch(showToast({ message: 'Success', type: 'success' }));
+      // navigate('/boards');
     }
-  }, [login, loggedIn]);
+  }, [loggedIn]);
 
-  useEffect(() => {
-    if (error.length) {
-      setMessage(error);
-      setError('login', { type: 'custom', message: '' });
-      setError('password', { type: 'custom', message: '' });
-      dispatch(showToast({ message: error }));
-    }
-  }, [error]);
-
-  const onSubmit: SubmitHandler<ISignInForm> = async ({ login, password }) => {
-    dispatch(signIn({ login, password }));
+  const onSubmit: SubmitHandler<ISignInForm> = ({ login, password }) => {
+    signInUser({ login, password })
+      .unwrap()
+      .catch((e) => {
+        dispatch(showToast({ message: e.data.message }));
+        setError('login', { type: 'custom', message: '' });
+        setError('password', { type: 'custom', message: '' });
+      });
   };
 
   return (
@@ -67,9 +69,9 @@ const SignIn = () => {
         />
       </div>
 
-      <Button type="submit" variant="contained" disabled={loading}>
+      <Button type="submit" variant="contained" disabled={isLoading}>
         {t('form.fields.signIn')}
-        {loading && '...'}
+        {isLoading && '...'}
       </Button>
       <div>
         <Link href="/registration" margin="normal">

@@ -12,10 +12,12 @@ import React, { ChangeEvent, useState } from 'react';
 import './header.scss';
 import { useNavigate } from 'react-router-dom';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
-import { selectUser, signOut } from '../../store/userSlice';
+import { selectUser, signOutReducer } from '../../store/userSlice';
 import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
+import { api } from '../../services/api';
+import { showToast } from '../../store/toastSlice';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -36,10 +38,10 @@ const Header = () => {
   const dispatch = useAppDispatch();
 
   const { t } = useTranslation();
-  const logOut = () => {
-    localStorage.clear();
-    dispatch(signOut());
-    navigate('/');
+  const handleSignOut = () => {
+    dispatch(signOutReducer());
+    dispatch(api.util.resetApiState());
+    dispatch(showToast({ type: 'success', message: 'Successfully signed out' }));
   };
 
   const changeLanguage = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -106,7 +108,7 @@ const Header = () => {
               </NativeSelect>
             </FormControl>
             {user.loggedIn && (
-              <Button color="inherit" onClick={logOut}>
+              <Button color="inherit" onClick={handleSignOut}>
                 {t('menu.signOut')}
               </Button>
             )}

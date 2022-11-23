@@ -8,6 +8,7 @@ import {
 import userReducer from './userSlice';
 import { api } from '../services/api';
 import toastReducer from './toastSlice';
+import { rtkErrorMiddleware } from './error.middleware';
 
 export const reducersList = {
   user: userReducer,
@@ -21,7 +22,8 @@ const setupStore = (preloadedState?: PreloadedState<RootState>) => {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(api.middleware, rtkErrorMiddleware),
   });
 };
 
