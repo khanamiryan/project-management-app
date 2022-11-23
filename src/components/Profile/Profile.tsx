@@ -1,28 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Profile.scss';
 import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box } from '@mui/system';
-import { deleteUser, getUser, selectUser, setUserInfo } from '../../store/userSlice';
-import { Alert, Button } from '@mui/material';
+import { Button } from '@mui/material';
 
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import { useAppDispatch } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
 import { Warning } from '@mui/icons-material';
 import { showToast } from 'store/toastSlice';
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
+import { useDeleteUserMutation, useSetUserInfoMutation } from '../../services/users.api';
+import { useUser } from '../../hooks/useUser';
+import { useNavigate } from 'react-router-dom';
 
-interface IProfile {
+export interface IProfile {
   name: string;
   login: string;
   password: string;
 }
 
 const Profile = () => {
-  const user = useAppSelector(selectUser);
+  const user = useUser();
   const dispatch = useAppDispatch();
-
+  const [setUserInfo, { isLoading }] = useSetUserInfoMutation();
+  const [deleteUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     control,
@@ -34,46 +38,42 @@ const Profile = () => {
       password: '',
     },
   });
-  useEffect(() => {
-    //todo add getCurrentUser function, without giving id
-    //  todo add function, that will dynamically change values, if it was changed in another place
-    if (user.id) {
-      //in the future if will not used, because it will page with private id
-      dispatch(getUser(user.id));
-    }
-  }, []);
 
   const onSubmit: SubmitHandler<IProfile> = (data) => {
-    dispatch(setUserInfo(data))
+    setUserInfo({ ...data, id: user.id })
       .unwrap()
       .then(() => {
         dispatch(showToast({ type: 'success', message: 'Success!' }));
+        navigate('/boards');
+      })
+      .catch((error) => {
+        dispatch(showToast({ message: error.data.message }));
       });
   };
 
   const handleDeleteUser = () => {
-    dispatch(deleteUser(user.id)).then(() => {
-      setOpen(false);
-    });
+    deleteUser(user.id)
+      .unwrap()
+      .then(() => {
+        setOpen(false);
+        dispatch(showToast({ message: 'Success to delete user', type: 'success' }));
+        navigate('/');
+      })
+      .catch((error) => {
+        dispatch(showToast({ message: error.data.message }));
+      });
   };
 
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (user.error.length > 0) {
-      dispatch(showToast({ message: user.error }));
-    }
-  }, [user.error]);
 
   const { t } = useTranslation();
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
-      {user.error && <Alert severity="error">{user.error}</Alert>}
-      {/* <Toast open={toastOpen} message={toastMessage} type={toastType}></Toast> */}
+      {/*{isError && <Alert severity="error">{error!.data!.message}</Alert>}*/}
 
       <Modal
-        confirmButtonText={user.loading ? 'Deleting...' : 'Confirm'}
+        confirmButtonText={isDeleteLoading ? 'Deleting...' : 'Confirm'}
         open={open}
         onClickCancel={() => {
           setOpen(false);
@@ -116,8 +116,8 @@ const Profile = () => {
         />
       </div>
 
-      <Button variant={'contained'} type="submit" disabled={!isDirty || user.loading}>
-        {t('form.fields.save')} {user.loading && '...'}
+      <Button variant={'contained'} type="submit" disabled={!isDirty || isLoading}>
+        {t('form.fields.save')} {isLoading && '...'}
       </Button>
       <Button onClick={() => setOpen(true)}>{t('form.fields.deleteUser')}</Button>
     </Box>
