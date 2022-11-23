@@ -16,8 +16,10 @@ export const authApi = api.injectEndpoints({
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          const id = (jwt_decode(data.token) as DecodedToken).id;
+          const { id, exp } = jwt_decode(data.token) as DecodedToken;
           localStorage.setItem('token', data.token);
+          // console.log(jwt_decode(data.token) as DecodedToken);
+          // console.log(exp > Date.now() / 1000);
           await dispatch(usersApi.endpoints.getUser.initiate(id));
         } catch (error) {}
       },

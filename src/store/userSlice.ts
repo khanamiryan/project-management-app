@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from './store';
-import jwt_decode from 'jwt-decode';
 
 import { usersApi } from '../services/users.api';
 import { authApi } from '../services/auth.api';
-import { DecodedToken, UserState } from '../types/types';
+import { UserState } from '../types/types';
 
 // const tokenLocalStore = localStorage.getItem('token');
 // const userId = tokenLocalStore ? (jwt_decode(tokenLocalStore) as DecodedToken).id : '';
@@ -38,6 +37,7 @@ export const userSlice = createSlice({
     },
     setToken: (state: UserState, action: PayloadAction<UserState['token']>) => {
       state.token = action.payload;
+      state.loggedIn = action.payload.length > 0;
     },
   },
   extraReducers: (builder) => {

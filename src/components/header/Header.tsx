@@ -39,12 +39,9 @@ const Header = () => {
 
   const { t } = useTranslation();
   const handleSignOut = () => {
-    localStorage.clear();
-
     dispatch(signOutReducer());
     dispatch(api.util.resetApiState());
     dispatch(showToast({ type: 'success', message: 'Successfully signed out' }));
-    navigate('/');
   };
 
   const changeLanguage = (e: ChangeEvent<HTMLSelectElement>) => {

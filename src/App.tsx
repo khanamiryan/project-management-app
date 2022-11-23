@@ -8,21 +8,43 @@ import SignIn from 'pages/signIn/SignIn';
 import SignUp from 'pages/signUp/SignUp';
 import React from 'react';
 import { Route, Routes } from 'react-router';
+
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import { useUser } from './hooks/useUser';
 import { useUserInit } from './hooks/useUserInit';
 
+import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
+
 function App() {
-  useUserInit(); //may be some memo or useeffect or change the place?
+  const user = useUser();
+  const { isLoading } = useUserInit(); //may be some memo or useeffect or change the place?
+
   return (
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<MainPage />} />
-          <Route path="boards" element={<Boards />} />
-          <Route path="boards/:id" element={<Board />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="login" element={<SignIn />} />
-          <Route path="registration" element={<SignUp />} />
-          <Route path="/boards/:id" element={<p>This is a page for some board</p>} />
+          <Route
+            element={isLoading ? <LoadingBackdrop /> : <ProtectedRoute isAllowed={user.loggedIn} />}
+          >
+            <Route path="boards" element={<Boards />} />
+            <Route path="boards/:id" element={<Board />} />
+            <Route path="profile" element={<Profile />} />
+
+            {/*<Route path="/boards/:id" element={<p>This is a page for some board</p>} />*/}
+          </Route>
+          <Route
+            element={
+              isLoading ? (
+                <LoadingBackdrop />
+              ) : (
+                <ProtectedRoute isAllowed={!user.loggedIn} redirectPath={'/boards'} />
+              )
+            }
+          >
+            <Route path="login" element={<SignIn />} />
+            <Route path="registration" element={<SignUp />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
@@ -31,5 +53,5 @@ function App() {
 }
 
 export default App;
-/*  
+/*
            <Route path="*" element={<NotFoundRoute />} />*/

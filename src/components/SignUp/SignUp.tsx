@@ -33,7 +33,7 @@ const SignUp = () => {
       .then(({ login }) => {
         if (login.length) {
           dispatch(showToast({ message: 'Success to Sign Up', type: 'success' }));
-          navigate('/boards');
+          // navigate('/boards');
         }
       })
       .catch((e) => {

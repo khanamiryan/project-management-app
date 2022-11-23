@@ -32,7 +32,7 @@ const SignIn = () => {
   useEffect(() => {
     if (loggedIn) {
       dispatch(showToast({ message: 'Success', type: 'success' }));
-      navigate('/boards');
+      // navigate('/boards');
     }
   }, [loggedIn]);
 

@@ -71,7 +71,6 @@ export const usersApi = api.injectEndpoints({
           if (data) {
             dispatch(api.util.resetApiState());
             dispatch(signOutReducer());
-            //await dispatch(usersApi.endpoints.signInUser.initiate({ login, password }));
           }
         } catch {
           console.log('Unknown error with user delete');
