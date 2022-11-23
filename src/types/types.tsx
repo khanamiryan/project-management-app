@@ -6,9 +6,9 @@ export type Board = {
 };
 
 export type User = {
-  _id: 'string';
-  name: 'string';
-  login: 'string';
+  _id: string;
+  name: string;
+  login: string;
 };
 
 export interface IColumn {
@@ -28,3 +28,5 @@ export interface ITask {
   userId: string;
   users: string[];
 }
+
+export type BoardFormFields = { title: string; users: string[] };
