@@ -59,11 +59,6 @@ export interface IUserResponse {
   _id: string;
   login: string;
 }
-export type User = {
-  _id: 'string';
-  name: 'string';
-  login: 'string';
-};
 export type DecodedToken = {
   id: string;
   login: string;
