@@ -1,23 +1,30 @@
 import { Box, Button, ButtonGroup, Card, Input } from '@mui/material';
 import { Stack } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { IColumn, ITask } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
 import {
   useDeleteTaskMutation,
+  useGetColumnsQuery,
   useUpdateColumnMutation,
+  useUpdateColumnsSetMutation,
   useUpdateTasksSetMutation,
   //useAddTaskMutation,
   //useGetTasksByColumnQuery,
 } from './../../../services/board.api';
 import Modal from 'components/Modal/Modal';
 import ModalCreate from '../ModalCreate/ModalCreate';
+import { useDrag, useDrop } from 'react-dnd';
+import { Filter } from '@mui/icons-material';
 
 interface ITaskListProps {
   dataColumn: IColumn;
   dataTasks: ITask[] | undefined;
   onDeleteColumn: (selectedColumn: IColumn) => void;
+}
+interface IDropResult {
+  dataColumn: IColumn;
 }
 
 export default function TasksList({
@@ -39,6 +46,74 @@ export default function TasksList({
   const [updateColumn] = useUpdateColumnMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
+  const [updateColumnsSet] = useUpdateColumnsSetMutation();
+  const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
+
+  const ref = useRef(null);
+
+  const [{ isDragging }, dragRef] = useDrag(() => ({
+    type: 'column',
+    item: dataColumn,
+    end: (dataColumnDrag, monitor) => {
+      console.log(' start function end');
+      const dataColumnDrop = monitor.getDropResult<IDropResult>()?.dataColumn;
+      if (dataColumnDrag && dataColumnDrop) {
+        console.log('данные из DND', dataColumnDrag, dataColumnDrop);
+        const { order: orderDrag, _id: idDrag } = dataColumnDrag;
+        const { order: orderDrop, _id: idDrop } = dataColumnDrop;
+        //orderDrop = orderDrag;
+        const newDataColumnsPATCH = dataColumns
+          ?.filter((item) => {
+            if (
+              (item.order >= orderDrag && item.order <= orderDrop) ||
+              (item.order >= orderDrop && item.order <= orderDrag)
+            ) {
+              return item;
+            }
+          })
+          .map((column) => {
+            const { order, _id, title } = column;
+            switch (order) {
+              case orderDrag:
+                return { order: orderDrop, _id: _id };
+              case orderDrop:
+                if (orderDrop > orderDrag) {
+                  return { order: orderDrop - 1, _id: _id };
+                } else {
+                  return { order: orderDrop + 1, _id: _id };
+                }
+              default:
+                if (column.order < orderDrop) {
+                  console.log(orderDrop);
+                  return { order: column.order - 1, _id: _id };
+                } else {
+                  console.log(orderDrop);
+                  return { order: column.order + 1, _id: _id };
+                }
+            }
+          });
+
+        console.log(newDataColumnsPATCH);
+
+        if (newDataColumnsPATCH) {
+          updateColumnsSet(newDataColumnsPATCH);
+          //newDataColumnsPATCH = undefined;
+        }
+      }
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
+  const [{ isOver }, dropRef] = useDrop(() => ({
+    accept: 'column',
+    drop: () => ({ dataColumn }),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
+  dragRef(dropRef(ref));
 
   const confirmDeleteColumn = () => {
     onDeleteColumn(dataColumn);
@@ -103,7 +178,7 @@ export default function TasksList({
 
   return (
     <>
-      <Card className="board-column" variant="outlined">
+      <Card className="board-column" variant="outlined" ref={ref}>
         <Box className="column-name">
           {!editTitleColumn && (
             <Stack
