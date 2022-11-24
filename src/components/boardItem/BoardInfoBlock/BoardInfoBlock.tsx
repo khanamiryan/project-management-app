@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, IconButton, Avatar, Chip, Typography } from '@mui/material';
+import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import React, { useEffect, useState } from 'react';
@@ -13,8 +13,6 @@ import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
-import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
-import FaceIcon from '@mui/icons-material/Face';
 import UserChip from 'components/UserChip/UserChip';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {

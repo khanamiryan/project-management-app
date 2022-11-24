@@ -1,15 +1,15 @@
-import { Button, ButtonGroup, Card, Chip, Typography } from '@mui/material';
-import { type } from '@testing-library/user-event/dist/type';
+import { Card, IconButton, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
 import Modal from 'components/Modal/Modal';
 import UserChip from 'components/UserChip/UserChip';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useDeleteTaskMutation, useUpdateTaskMutation } from 'services/board.api';
+import { useUpdateTaskMutation } from 'services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
 import { ITask, TaskFormFields } from 'types/types';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import './taskCard.scss';
 
@@ -17,10 +17,9 @@ type ModalType = 'delete' | 'edit' | 'view';
 
 type taskCardProps = {
   dataTask: ITask;
-  editTask: (taskData: ITask) => void;
   onDelete: (task: ITask) => void;
 };
-export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps): JSX.Element {
+export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>('view');
   const { data: board } = useGetBoardByIdQuery(dataTask.boardId);
@@ -34,16 +33,12 @@ export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps
       description: dataTask.description,
     },
   });
-  //const [openEditModal, setOpenEditModal] = useState(false);
-  console.log(board);
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
-  // const [deleteTask] = useDeleteTaskMutation();
 
   const closeModal = () => setOpenModal(false);
 
-  const handleEditTask = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEditTask = () => {
     setModalType('edit');
     setOpenModal(true);
   };
@@ -90,7 +85,9 @@ export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps
       default: {
         return {
           title,
-          onClickConfirm: confirmDeleteTask,
+          onClickConfirm: handleEditTask,
+          confirmButtonText: 'EDIT',
+          cancelButtonText: 'CLOSE',
         };
       }
     }
@@ -160,7 +157,6 @@ export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps
       }
     }
   };
-  ////////////end
 
   const confirmDeleteTask = () => {
     onDelete(dataTask);
@@ -169,14 +165,25 @@ export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps
 
   return (
     <>
-      <Card className="task-card" variant="outlined" onClick={handleShowTask}>
-        <Typography component="h3"> {title}</Typography>
-        <Typography component="p"> {description}</Typography>
-        <Typography component="p"> Order:{order}</Typography>
-        <ButtonGroup>
-          <Button onClick={(e) => handleEditTask(e)}> Edit</Button>
-          <Button onClick={(e) => handleDeleteTask(e)}> Del</Button>
-        </ButtonGroup>
+      <Card
+        className="task-card"
+        variant="outlined"
+        onClick={handleShowTask}
+        sx={{ position: 'relative' }}
+      >
+        <IconButton
+          onClick={(e) => handleDeleteTask(e)}
+          sx={{ position: 'absolute', top: '4px', right: '8px' }}
+        >
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+        <Typography component="h3" mt={1} variant={'body1'}>
+          {title}
+        </Typography>
+        <Typography component="p" variant={'body2'}>
+          {description}
+        </Typography>
+        {/* <Typography component="p"> Order:{order}</Typography> */}
       </Card>
       <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
         {getModalContent()}
