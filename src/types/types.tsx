@@ -67,3 +67,5 @@ export type DecodedToken = {
 };
 
 export type BoardFormFields = { title: string; users: string[] };
+
+export type TaskFormFields = { title: string; description: string; users: string[] };

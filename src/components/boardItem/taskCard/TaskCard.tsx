@@ -1,9 +1,19 @@
-import { Button, ButtonGroup, Card, Typography } from '@mui/material';
+import { Button, ButtonGroup, Card, Chip, Typography } from '@mui/material';
+import { type } from '@testing-library/user-event/dist/type';
+import InputText from 'components/InputText/InputText';
 import Modal from 'components/Modal/Modal';
+import UserChip from 'components/UserChip/UserChip';
+import UsersSelect from 'components/UsersSelect/UsersSelect';
 import React, { useState } from 'react';
-import { useDeleteTaskMutation } from 'services/board.api';
-import { ITask } from 'types/types';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDeleteTaskMutation, useUpdateTaskMutation } from 'services/board.api';
+import { useGetBoardByIdQuery } from 'services/boards.api';
+import { useGetUsersQuery } from 'services/users.api';
+import { ITask, TaskFormFields } from 'types/types';
+
 import './taskCard.scss';
+
+type ModalType = 'delete' | 'edit' | 'view';
 
 type taskCardProps = {
   dataTask: ITask;
@@ -12,46 +22,164 @@ type taskCardProps = {
 };
 export default function TaskCard({ dataTask, editTask, onDelete }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
+  const [modalType, setModalType] = useState<ModalType>('view');
+  const { data: board } = useGetBoardByIdQuery(dataTask.boardId);
+  const { data: allUsers } = useGetUsersQuery('');
+
+  const [updateTask] = useUpdateTaskMutation();
+
+  const { handleSubmit, control } = useForm<TaskFormFields>({
+    defaultValues: {
+      title: dataTask.title,
+      description: dataTask.description,
+    },
+  });
   //const [openEditModal, setOpenEditModal] = useState(false);
+  console.log(board);
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
   // const [deleteTask] = useDeleteTaskMutation();
 
-  const handleEditTask = () => {
-    editTask(dataTask);
-  };
-  const handleDeleteTask = () => {
+  const closeModal = () => setOpenModal(false);
+
+  const handleEditTask = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setModalType('edit');
     setOpenModal(true);
   };
 
-  const confirmDeleteTask = () => {
-    //TODO переписать поднять в тасклист вызов deleteTask const [deleteTask] = useDeleteTaskMutation();
-    // deleteTask({ _id: _id, boardId: boardId, columnId: columnId });
-    onDelete(dataTask);
-    setOpenModal(false);
+  const handleShowTask = (e: React.MouseEvent) => {
+    setModalType('view');
+    setOpenModal(true);
   };
-  const cancelDeleteTask = () => {
-    setOpenModal(false);
+  const handleDeleteTask = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setModalType('delete');
+    setOpenModal(true);
+  };
+
+  let users: string[] = dataTask.users;
+  const onShare = (usersId: string[]) => {
+    users = usersId;
+  };
+
+  const onSubmitEditedTask: SubmitHandler<TaskFormFields> = (data) => {
+    updateTask({ ...dataTask, ...data, users });
+    closeModal();
+  };
+
+  const ownerObj = allUsers?.find(({ _id }) => _id === dataTask.userId);
+  const contributors = dataTask.users.map((contributorId) =>
+    allUsers?.find(({ _id }) => contributorId === _id)
+  );
+
+  const getModalProps = () => {
+    switch (modalType) {
+      case 'delete': {
+        return {
+          title: `Do you really want to remove task "${title}"?`,
+          onClickConfirm: confirmDeleteTask,
+        };
+      }
+      case 'edit': {
+        return {
+          title: `Edit task "${title}"`,
+          onClickConfirm: handleSubmit(onSubmitEditedTask),
+        };
+      }
+      default: {
+        return {
+          title,
+          onClickConfirm: confirmDeleteTask,
+        };
+      }
+    }
+  };
+
+  const getModalContent = () => {
+    switch (modalType) {
+      case 'delete': {
+        return 'if you delete this task you will not be able to restore it';
+      }
+      case 'edit': {
+        return (
+          <>
+            <InputText
+              name="title"
+              label={`Task title`}
+              autoComplete={`Task title`}
+              control={control}
+              rules={{
+                required: 'title is required',
+                maxLength: {
+                  value: 20,
+                  message: 'No more then 20 letters',
+                },
+              }}
+            />
+            <InputText
+              name="description"
+              label={`Task description`}
+              autoComplete={`Task description`}
+              control={control}
+              rules={{
+                required: 'description is required',
+                maxLength: {
+                  value: 50,
+                  message: 'No more then 50 letters',
+                },
+              }}
+            />
+            <UsersSelect
+              onUserSelect={onShare}
+              selectedUsersId={dataTask.users}
+              usersIdForSelection={board && [...board.users, board.owner]}
+            />
+          </>
+        );
+      }
+      default: {
+        return (
+          <>
+            <Typography variant="body1">{dataTask.description}</Typography>
+            <Typography variant="body1">Creator: </Typography>
+            {ownerObj && <UserChip login={ownerObj.login} isOwner />}
+
+            {contributors.length && (
+              <>
+                <Typography variant="body1">Users: </Typography>
+                {contributors.map((contributor) => {
+                  if (contributor) {
+                    return <UserChip key={contributor._id} login={contributor.login} />;
+                  }
+                })}
+              </>
+            )}
+          </>
+        );
+      }
+    }
+  };
+  ////////////end
+
+  const confirmDeleteTask = () => {
+    onDelete(dataTask);
+    closeModal();
   };
 
   return (
     <>
-      <Card className="task-card" variant="outlined">
+      <Card className="task-card" variant="outlined" onClick={handleShowTask}>
         <Typography component="h3"> {title}</Typography>
         <Typography component="p"> {description}</Typography>
         <Typography component="p"> Order:{order}</Typography>
         <ButtonGroup>
-          <Button onClick={handleEditTask}> Edit</Button>
-          <Button onClick={handleDeleteTask}> Del</Button>
+          <Button onClick={(e) => handleEditTask(e)}> Edit</Button>
+          <Button onClick={(e) => handleDeleteTask(e)}> Del</Button>
         </ButtonGroup>
       </Card>
-      <Modal
-        open={openModal}
-        title={`do you really want to remove "${title}" task?`}
-        onClickConfirm={confirmDeleteTask}
-        onClickCancel={cancelDeleteTask}
-      >
-        if you delete this list you will not be able to restore it
+      <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
+        {getModalContent()}
       </Modal>
     </>
   );

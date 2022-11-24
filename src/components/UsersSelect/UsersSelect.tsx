@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 
 type UsersSelectProps = {
   selectedUsersId?: string[];
+  usersIdForSelection?: string[];
   onUserSelect: (logins: string[]) => void;
 };
 
@@ -43,7 +44,11 @@ const getUserIdByLogin = (login: string, users: User[]) => {
   return users.find((user) => user.login === login)?._id;
 };
 
-export default function UsersSelect({ selectedUsersId = [], onUserSelect }: UsersSelectProps) {
+export default function UsersSelect({
+  selectedUsersId = [],
+  usersIdForSelection = [],
+  onUserSelect,
+}: UsersSelectProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { data: users, isSuccess } = useGetUsersQuery('');
@@ -105,11 +110,13 @@ export default function UsersSelect({ selectedUsersId = [], onUserSelect }: User
         >
           {users &&
             users.map(({ _id, login }) => {
-              if (_id === currentUserId) {
-                console.log(_id);
+              // when creating a task, the owner is available for selection, but not when creating a board
+              if (_id === currentUserId && !usersIdForSelection.length) {
                 return null;
               }
-              console.log(_id);
+              if (usersIdForSelection.length && !usersIdForSelection.includes(_id)) {
+                return null;
+              }
               return (
                 <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
                   {login}

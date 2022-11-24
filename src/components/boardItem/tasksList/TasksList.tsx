@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Card, Input } from '@mui/material';
+import { Box, Button, ButtonGroup, Card, Input, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React, { useState } from 'react';
 import { IColumn, ITask } from 'types/types';
@@ -112,8 +112,9 @@ export default function TasksList({
               spacing={2}
               onClick={() => setEditTitleColumn(!editTitleColumn)}
             >
-              <h3>{title}</h3> <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
-              <p>order: {dataColumn.order}</p>
+              <Typography variant={'h5'}>{title}</Typography>{' '}
+              <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
+              {/* <p>order: {dataColumn.order}</p> */}
             </Stack>
           )}
           {editTitleColumn && (

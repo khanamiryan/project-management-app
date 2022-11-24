@@ -15,6 +15,7 @@ import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
 import FaceIcon from '@mui/icons-material/Face';
+import UserChip from 'components/UserChip/UserChip';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -122,24 +123,11 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
       {/* //TODO  вынести в отдельный компонент*/}
       {ownerObj && (
         <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
-          <Chip
-            icon={<FaceRetouchingNaturalIcon />}
-            label={ownerObj.login}
-            color="primary"
-            variant="outlined"
-          />
+          <UserChip login={ownerObj.login} isOwner />
           {contributors.length &&
             contributors.map((contributor) => {
               if (contributor) {
-                return (
-                  <Chip
-                    key={contributor._id}
-                    icon={<FaceIcon />}
-                    label={contributor.login}
-                    color="primary"
-                    variant="outlined"
-                  />
-                );
+                return <UserChip key={contributor._id} login={contributor.login} />;
               }
             })}
         </Stack>
