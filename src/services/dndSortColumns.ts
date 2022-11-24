@@ -1,9 +1,5 @@
 import { DragSourceMonitor } from 'react-dnd';
 import { IColumn, ITask } from '../types/types';
-import { useUpdateTasksSetMutation } from './board.api';
-
-const dndSortColumns = (dataColumnDrag: IColumn, dataColumnDrop: IColumn) => {};
-export default dndSortColumns;
 
 export const dndUpdateColumns = (
   dataColumnDrag: IColumn,
@@ -11,7 +7,6 @@ export const dndUpdateColumns = (
   dataColumns: IColumn[] | undefined,
   updateColumnsSet: (data: Pick<IColumn, '_id' | 'order'>[]) => void
 ) => {
-  const typeData = typeof dataColumnDrag;
   interface IDropResult {
     dataColumn: typeof dataColumnDrag;
   }
@@ -43,10 +38,8 @@ export const dndUpdateColumns = (
             }
           default:
             if (column.order < orderDrop) {
-              console.log(orderDrop);
               return { order: column.order - 1, _id: _id };
             } else {
-              console.log(orderDrop);
               return { order: column.order + 1, _id: _id };
             }
         }
@@ -57,7 +50,7 @@ export const dndUpdateColumns = (
   }
 };
 
-export const dndUpdateTasks = (
+export const dndUpdateTasksInsideColumn = (
   dataTaskDrag: ITask,
   dataTaskDrop: ITask,
   dataTasks: ITask[] | undefined,
@@ -89,10 +82,8 @@ export const dndUpdateTasks = (
           }
         default:
           if (task.order < orderDrop) {
-            console.log(orderDrop);
             return { order: task.order - 1, _id: _id, columnId: dataTaskDrop.columnId };
           } else {
-            console.log(orderDrop);
             return { order: task.order + 1, _id: _id, columnId: dataTaskDrop.columnId };
           }
       }
@@ -100,4 +91,40 @@ export const dndUpdateTasks = (
   if (newDataTasksPATCH) {
     updateTasksSet(newDataTasksPATCH);
   }
+};
+
+export const dndUpdateTasksBetweenColumn = (
+  dataTaskDrag: ITask,
+  dataTaskDrop: ITask,
+  dataTasks: ITask[],
+  dataTasksDrop: ITask[],
+  updateTasksSet: (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => void
+) => {
+  const dataTasksAfterDrag = dataTasks
+    .filter((item) => item._id !== dataTaskDrag._id)
+    .map((task) => {
+      if (task.order < dataTaskDrag.order) {
+        return { _id: task._id, order: task.order, columnId: task.columnId };
+      } else {
+        return { _id: task._id, order: task.order - 1, columnId: task.columnId };
+      }
+    });
+
+  const dataTasksAfterDrop = dataTasksDrop.map((task) => {
+    if (task.order < dataTaskDrop.order) {
+      return { _id: task._id, order: task.order, columnId: task.columnId };
+    } else {
+      return { _id: task._id, order: task.order + 1, columnId: task.columnId };
+    }
+  });
+
+  const setTasks = dataTasksAfterDrag.concat([
+    ...dataTasksAfterDrop,
+    {
+      _id: dataTaskDrag._id,
+      order: dataTaskDrop.order,
+      columnId: dataTaskDrop.columnId,
+    },
+  ]);
+  updateTasksSet(setTasks);
 };

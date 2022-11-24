@@ -21,9 +21,6 @@ interface ITaskListProps {
   dataTasks: ITask[] | undefined;
   onDeleteColumn: (selectedColumn: IColumn) => void;
 }
-interface IDropResult {
-  dataColumn: IColumn;
-}
 
 export default function TasksList({
   dataColumn,
@@ -50,7 +47,7 @@ export default function TasksList({
   };
 
   const ref = useRef(null);
-  //const refTask = useRef<HTMLDivElement | null>(null);
+
   // todo: styles for isDragging components
 
   const [{ isDragging }, dragRef] = useDrag(
@@ -59,46 +56,6 @@ export default function TasksList({
       item: dataColumn,
       end: (dataColumnDrag, monitor) => {
         dndUpdateColumns(dataColumnDrag, monitor, dataColumns, wrapperUpdateColumnsSet);
-        /*const dataColumnDrop = monitor.getDropResult<IDropResult>()?.dataColumn;
-        if (dataColumnDrag && dataColumnDrop && dataColumnDrag._id !== dataColumnDrop._id) {
-          const { order: orderDrag } = dataColumnDrag;
-          const { order: orderDrop } = dataColumnDrop;
-          const newDataColumnsPATCH = dataColumns
-            ?.filter((item) => {
-              if (
-                (item.order >= orderDrag && item.order <= orderDrop) ||
-                (item.order >= orderDrop && item.order <= orderDrag)
-              ) {
-                return true;
-              } else {
-                return false;
-              }
-            })
-            .map((column) => {
-              const { order, _id } = column;
-              switch (order) {
-                case orderDrag:
-                  return { order: orderDrop, _id: _id };
-                case orderDrop:
-                  if (orderDrop > orderDrag) {
-                    return { order: orderDrop - 1, _id: _id };
-                  } else {
-                    return { order: orderDrop + 1, _id: _id };
-                  }
-                default:
-                  if (column.order < orderDrop) {
-                    console.log(orderDrop);
-                    return { order: column.order - 1, _id: _id };
-                  } else {
-                    console.log(orderDrop);
-                    return { order: column.order + 1, _id: _id };
-                  }
-              }
-            });
-          if (newDataColumnsPATCH) {
-            updateColumnsSet(newDataColumnsPATCH);
-          }
-        }*/
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -118,24 +75,17 @@ export default function TasksList({
     [dataColumns]
   );
 
-  /*const [{ isDraggingTask }, dragRefTask] = useDrag(
+  // todo добавление карточки в пустой столбец
+  /*const [{ isOverCard }, dropRefCard] = useDrop(
     () => ({
-      type: 'task',
-      item: dataTask,
-      end: (dataTaskDrag, monitor) => {},
+      accept: 'task',
+      drop: () => ({ dataColumn }),
       collect: (monitor) => ({
-        isDraggingTask: monitor.isDragging(),
+        isOverCard: !!monitor.isOver(),
       }),
     }),
-    []
-  );
-  const [{ isOverTask }, dropRefTask] = useDrop(() => ({
-    accept: 'task',
-    drop: () => ({ dataTask }),
-    collect: (monitor) => ({
-      isOverTask: !!monitor.isOver(),
-    }),
-  }));*/
+    [dataColumns]
+  );*/
 
   dragRef(dropRef(ref));
 

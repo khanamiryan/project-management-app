@@ -3,12 +3,13 @@ import Modal from 'components/Modal/Modal';
 import React, { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDeleteTaskMutation, useUpdateTasksSetMutation } from 'services/board.api';
-import { dndUpdateTasks } from 'services/dndSortColumns';
+import { dndUpdateTasksBetweenColumn, dndUpdateTasksInsideColumn } from 'services/dndSortColumns';
 import { ITask } from 'types/types';
 import './taskCard.scss';
 
 interface IDropResultTask {
   dataTask: ITask;
+  dataTasks: ITask[];
 }
 type taskCardProps = {
   dataTask: ITask;
@@ -32,27 +33,37 @@ export default function TaskCard({
     updateTasksSet(data);
   };
   const refTask = useRef(null);
-
+  //todo: styles for isDragging component
   const [{ isDragging }, dragRefTask] = useDrag(
     () => ({
       type: 'task',
       item: dataTask,
       end: (dataTaskDrag, monitor) => {
-        //todo: add to empty column
+        //todo: add logic to empty column
 
         const dataTaskDrop = monitor.getDropResult<IDropResultTask>()?.dataTask;
-        if (dataTaskDrag && dataTaskDrop && dataTaskDrag._id !== dataTaskDrop._id) {
+        const dataTasksDrop = monitor.getDropResult<IDropResultTask>()?.dataTasks;
+        if (
+          dataTaskDrag &&
+          dataTaskDrop &&
+          dataTasksDrop &&
+          dataTaskDrag._id !== dataTaskDrop._id
+        ) {
           if (dataTaskDrag.columnId === dataTaskDrop?.columnId) {
-            dndUpdateTasks(dataTaskDrag, dataTaskDrop, dataTasks, wrapperUpdateTasksSet);
+            dndUpdateTasksInsideColumn(
+              dataTaskDrag,
+              dataTaskDrop,
+              dataTasks,
+              wrapperUpdateTasksSet
+            );
           } else {
-            console.log(' task DND', dataTaskDrag, dataTaskDrop);
-            if (dataTaskDrag && dataTaskDrop && dataTaskDrag._id !== dataTaskDrop._id) {
-              if (dataTaskDrag.columnId === dataTaskDrop.columnId) {
-                console.log('один столбец');
-              } else {
-                console.log('разные столбцы');
-              }
-            }
+            dndUpdateTasksBetweenColumn(
+              dataTask,
+              dataTaskDrop,
+              dataTasks,
+              dataTasksDrop,
+              wrapperUpdateTasksSet
+            );
           }
         }
       },
@@ -62,10 +73,12 @@ export default function TaskCard({
     }),
     [dataTasks]
   );
+
+  // todo: styles for isOver Component
   const [{ isOver }, dropRefTask] = useDrop(
     () => ({
       accept: 'task',
-      drop: () => ({ dataTask }),
+      drop: () => ({ dataTask, dataTasks }),
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
