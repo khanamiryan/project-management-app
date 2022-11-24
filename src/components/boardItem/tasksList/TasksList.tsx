@@ -14,6 +14,7 @@ import {
 import Modal from 'components/Modal/Modal';
 import ModalCreate from '../ModalCreate/ModalCreate';
 import { useDrag, useDrop } from 'react-dnd';
+import { dndUpdateColumns } from 'services/dndSortColumns';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -44,8 +45,12 @@ export default function TasksList({
   const [updateTasksSet] = useUpdateTasksSetMutation();
   const [updateColumnsSet] = useUpdateColumnsSetMutation();
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
+  const wrapperUpdateColumnsSet = (data: Pick<IColumn, '_id' | 'order'>[]) => {
+    updateColumnsSet(data);
+  };
 
   const ref = useRef(null);
+  //const refTask = useRef<HTMLDivElement | null>(null);
   // todo: styles for isDragging components
 
   const [{ isDragging }, dragRef] = useDrag(
@@ -53,7 +58,8 @@ export default function TasksList({
       type: 'column',
       item: dataColumn,
       end: (dataColumnDrag, monitor) => {
-        const dataColumnDrop = monitor.getDropResult<IDropResult>()?.dataColumn;
+        dndUpdateColumns(dataColumnDrag, monitor, dataColumns, wrapperUpdateColumnsSet);
+        /*const dataColumnDrop = monitor.getDropResult<IDropResult>()?.dataColumn;
         if (dataColumnDrag && dataColumnDrop && dataColumnDrag._id !== dataColumnDrop._id) {
           const { order: orderDrag } = dataColumnDrag;
           const { order: orderDrop } = dataColumnDrop;
@@ -92,7 +98,7 @@ export default function TasksList({
           if (newDataColumnsPATCH) {
             updateColumnsSet(newDataColumnsPATCH);
           }
-        }
+        }*/
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -111,6 +117,26 @@ export default function TasksList({
     }),
     [dataColumns]
   );
+
+  /*const [{ isDraggingTask }, dragRefTask] = useDrag(
+    () => ({
+      type: 'task',
+      item: dataTask,
+      end: (dataTaskDrag, monitor) => {},
+      collect: (monitor) => ({
+        isDraggingTask: monitor.isDragging(),
+      }),
+    }),
+    []
+  );
+  const [{ isOverTask }, dropRefTask] = useDrop(() => ({
+    accept: 'task',
+    drop: () => ({ dataTask }),
+    collect: (monitor) => ({
+      isOverTask: !!monitor.isOver(),
+    }),
+  }));*/
+
   dragRef(dropRef(ref));
 
   const confirmDeleteColumn = () => {
@@ -206,16 +232,26 @@ export default function TasksList({
 
         <Stack className="tasks-list" direction={'column'} spacing={1}>
           {dataTasks &&
-            dataTasks.map((task) => {
-              return (
-                <TaskCard
-                  key={task._id}
-                  dataTask={task}
-                  editTask={editTask}
-                  onDelete={onDeleteTask}
-                ></TaskCard>
-              );
-            })}
+            [...dataTasks]
+              .sort((a, b) => {
+                if (a.order > b.order) {
+                  return 1;
+                } else {
+                  return -1;
+                }
+              })
+              .map((task) => {
+                return (
+                  <TaskCard
+                    key={task._id}
+                    dataTask={task}
+                    dataTasks={dataTasks}
+                    editTask={editTask}
+                    onDelete={onDeleteTask}
+                    //ref={refTask}
+                  ></TaskCard>
+                );
+              })}
         </Stack>
         <Button variant="contained" fullWidth onClick={handleAddTask}>
           Add task
