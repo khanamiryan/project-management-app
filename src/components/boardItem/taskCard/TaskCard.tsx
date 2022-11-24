@@ -183,7 +183,7 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
         <Typography component="p" variant={'body2'}>
           {description}
         </Typography>
-        {/* <Typography component="p"> Order:{order}</Typography> */}
+        <Typography component="p"> Order:{order}</Typography>
       </Card>
       <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
         {getModalContent()}

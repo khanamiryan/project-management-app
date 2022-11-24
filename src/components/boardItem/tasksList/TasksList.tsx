@@ -1,18 +1,23 @@
 import { Box, Button, ButtonGroup, Card, Input, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React, { useState } from 'react';
-import { IColumn, ITask } from 'types/types';
+import { IColumn, ITask, TaskFormFields } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
 import {
   useDeleteTaskMutation,
   useUpdateColumnMutation,
   useUpdateTasksSetMutation,
-  //useAddTaskMutation,
+  useAddTaskMutation,
   //useGetTasksByColumnQuery,
 } from './../../../services/board.api';
+import { useGetBoardByIdQuery } from 'services/boards.api';
 import Modal from 'components/Modal/Modal';
-import ModalCreate from '../ModalCreate/ModalCreate';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useAppSelector } from 'store/redux.hooks';
+import { selectUser } from 'store/userSlice';
+import InputText from 'components/InputText/InputText';
+import UsersSelect from 'components/UsersSelect/UsersSelect';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -26,48 +31,36 @@ export default function TasksList({
   onDeleteColumn,
 }: ITaskListProps): JSX.Element {
   const { _id: columnId, title, boardId } = dataColumn;
-
+  const { data: board } = useGetBoardByIdQuery(boardId);
+  const { id: currentUserId } = useAppSelector(selectUser);
   const [openModal, setOpenModal] = useState(false);
-  const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [actionModalCreate, setActionModalCreate] = useState<'Add' | 'Edit'>('Add');
-  const [currentTaskData, setCurrentTaskData] = useState<ITask | null>(null);
-
+  const [modalType, setModalType] = useState<'delete_column' | 'add_task'>('delete_column');
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
-
-  // const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
+  const [addTask] = useAddTaskMutation();
+  const { handleSubmit, control } = useForm<TaskFormFields>({
+    defaultValues: {
+      title: '',
+      description: '',
+    },
+  });
+
+  const closeModal = () => setOpenModal(false);
 
   const confirmDeleteColumn = () => {
     onDeleteColumn(dataColumn);
     setOpenModal(false);
   };
-  const cancelDeleteColumn = () => {
-    setOpenModal(false);
-  };
 
-  const editTask = (taskData: ITask) => {
-    setCurrentTaskData(taskData);
-    setActionModalCreate('Edit');
-    setOpenModalCreate(true);
-  };
-
-  const closeModalCreate = () => {
-    setOpenModalCreate(false);
-    setCurrentTaskData(null);
-    //setActionModalCreate('Add');
-  };
-
-  const handleAddTask = () => {
-    setActionModalCreate('Add');
-    setOpenModalCreate(true);
-  };
-  const handleDeleteColumn = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleDeleteColumn = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setModalType('delete_column');
     setOpenModal(true);
   };
+
   const handleUpdateColumn = () => {
     const newColumnData = { _id: columnId, title: newColumnTitle, order: dataColumn.order };
     if (newColumnTitle !== dataColumn.title) {
@@ -76,6 +69,11 @@ export default function TasksList({
     // todo: order
 
     setEditTitleColumn(!editTitleColumn);
+  };
+
+  const handleAddTask = () => {
+    setModalType('add_task');
+    setOpenModal(true);
   };
 
   const onDeleteTask = (selectedTask: ITask) => {
@@ -101,6 +99,86 @@ export default function TasksList({
     }
   };
 
+  let users: string[] = [];
+  const onShare = (usersId: string[]) => {
+    users = usersId;
+  };
+
+  const onSubmitNewTask: SubmitHandler<TaskFormFields> = (data) => {
+    addTask({
+      title: data.title,
+      order: dataTasks?.length ? dataTasks.length + 1 : 1,
+      boardId: boardId,
+      columnId: columnId,
+      description: data.description,
+      userId: currentUserId,
+      users: users,
+    });
+    closeModal();
+  };
+
+  const getModalProps = () => {
+    switch (modalType) {
+      case 'delete_column': {
+        return {
+          title: `do you really want to remove "${title}" list?`,
+          onClickConfirm: confirmDeleteColumn,
+        };
+      }
+      //add_task
+      default: {
+        return {
+          title: 'Add task',
+          onClickConfirm: handleSubmit(onSubmitNewTask),
+        };
+      }
+    }
+  };
+
+  const getModalContent = () => {
+    switch (modalType) {
+      case 'delete_column': {
+        return 'if you delete this list you will not be able to restore it';
+      }
+      default: {
+        return (
+          <>
+            <InputText
+              name="title"
+              label={`Task title`}
+              autoComplete={`Task title`}
+              control={control}
+              rules={{
+                required: 'title is required',
+                maxLength: {
+                  value: 20,
+                  message: 'No more then 20 letters',
+                },
+              }}
+            />
+            <InputText
+              name="description"
+              label={`Task description`}
+              autoComplete={`Task description`}
+              control={control}
+              rules={{
+                required: 'description is required',
+                maxLength: {
+                  value: 50,
+                  message: 'No more then 50 letters',
+                },
+              }}
+            />
+            <UsersSelect
+              onUserSelect={onShare}
+              usersIdForSelection={board && [...board.users, board.owner]}
+            />
+          </>
+        );
+      }
+    }
+  };
+
   return (
     <>
       <Card className="board-column" variant="outlined">
@@ -114,7 +192,7 @@ export default function TasksList({
             >
               <Typography variant={'h5'}>{title}</Typography>{' '}
               <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
-              {/* <p>order: {dataColumn.order}</p> */}
+              <p>order: {dataColumn.order}</p>
             </Stack>
           )}
           {editTitleColumn && (
@@ -136,40 +214,16 @@ export default function TasksList({
         <Stack className="tasks-list" direction={'column'} spacing={1}>
           {dataTasks &&
             dataTasks.map((task) => {
-              return (
-                <TaskCard
-                  key={task._id}
-                  dataTask={task}
-                  editTask={editTask}
-                  onDelete={onDeleteTask}
-                ></TaskCard>
-              );
+              return <TaskCard key={task._id} dataTask={task} onDelete={onDeleteTask}></TaskCard>;
             })}
         </Stack>
         <Button variant="contained" fullWidth onClick={handleAddTask}>
           Add task
         </Button>
       </Card>
-      <Modal
-        open={openModal}
-        title={`do you really want to remove "${title}" list?`}
-        onClickConfirm={confirmDeleteColumn}
-        onClickCancel={cancelDeleteColumn}
-      >
-        if you delete this list you will not be able to restore it
+      <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
+        {getModalContent()}
       </Modal>
-      {dataTasks && (
-        <ModalCreate
-          type="Task"
-          action={actionModalCreate}
-          boardId={boardId || ''}
-          currentLength={dataTasks.length}
-          openModal={openModalCreate}
-          closeModal={closeModalCreate}
-          columnId={columnId}
-          taskData={currentTaskData}
-        ></ModalCreate>
-      )}
     </>
   );
 }
