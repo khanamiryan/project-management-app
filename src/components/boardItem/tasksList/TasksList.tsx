@@ -10,13 +10,10 @@ import {
   useUpdateColumnMutation,
   useUpdateColumnsSetMutation,
   useUpdateTasksSetMutation,
-  //useAddTaskMutation,
-  //useGetTasksByColumnQuery,
 } from './../../../services/board.api';
 import Modal from 'components/Modal/Modal';
 import ModalCreate from '../ModalCreate/ModalCreate';
 import { useDrag, useDrop } from 'react-dnd';
-import { Filter } from '@mui/icons-material';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -42,7 +39,6 @@ export default function TasksList({
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  // const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
@@ -50,69 +46,71 @@ export default function TasksList({
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
 
   const ref = useRef(null);
+  // todo: styles for isDragging components
 
-  const [{ isDragging }, dragRef] = useDrag(() => ({
-    type: 'column',
-    item: dataColumn,
-    end: (dataColumnDrag, monitor) => {
-      console.log(' start function end');
-      const dataColumnDrop = monitor.getDropResult<IDropResult>()?.dataColumn;
-      if (dataColumnDrag && dataColumnDrop) {
-        console.log('данные из DND', dataColumnDrag, dataColumnDrop);
-        const { order: orderDrag, _id: idDrag } = dataColumnDrag;
-        const { order: orderDrop, _id: idDrop } = dataColumnDrop;
-        //orderDrop = orderDrag;
-        const newDataColumnsPATCH = dataColumns
-          ?.filter((item) => {
-            if (
-              (item.order >= orderDrag && item.order <= orderDrop) ||
-              (item.order >= orderDrop && item.order <= orderDrag)
-            ) {
-              return item;
-            }
-          })
-          .map((column) => {
-            const { order, _id, title } = column;
-            switch (order) {
-              case orderDrag:
-                return { order: orderDrop, _id: _id };
-              case orderDrop:
-                if (orderDrop > orderDrag) {
-                  return { order: orderDrop - 1, _id: _id };
-                } else {
-                  return { order: orderDrop + 1, _id: _id };
-                }
-              default:
-                if (column.order < orderDrop) {
-                  console.log(orderDrop);
-                  return { order: column.order - 1, _id: _id };
-                } else {
-                  console.log(orderDrop);
-                  return { order: column.order + 1, _id: _id };
-                }
-            }
-          });
-
-        console.log(newDataColumnsPATCH);
-
-        if (newDataColumnsPATCH) {
-          updateColumnsSet(newDataColumnsPATCH);
-          //newDataColumnsPATCH = undefined;
+  const [{ isDragging }, dragRef] = useDrag(
+    () => ({
+      type: 'column',
+      item: dataColumn,
+      end: (dataColumnDrag, monitor) => {
+        const dataColumnDrop = monitor.getDropResult<IDropResult>()?.dataColumn;
+        if (dataColumnDrag && dataColumnDrop && dataColumnDrag._id !== dataColumnDrop._id) {
+          const { order: orderDrag } = dataColumnDrag;
+          const { order: orderDrop } = dataColumnDrop;
+          const newDataColumnsPATCH = dataColumns
+            ?.filter((item) => {
+              if (
+                (item.order >= orderDrag && item.order <= orderDrop) ||
+                (item.order >= orderDrop && item.order <= orderDrag)
+              ) {
+                return true;
+              } else {
+                return false;
+              }
+            })
+            .map((column) => {
+              const { order, _id } = column;
+              switch (order) {
+                case orderDrag:
+                  return { order: orderDrop, _id: _id };
+                case orderDrop:
+                  if (orderDrop > orderDrag) {
+                    return { order: orderDrop - 1, _id: _id };
+                  } else {
+                    return { order: orderDrop + 1, _id: _id };
+                  }
+                default:
+                  if (column.order < orderDrop) {
+                    console.log(orderDrop);
+                    return { order: column.order - 1, _id: _id };
+                  } else {
+                    console.log(orderDrop);
+                    return { order: column.order + 1, _id: _id };
+                  }
+              }
+            });
+          if (newDataColumnsPATCH) {
+            updateColumnsSet(newDataColumnsPATCH);
+          }
         }
-      }
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
     }),
-  }));
-
-  const [{ isOver }, dropRef] = useDrop(() => ({
-    accept: 'column',
-    drop: () => ({ dataColumn }),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
+    [dataColumns]
+  );
+  // todo: styles for isOver elements
+  const [{ isOver }, dropRef] = useDrop(
+    () => ({
+      accept: 'column',
+      drop: () => ({ dataColumn }),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
     }),
-  }));
+    [dataColumns]
+  );
   dragRef(dropRef(ref));
 
   const confirmDeleteColumn = () => {
@@ -132,7 +130,6 @@ export default function TasksList({
   const closeModalCreate = () => {
     setOpenModalCreate(false);
     setCurrentTaskData(null);
-    //setActionModalCreate('Add');
   };
 
   const handleAddTask = () => {
