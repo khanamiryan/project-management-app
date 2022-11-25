@@ -2,14 +2,20 @@ import { Button, ButtonGroup, Card, Typography } from '@mui/material';
 import Modal from 'components/Modal/Modal';
 import React, { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { useDeleteTaskMutation, useUpdateTasksSetMutation } from 'services/board.api';
-import { dndUpdateTasksBetweenColumn, dndUpdateTasksInsideColumn } from 'services/dndSortColumns';
+import { useUpdateTasksSetMutation } from 'services/board.api';
+import {
+  dndAddTaskToEmptyColumn,
+  dndUpdateTasksBetweenColumn,
+  dndUpdateTasksInsideColumn,
+} from 'services/dndSortColumns';
 import { ITask } from 'types/types';
 import './taskCard.scss';
 
 interface IDropResultTask {
   dataTask: ITask;
   dataTasks: ITask[];
+  isOverCurrent: boolean;
+  columnIdDrop: string;
 }
 type taskCardProps = {
   dataTask: ITask;
@@ -24,10 +30,8 @@ export default function TaskCard({
   onDelete,
 }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
-  //const [openEditModal, setOpenEditModal] = useState(false);
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
-  // const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
   const wrapperUpdateTasksSet = (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => {
     updateTasksSet(data);
@@ -39,17 +43,17 @@ export default function TaskCard({
       type: 'task',
       item: dataTask,
       end: (dataTaskDrag, monitor) => {
-        //todo: add logic to empty column
-
         const dataTaskDrop = monitor.getDropResult<IDropResultTask>()?.dataTask;
         const dataTasksDrop = monitor.getDropResult<IDropResultTask>()?.dataTasks;
+        const columnIdDrop = monitor.getDropResult<IDropResultTask>()?.columnIdDrop;
+
         if (
           dataTaskDrag &&
           dataTaskDrop &&
           dataTasksDrop &&
           dataTaskDrag._id !== dataTaskDrop._id
         ) {
-          if (dataTaskDrag.columnId === dataTaskDrop?.columnId) {
+          if (dataTaskDrag.columnId === dataTaskDrop.columnId) {
             dndUpdateTasksInsideColumn(
               dataTaskDrag,
               dataTaskDrop,
@@ -65,6 +69,8 @@ export default function TaskCard({
               wrapperUpdateTasksSet
             );
           }
+        } else if (dataTaskDrag && columnIdDrop && !dataTasksDrop) {
+          dndAddTaskToEmptyColumn(dataTask, dataTasks, columnIdDrop, wrapperUpdateTasksSet);
         }
       },
       collect: (monitor) => ({
@@ -75,12 +81,19 @@ export default function TaskCard({
   );
 
   // todo: styles for isOver Component
-  const [{ isOver }, dropRefTask] = useDrop(
+  const [{ isOver, isOverCurrent }, dropRefTask] = useDrop(
     () => ({
       accept: 'task',
-      drop: () => ({ dataTask, dataTasks }),
+      drop: (_item, monitor) => {
+        console.log('дроп из карточки', monitor.didDrop());
+        if (monitor.didDrop()) {
+          return;
+        }
+        return { dataTask, dataTasks, monitor };
+      },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
+        isOverCurrent: monitor.isOver({ shallow: true }),
       }),
     }),
     [dataTasks]
@@ -97,7 +110,6 @@ export default function TaskCard({
 
   const confirmDeleteTask = () => {
     //TODO переписать поднять в тасклист вызов deleteTask const [deleteTask] = useDeleteTaskMutation();
-    // deleteTask({ _id: _id, boardId: boardId, columnId: columnId });
     onDelete(dataTask);
     setOpenModal(false);
   };

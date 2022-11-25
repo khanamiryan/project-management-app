@@ -1,6 +1,21 @@
 import { DragSourceMonitor } from 'react-dnd';
 import { IColumn, ITask } from '../types/types';
 
+//todo: refactor: add to onDeleteTask
+export const getTasksAfterDelTask = (dataTasks: ITask[], removeTask: ITask) => {
+  return dataTasks
+    .filter((task) => task._id !== removeTask._id)
+    .map((task) => {
+      if (task.order < removeTask.order) {
+        return { _id: task._id, order: task.order, columnId: task.columnId };
+      } else {
+        return { _id: task._id, order: task.order - 1, columnId: task.columnId };
+      }
+    });
+};
+
+//todo:  refactor:  if possible combine function dndUpdateColumns dndUpdateTasksInsideColumn
+//todo: without monitor
 export const dndUpdateColumns = (
   dataColumnDrag: IColumn,
   monitor: DragSourceMonitor<IColumn, unknown>,
@@ -100,15 +115,7 @@ export const dndUpdateTasksBetweenColumn = (
   dataTasksDrop: ITask[],
   updateTasksSet: (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => void
 ) => {
-  const dataTasksAfterDrag = dataTasks
-    .filter((item) => item._id !== dataTaskDrag._id)
-    .map((task) => {
-      if (task.order < dataTaskDrag.order) {
-        return { _id: task._id, order: task.order, columnId: task.columnId };
-      } else {
-        return { _id: task._id, order: task.order - 1, columnId: task.columnId };
-      }
-    });
+  const dataTasksAfterDrag = getTasksAfterDelTask(dataTasks, dataTaskDrag);
 
   const dataTasksAfterDrop = dataTasksDrop.map((task) => {
     if (task.order < dataTaskDrop.order) {
@@ -125,6 +132,19 @@ export const dndUpdateTasksBetweenColumn = (
       order: dataTaskDrop.order,
       columnId: dataTaskDrop.columnId,
     },
+  ]);
+  updateTasksSet(setTasks);
+};
+
+export const dndAddTaskToEmptyColumn = (
+  dataTaskDrag: ITask,
+  dataTasks: ITask[],
+  columnId: string,
+  updateTasksSet: (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => void
+) => {
+  const dataTasksAfterDrag = getTasksAfterDelTask(dataTasks, dataTaskDrag);
+  const setTasks = dataTasksAfterDrag.concat([
+    { _id: dataTaskDrag._id, order: 1, columnId: columnId },
   ]);
   updateTasksSet(setTasks);
 };
