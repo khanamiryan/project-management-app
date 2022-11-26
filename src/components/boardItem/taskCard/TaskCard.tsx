@@ -1,4 +1,4 @@
-import { Card, IconButton, Typography } from '@mui/material';
+import { Box, Card, Divider, IconButton, Stack, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
 import Modal from 'components/Modal/Modal';
 import UserChip from 'components/UserChip/UserChip';
@@ -111,8 +111,8 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
               rules={{
                 required: 'title is required',
                 maxLength: {
-                  value: 20,
-                  message: 'No more then 20 letters',
+                  value: 18,
+                  message: 'No more then 18 letters',
                 },
               }}
             />
@@ -121,13 +121,8 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
               label={`Task description`}
               autoComplete={`Task description`}
               control={control}
-              rules={{
-                required: 'description is required',
-                maxLength: {
-                  value: 50,
-                  message: 'No more then 50 letters',
-                },
-              }}
+              multiline
+              maxRows={6}
             />
             <UsersSelect
               onUserSelect={onShare}
@@ -139,20 +134,34 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
       }
       default: {
         return (
-          <>
-            <Typography variant="body1">{dataTask.description}</Typography>
-            <Typography variant="body1">Creator: </Typography>
-            {ownerObj && <UserChip login={ownerObj.login} isOwner />}
+          <Stack spacing={2} minWidth={'250px'}>
+            {dataTask.description && (
+              <>
+                <Typography variant="body1">{dataTask.description}</Typography>
+                <Divider />
+              </>
+            )}
+            <Box>
+              <Typography variant="body1" component={'span'}>
+                Creator:{' '}
+              </Typography>
+              {ownerObj && <UserChip login={ownerObj.login} isOwner />}
+            </Box>
 
             {contributors.length && (
               <>
-                <Typography variant="body1">Users: </Typography>
-                {contributors.map((contributor) => (
-                  <UserChip key={contributor._id} login={contributor.login} />
-                ))}
+                <Divider />
+                <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <Typography variant="body1" component={'span'}>
+                    Users:{' '}
+                  </Typography>
+                  {contributors.map((contributor) => (
+                    <UserChip key={contributor._id} login={contributor.login} />
+                  ))}
+                </Box>
               </>
             )}
-          </>
+          </Stack>
         );
       }
     }
@@ -184,7 +193,7 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
           {description.length > 24 ? `${description.slice(0, 24)}...` : description}
         </Typography>
         <RoundUsersAvatars logins={contributors.map(({ login }) => login)} />
-        <Typography component="p"> Order:{order}</Typography>
+        {/* <Typography component="p"> Order:{order}</Typography> */}
       </Card>
       <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
         {getModalContent()}

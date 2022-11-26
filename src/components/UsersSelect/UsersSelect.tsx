@@ -89,42 +89,40 @@ export default function UsersSelect({
   };
 
   return (
-    <div>
-      <FormControl sx={{ m: 0, width: 300 }}>
-        <InputLabel id="demo-multiple-chip-label">{t('modal.board.share')}</InputLabel>
-        <Select
-          labelId="demo-multiple-chip-label"
-          id="demo-multiple-chip"
-          multiple
-          value={personName}
-          onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
-          MenuProps={MenuProps}
-        >
-          {users &&
-            users.map(({ _id, login }) => {
-              // when creating a task, the owner is available for selection, but not when creating a board
-              if (_id === currentUserId && !usersIdForSelection.length) {
-                return null;
-              }
-              if (usersIdForSelection.length && !usersIdForSelection.includes(_id)) {
-                return null;
-              }
-              return (
-                <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
-                  {login}
-                </MenuItem>
-              );
-            })}
-        </Select>
-      </FormControl>
-    </div>
+    <FormControl sx={{ m: 0, width: '100%' }}>
+      <InputLabel id="demo-multiple-chip-label">{t('modal.board.share')}</InputLabel>
+      <Select
+        labelId="demo-multiple-chip-label"
+        id="demo-multiple-chip"
+        multiple
+        value={personName}
+        onChange={handleChange}
+        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+        renderValue={(selected) => (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {selected.map((value) => (
+              <Chip key={value} label={value} />
+            ))}
+          </Box>
+        )}
+        MenuProps={MenuProps}
+      >
+        {users &&
+          users.map(({ _id, login }) => {
+            // when creating a task, the owner is available for selection, but not when creating a board
+            if (_id === currentUserId && !usersIdForSelection.length) {
+              return null;
+            }
+            if (usersIdForSelection.length && !usersIdForSelection.includes(_id)) {
+              return null;
+            }
+            return (
+              <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
+                {login}
+              </MenuItem>
+            );
+          })}
+      </Select>
+    </FormControl>
   );
 }

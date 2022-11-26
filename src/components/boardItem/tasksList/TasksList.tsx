@@ -151,8 +151,8 @@ export default function TasksList({
               rules={{
                 required: 'title is required',
                 maxLength: {
-                  value: 20,
-                  message: 'No more then 20 letters',
+                  value: 18,
+                  message: 'No more then 18 letters',
                 },
               }}
             />
@@ -161,13 +161,8 @@ export default function TasksList({
               label={`Task description`}
               autoComplete={`Task description`}
               control={control}
-              rules={{
-                required: 'description is required',
-                maxLength: {
-                  value: 50,
-                  message: 'No more then 50 letters',
-                },
-              }}
+              multiline
+              maxRows={6}
             />
             <UsersSelect
               onUserSelect={onShare}
