@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import store from './store/store';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { LinkProps } from '@mui/material/Link';
@@ -40,9 +42,11 @@ root.render(
     <BrowserRouter>
       <Provider store={store({})}>
         <ThemeProvider theme={theme}>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
+          <DndProvider backend={HTML5Backend}>
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </DndProvider>
         </ThemeProvider>
       </Provider>
     </BrowserRouter>

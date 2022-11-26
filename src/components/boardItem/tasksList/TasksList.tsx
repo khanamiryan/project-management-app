@@ -1,18 +1,20 @@
 import { Box, Button, ButtonGroup, Card, Input } from '@mui/material';
 import { Stack } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { IColumn, ITask } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
 import {
   useDeleteTaskMutation,
+  useGetColumnsQuery,
   useUpdateColumnMutation,
+  useUpdateColumnsSetMutation,
   useUpdateTasksSetMutation,
-  //useAddTaskMutation,
-  //useGetTasksByColumnQuery,
 } from './../../../services/board.api';
 import Modal from 'components/Modal/Modal';
 import ModalCreate from '../ModalCreate/ModalCreate';
+import { useDrag, useDrop } from 'react-dnd';
+import { dndUpdateColumns } from 'services/dndSortColumns';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -35,10 +37,69 @@ export default function TasksList({
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  // const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumn] = useUpdateColumnMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
+  const [updateColumnsSet] = useUpdateColumnsSetMutation();
+  const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
+  const wrapperUpdateColumnsSet = (data: Pick<IColumn, '_id' | 'order'>[]) => {
+    updateColumnsSet(data);
+  };
+
+  const ref = useRef(null);
+
+  // todo: styles for isDragging components
+
+  const [{ isDragging }, dragRef] = useDrag(
+    () => ({
+      type: 'column',
+      item: dataColumn,
+      end: (dataColumnDrag, monitor) => {
+        dndUpdateColumns(dataColumnDrag, monitor, dataColumns, wrapperUpdateColumnsSet);
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }),
+    [dataColumns]
+  );
+  // todo: styles for isOver elements
+  const [{ isOver }, dropRef] = useDrop(
+    () => ({
+      accept: 'column',
+      drop: () => ({ dataColumn }),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    [dataColumns]
+  );
+
+  // todo добавление карточки в пустой столбец
+  const [{ isOverCard, isOverCurrentCard }, dropRefCard] = useDrop(
+    () => ({
+      accept: 'task',
+      drop: (_itemDrag, monitor) => {
+        console.log('дроп из списка', monitor.didDrop());
+        console.log('_item', _itemDrag);
+        if (monitor.didDrop()) {
+          console.log('дроп из карточки monitor diddrop');
+          return;
+        }
+        console.log('дроп из карточки monitor NOT diddrop', dataTasks);
+
+        return { dataTasks, columnIdDrop: columnId };
+      },
+      collect: (monitor) => ({
+        isOverCard: !!monitor.isOver(),
+        isOverCurrentCard: !!monitor.isOver({ shallow: true }),
+      }),
+    }),
+    [dataColumns]
+  );
+
+  dragRef(dropRef(ref));
+  //dropRefCard(dragRef(dropRef(ref)));
 
   const confirmDeleteColumn = () => {
     onDeleteColumn(dataColumn);
@@ -57,7 +118,6 @@ export default function TasksList({
   const closeModalCreate = () => {
     setOpenModalCreate(false);
     setCurrentTaskData(null);
-    //setActionModalCreate('Add');
   };
 
   const handleAddTask = () => {
@@ -103,7 +163,7 @@ export default function TasksList({
 
   return (
     <>
-      <Card className="board-column" variant="outlined">
+      <Card className="board-column" variant="outlined" ref={ref}>
         <Box className="column-name">
           {!editTitleColumn && (
             <Stack
@@ -132,18 +192,28 @@ export default function TasksList({
           )}
         </Box>
 
-        <Stack className="tasks-list" direction={'column'} spacing={1}>
+        <Stack className="tasks-list" direction={'column'} spacing={1} ref={dropRefCard}>
           {dataTasks &&
-            dataTasks.map((task) => {
-              return (
-                <TaskCard
-                  key={task._id}
-                  dataTask={task}
-                  editTask={editTask}
-                  onDelete={onDeleteTask}
-                ></TaskCard>
-              );
-            })}
+            [...dataTasks]
+              .sort((a, b) => {
+                if (a.order > b.order) {
+                  return 1;
+                } else {
+                  return -1;
+                }
+              })
+              .map((task) => {
+                return (
+                  <TaskCard
+                    key={task._id}
+                    dataTask={task}
+                    dataTasks={dataTasks}
+                    editTask={editTask}
+                    onDelete={onDeleteTask}
+                    //ref={refTask}
+                  ></TaskCard>
+                );
+              })}
         </Stack>
         <Button variant="contained" fullWidth onClick={handleAddTask}>
           Add task

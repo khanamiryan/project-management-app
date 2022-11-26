@@ -1,6 +1,6 @@
-import { Button, ButtonGroup } from '@mui/material';
+import { Alert, Button, CircularProgress } from '@mui/material';
 import { Box, Stack } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './boardItem.scss';
 import TasksList from './tasksList/TasksList';
 import {
@@ -9,37 +9,40 @@ import {
   useGetTasksByBoardIdQuery,
   useUpdateColumnsSetMutation,
 } from './../../services/board.api';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
-import { useGetBoardByIdQuery, useGetBoardsSetByUserIdQuery } from 'services/boards.api';
+import { useGetBoardByIdQuery } from 'services/boards.api';
 import { IColumn } from 'types/types';
+import { t } from 'i18next';
+import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 
 export default function BoardItem(): JSX.Element {
-  // todo: loader, toaster,renavigate
-  /*
-    const navigate = useNavigate();
-  const goHome = () => navigate('/', { replace: true });
-  useEffect(() => {
-    if (!dataColumns) {
-      goHome();
-    }
-  }, []);*/
-  const { id: idBoard } = useParams();
+  // todo: loader, toast
+  const navigate = useNavigate();
+  const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const { id } = useAppSelector(selectUser);
+  const { id: userId } = useAppSelector(selectUser);
   const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumsSet] = useUpdateColumnsSetMutation();
 
-  // const { data: dataBoards } = useGetBoardsSetByUserIdQuery(id);
-  // const dataCurrentBoard = dataBoards?.find((item) => item._id === idBoard);
-  const { data: dataCurrentBoard } = useGetBoardByIdQuery(idBoard as string);
-  const { data: dataColumns } = useGetColumnsQuery(idBoard as string);
-  const { data: dataTasksByBoardId } = useGetTasksByBoardIdQuery(idBoard || '');
+  const {
+    data: dataCurrentBoard,
+    isLoading: isBoardLoading,
+    isError: isBoardError,
+  } = useGetBoardByIdQuery(idBoard);
+  const {
+    data: dataColumns,
+    isLoading: isColumnsLoading,
+    isError: isColumnsError,
+  } = useGetColumnsQuery(idBoard);
+  const {
+    data: dataTasksByBoardId,
+    isLoading: isTasksLoading,
+    isError: isTasksError,
+  } = useGetTasksByBoardIdQuery(idBoard);
 
-  const handleEditBoard = () => {};
-  const handleDeleteBoard = () => {};
   const handleAddColumn = () => {
     setOpenModalCreate(true);
   };
@@ -65,47 +68,53 @@ export default function BoardItem(): JSX.Element {
     }
   };
 
+  useEffect(() => {
+    const isMember = () => {
+      return (
+        dataCurrentBoard?.owner === userId || dataCurrentBoard?.users.some((id) => id === userId)
+      );
+    };
+
+    if (dataCurrentBoard === null || (dataCurrentBoard && !isMember())) {
+      navigate('/boards/');
+    }
+  });
+
   return (
     <>
       <Box className="board-header">
-        <Stack
-          className="board-nav"
-          direction={{ xs: 'column', sm: 'row' }}
-          spacing={{ xs: 1, sm: 2, md: 4 }}
-        >
-          <h1 className="board-title">
-            {dataCurrentBoard?.title || '***** - You do not own this board'}
-          </h1>
-          <Button variant="contained" color="warning">
-            Description
-          </Button>
-          <Box>
-            <ButtonGroup>
-              <Button variant="contained" color="warning" onClick={handleEditBoard}>
-                Edit
-              </Button>
-              <Button variant="contained" color="warning" onClick={handleDeleteBoard}>
-                Delete
-              </Button>
-            </ButtonGroup>
-          </Box>
-        </Stack>
+        {isBoardLoading && <CircularProgress size={80} />}
+        {isBoardError && (
+          <Alert variant="outlined" severity="error">
+            {t('boards.serverError')}
+          </Alert>
+        )}
+        {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
       </Box>
+
       <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
         {dataColumns &&
-          dataColumns.map((dataColumn) => {
-            const tasksByColumn = dataTasksByBoardId?.filter(
-              (item) => item.columnId === dataColumn._id
-            );
-            return (
-              <TasksList
-                key={dataColumn._id}
-                dataColumn={dataColumn}
-                dataTasks={tasksByColumn}
-                onDeleteColumn={onDeleteColumn}
-              />
-            );
-          })}
+          [...dataColumns]
+            .sort((a, b) => {
+              if (a.order > b.order) {
+                return 1;
+              } else {
+                return -1;
+              }
+            })
+            .map((dataColumn) => {
+              const tasksByColumn = dataTasksByBoardId?.filter(
+                (item) => item.columnId === dataColumn._id
+              );
+              return (
+                <TasksList
+                  key={dataColumn._id}
+                  dataColumn={dataColumn}
+                  dataTasks={tasksByColumn}
+                  onDeleteColumn={onDeleteColumn}
+                />
+              );
+            })}
 
         <Box className="board-add-list board-column">
           <Button
