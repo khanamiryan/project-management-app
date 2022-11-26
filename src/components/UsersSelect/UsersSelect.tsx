@@ -12,8 +12,12 @@ import { useGetUsersQuery } from 'services/users.api';
 import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 
-type UsersSelectProps = { onUserSelect: (logins: string[]) => void };
+type UsersSelectProps = {
+  selectedUsersId?: string[];
+  onUserSelect: (logins: string[]) => void;
+};
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -39,17 +43,35 @@ const getUserIdByLogin = (login: string, users: User[]) => {
   return users.find((user) => user.login === login)?._id;
 };
 
-export default function UsersSelect({ onUserSelect }: UsersSelectProps) {
+export default function UsersSelect({ selectedUsersId = [], onUserSelect }: UsersSelectProps) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState<string[]>([]);
-  const { data: users } = useGetUsersQuery('');
+  const { data: users, isSuccess } = useGetUsersQuery('');
+
+  const [personName, setPersonName] = useState<string[]>([]);
   const { id: currentUserId } = useAppSelector(selectUser);
+
+  useEffect(() => {
+    if (isSuccess && selectedUsersId.length) {
+      const selectedNames = users
+        ? selectedUsersId.reduce((acc: string[], id) => {
+            const name = users.find(({ _id }) => id === _id)?.name;
+            if (name) {
+              acc = [...acc, name];
+            }
+            return acc;
+          }, [])
+        : [];
+      console.log('useEffect');
+      setPersonName(selectedNames);
+    }
+  }, [isSuccess, selectedUsersId, users]);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
       target: { value },
     } = event;
+    console.log(value);
     setPersonName(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value

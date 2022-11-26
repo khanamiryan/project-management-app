@@ -64,3 +64,5 @@ export type DecodedToken = {
   iat: number;
   exp: number;
 };
+
+export type BoardFormFields = { title: string; users: string[] };
