@@ -3,15 +3,13 @@ import InputText from 'components/InputText/InputText';
 import Modal from 'components/Modal/Modal';
 import UserChip from 'components/UserChip/UserChip';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useUpdateTaskMutation } from 'services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
 import { ITask, TaskFormFields, User } from 'types/types';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-import React, { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useUpdateTasksSetMutation } from 'services/board.api';
 import {
@@ -19,7 +17,6 @@ import {
   dndUpdateTasksBetweenColumn,
   dndUpdateTasksInsideColumn,
 } from 'services/dndSortColumns';
-import { ITask } from 'types/types';
 import './taskCard.scss';
 import RoundUsersAvatars from 'components/RoundUsersAvatars/RoundUsersAvatars';
 
@@ -263,7 +260,8 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   return (
     <>
       <Card
-        ref={refTask} className="task-card"
+        ref={refTask}
+        className="task-card"
         variant="outlined"
         onClick={handleShowTask}
         sx={{ position: 'relative' }}
