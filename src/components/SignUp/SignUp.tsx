@@ -1,17 +1,17 @@
 import React from 'react';
 import './SignUp.scss';
-import { Box, Button, Link } from '@mui/material';
+import { Button, Link, Card, CardContent, Avatar, Typography } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
 
 import { useAppDispatch } from '../../store/redux.hooks';
-import { useNavigate } from 'react-router-dom';
 
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
 import { useSignUpUserMutation } from '../../services/auth.api';
 import { showToast } from '../../store/toastSlice';
 import { ISignUpForm } from '../../types/types';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 
 const SignUp = () => {
   const { handleSubmit, control, setError } = useForm<ISignUpForm>({
@@ -25,7 +25,6 @@ const SignUp = () => {
   const [signUpUser, { isLoading }] = useSignUpUserMutation();
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<ISignUpForm> = async (data) => {
     await signUpUser(data)
@@ -45,8 +44,20 @@ const SignUp = () => {
   };
   const { t } = useTranslation();
   return (
-    <Box component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
-      <div>
+    <Card component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
+      <CardContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <HowToRegIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          {t('signUpTitle')}
+        </Typography>{' '}
         <InputText
           control={control}
           margin="normal"
@@ -55,9 +66,8 @@ const SignUp = () => {
           autoComplete="name"
           autoFocus
           rules={rules.name}
+          fullWidth
         />
-      </div>
-      <div>
         <InputText
           control={control}
           margin="normal"
@@ -65,9 +75,8 @@ const SignUp = () => {
           name="login"
           autoComplete="login"
           rules={rules.login}
+          fullWidth
         />
-      </div>
-      <div>
         <InputText
           control={control}
           margin="normal"
@@ -76,17 +85,24 @@ const SignUp = () => {
           type="password"
           autoComplete="current-password"
           rules={rules.password}
+          fullWidth
         />
-      </div>
-      <Button type="submit" variant="contained" disabled={isLoading}>
-        {t('form.fields.signup')} {isLoading && '...'}
-      </Button>
-      <div>
-        <Link href="/login" margin="normal">
-          {t('form.haveAccount')}
-        </Link>
-      </div>
-    </Box>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={isLoading}
+          sx={{ mb: 2, mt: 1 }}
+          fullWidth
+        >
+          {t('form.fields.signup')} {isLoading && '...'}
+        </Button>
+        <div>
+          <Link href="/login" margin="normal">
+            {t('form.haveAccount')}
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

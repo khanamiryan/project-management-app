@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import './SignIn.scss';
-import { Box, Button, Link } from '@mui/material';
+import { Avatar, Box, Button, Link, Typography, Card, CardContent } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
 import { useAppDispatch } from '../../store/redux.hooks';
-
+import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from 'store/toastSlice';
 
@@ -24,9 +24,7 @@ const SignIn = () => {
     },
   });
   const { t } = useTranslation();
-
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { loggedIn } = useUser();
 
   useEffect(() => {
@@ -47,17 +45,29 @@ const SignIn = () => {
   };
 
   return (
-    <Box component="form" className={'SignInForm'} onSubmit={handleSubmit(onSubmit)}>
-      <div>
+    <Card component="form" onSubmit={handleSubmit(onSubmit)} className="SignInForm">
+      <CardContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LoginIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          {t('signInTitle')}
+        </Typography>
         <InputText
           name="login"
           label={t('form.fields.login')}
           autoComplete="login"
           control={control}
           rules={rules.login}
+          fullWidth
         />
-      </div>
-      <div>
+
         <InputText
           name="password"
           control={control}
@@ -65,20 +75,26 @@ const SignIn = () => {
           margin="normal"
           label={t('form.fields.password')}
           type="password"
+          fullWidth
           autoComplete="password"
         />
-      </div>
 
-      <Button type="submit" variant="contained" disabled={isLoading}>
-        {t('form.fields.signIn')}
-        {isLoading && '...'}
-      </Button>
-      <div>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={isLoading}
+          fullWidth
+          sx={{ mb: 2, mt: 1 }}
+        >
+          {t('form.fields.signIn')}
+          {isLoading && '...'}
+        </Button>
+
         <Link href="/registration" margin="normal">
           {t('form.noAccount')}
         </Link>
-      </div>
-    </Box>
+      </CardContent>
+    </Card>
   );
 };
 

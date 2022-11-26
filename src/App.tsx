@@ -1,7 +1,7 @@
 import Board from 'pages/board/Board';
 import Boards from 'pages/boards/Boards';
 import Layout from 'pages/layout/Layout';
-import MainPage from 'pages/mailPage/MainPage';
+import MainPage from 'pages/mainPage/MainPage';
 import NotFound from 'pages/notFound/NotFound';
 import Profile from 'pages/profile/Profile';
 import SignIn from 'pages/signIn/SignIn';
@@ -19,6 +19,16 @@ function App() {
   const user = useUser();
   const { isLoading } = useUserInit(); //may be some memo or useeffect or change the place?
 
+  // const pages = [
+  //   { name: t('menu.mainPage'), url: '/' },
+  //   { name: t('menu.boards'), url: '/boards' },
+  //   { name: t('menu.profilePage'), url: '/profile' },
+  //   { name: t('menu.signIn'), url: '/login' },
+  //   { name: t('menu.signUp'), url: '/registration' },
+  // ];
+  // console.log(pages);
+  //
+  //
   return (
     <>
       <Routes>

@@ -6,15 +6,44 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { createTheme, ThemeProvider } from '@mui/material';
+import { LinkProps } from '@mui/material/Link';
+import LinkRouter from './utils/LinkRouter';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const theme = createTheme({
+  components: {
+    MuiLink: {
+      defaultProps: {
+        component: LinkRouter,
+      } as LinkProps,
+    },
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: LinkRouter,
+      },
+    },
+  },
+  palette: {
+    primary: {
+      main: '#233456',
+      contrastText: '#fafafa',
+    },
+    secondary: {
+      main: '#334561',
+      contrastText: '#fafafa',
+    },
+  },
+});
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store({})}>
-        <ErrorBoundary>
-          <App />
-        </ErrorBoundary>
+        <ThemeProvider theme={theme}>
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
+        </ThemeProvider>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>

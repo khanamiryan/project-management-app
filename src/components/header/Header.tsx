@@ -1,118 +1,108 @@
 import {
   AppBar,
-  Button,
   ButtonGroup,
-  Container,
-  FormControl,
-  NativeSelect,
   Toolbar,
   Typography,
+  useScrollTrigger,
+  Box,
+  Avatar,
 } from '@mui/material';
-import React, { ChangeEvent, useState } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
+import React, { useState } from 'react';
 import './header.scss';
-import { useNavigate } from 'react-router-dom';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
-import { selectUser, signOutReducer } from '../../store/userSlice';
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
+import { signOutReducer } from '../../store/userSlice';
+import { useAppDispatch } from '../../store/redux.hooks';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 import { api } from '../../services/api';
 import { showToast } from '../../store/toastSlice';
+import HeaderMenu from './Menu/Menu';
+import TranslateIcon from '@mui/icons-material/Translate';
+import { useUser } from '../../hooks/useUser';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Header = () => {
-  const navigate = useNavigate();
-  const goHome = () => navigate('/');
-  const goBoards = () => navigate('/boards');
-  const goBetaBoard = () => navigate('/boards/636cd10e96274bebf760a073');
-  const goProfile = () => navigate('/profile');
-  const goSignIn = () => navigate('/login');
-  const goSignUp = () => navigate('/registration');
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const onClickAddBoard = () => {
-    setModalOpen(true);
-  };
-  const onModalClose = () => setModalOpen(false);
-
-  const user = useAppSelector(selectUser);
+  const user = useUser();
   const dispatch = useAppDispatch();
+  const [modalOpen, setModalOpen] = useState(false);
 
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 100,
+  });
   const { t } = useTranslation();
+
   const handleSignOut = () => {
     dispatch(signOutReducer());
     dispatch(api.util.resetApiState());
-    dispatch(showToast({ type: 'success', message: 'Successfully signed out' }));
+    dispatch(showToast({ type: 'success', message: t('Successfully signed out') }));
+  };
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
   };
 
-  const changeLanguage = (e: ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(e.target.value);
+  const onClickAddBoard = () => {
+    setModalOpen(true);
   };
+  const pages = [
+    // { name: t('menu.mainPage'), url: '/' },
+    { name: t('menu.boards'), url: '/boards' },
+    // { name: 'Beta board', url: '/boards/636cd10e96274bebf760a073' },
+    { name: t('menu.profilePage'), url: '/profile' },
+    { name: 'Add board', onClick: onClickAddBoard },
+  ];
+  const userMenu = [
+    { name: t('menu.signIn'), url: '/login' },
+    { name: t('menu.signUp'), url: '/registration' },
+  ];
+
+  const userAuthorizedMenu = [
+    { name: t('Go to Main Page'), url: '/' },
+    {
+      name: t('menu.signOut'),
+      icon: <LogoutIcon sx={{ ml: 0.5 }} />,
+      onClick: handleSignOut,
+    },
+  ];
+
+  const langs = [
+    { name: 'ru', onClick: () => changeLanguage('ru') },
+    { name: 'en', onClick: () => changeLanguage('en') },
+  ];
+
+  const onModalClose = () => setModalOpen(false);
+
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar
+        elevation={trigger ? 3 : 0}
+        color={trigger ? 'secondary' : 'primary'}
+        position="sticky"
+        sx={{ mb: 2 }}
+        //sx={{ mb: 2, py: trigger ? 0.1 : 1 }}
+      >
         <Toolbar component="nav">
-          <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h6" component="h3">
-              My Project Name
-            </Typography>
-            <ButtonGroup variant="outlined" aria-label="outlined button group" sx={{ ml: 'auto' }}>
-              <Button color="inherit" onClick={goHome}>
-                {t('menu.mainPage')}
-              </Button>
-              {user.loggedIn && (
-                <Button color="inherit" onClick={goBoards}>
-                  {t('menu.boards')}
-                </Button>
-              )}
-              <Button color="inherit" onClick={onClickAddBoard}>
-                {t('menu.addBoard')}
-              </Button>
-              <Button color="inherit" onClick={goBetaBoard}>
-                Beta Board
-              </Button>
-              <Button color="inherit" onClick={goProfile}>
-                {t('menu.profilePage')}
-              </Button>
+          <Typography variant="h6" component="h3">
+            Super boards
+          </Typography>
+          {user.loggedIn && <HeaderMenu items={pages} icon={<MenuIcon />} />}
+          <Box sx={{ flexGrow: 1, display: 'flex' }}>
+            <ButtonGroup sx={{ ml: 'auto' }} variant={'text'}>
+              <HeaderMenu
+                items={user.loggedIn ? userAuthorizedMenu : userMenu}
+                icon={<Avatar alt={user?.name} />}
+              />
             </ButtonGroup>
-            {!user.loggedIn && (
-              <ButtonGroup
-                variant="outlined"
-                aria-label="outlined button group"
-                sx={{ ml: 'auto' }}
-              >
-                <Button color="inherit" onClick={goSignIn}>
-                  {t('menu.signIn')}
-                </Button>
-                <Button color="inherit" onClick={goSignUp}>
-                  {t('menu.signUp')}
-                </Button>
-              </ButtonGroup>
-            )}
-            <FormControl>
-              <NativeSelect
-                onChange={changeLanguage}
-                defaultValue={i18n.language}
-                inputProps={{
-                  name: 'lang',
-                  id: 'uncontrolled-native',
-                }}
-                sx={{
-                  ml: 2,
-                  pl: '10px',
-                  borderRadius: '4px',
-                  backgroundColor: '#FFFFFF',
-                }}
-              >
-                <option value={'en'}>en</option>
-                <option value={'ru'}>ru</option>
-              </NativeSelect>
-            </FormControl>
-            {user.loggedIn && (
-              <Button color="inherit" onClick={handleSignOut}>
-                {t('menu.signOut')}
-              </Button>
-            )}
-          </Container>
+          </Box>
+          <Box>
+            <HeaderMenu
+              items={langs}
+              icon={<TranslateIcon sx={{ mr: 0.5 }} />}
+              text={i18n.language.toUpperCase()}
+              alwaysIcon={true}
+            />
+          </Box>
         </Toolbar>
       </AppBar>
       {modalOpen && <CreateBoardModal onModalClose={onModalClose} open={modalOpen} />}

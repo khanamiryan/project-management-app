@@ -1,29 +1,31 @@
-.footer{
-  position: fixed;
-  bottom: 0;
-  padding: 5px;
-  background-color: #1976d2;
-  min-height: 48px;
-  max-height: 64px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+.footer {
+    position: sticky;
+  //  bottom: 0;
+  //  padding: 5px;
+  //  background-color: #1976d2;
+  //  min-height: 48px;
+  //  max-height: 64px;
+  //  display: flex;
+  //  justify-content: space-between;
+  //  width: 100%;
+  //
+  //  .footer-link{
+  //    max-width: 50px;
+  //    color: #fff;
+  //
+  //  }
+  //  .footer-year{
+  //    color: #fff;
+  //  }
+  //  a{
+  //    color: #fff;
+  //  }
+  .icon-rsschool {
+    height: 30px;
+    width: 100px;
+  }
 
-  .footer-link{
-    max-width: 50px;
-    color: #fff;
-
-  }
-  .footer-year{
-    color: #fff;
-  }
-  a{
-    color: #fff;
-  }
-.icon-rsschool{
-  height: 30px;
-  width: 100px;
+  //
 }
 
-}
-
+//
