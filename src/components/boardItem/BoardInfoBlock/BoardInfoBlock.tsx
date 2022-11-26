@@ -2,7 +2,7 @@ import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import React, { useEffect, useState } from 'react';
-import { Board, BoardFormFields } from 'types/types';
+import { Board, BoardFormFields, User } from 'types/types';
 import { useTranslation } from 'react-i18next';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
@@ -94,9 +94,10 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   }, [dispatch, isOwner, isSuccess]);
 
   const ownerObj = allUsers?.find(({ _id }) => _id === board.owner);
-  const contributors = board.users.map((contributorId) =>
-    allUsers?.find(({ _id }) => contributorId === _id)
-  );
+  const contributors = board.users.reduce((acc: User[], userId) => {
+    const contributor = allUsers?.find(({ _id }) => userId === _id);
+    return contributor ? [...acc, contributor] : acc;
+  }, []);
 
   return (
     <>
@@ -123,11 +124,9 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
         <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
           <UserChip login={ownerObj.login} isOwner />
           {contributors.length &&
-            contributors.map((contributor) => {
-              if (contributor) {
-                return <UserChip key={contributor._id} login={contributor.login} />;
-              }
-            })}
+            contributors.map((contributor) => (
+              <UserChip key={contributor._id} login={contributor.login} />
+            ))}
         </Stack>
       )}
 

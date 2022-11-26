@@ -8,10 +8,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useUpdateTaskMutation } from 'services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
-import { ITask, TaskFormFields } from 'types/types';
+import { ITask, TaskFormFields, User } from 'types/types';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import './taskCard.scss';
+import RoundUsersAvatars from 'components/RoundUsersAvatars/RoundUsersAvatars';
 
 type ModalType = 'delete' | 'edit' | 'view';
 
@@ -64,9 +65,10 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
   };
 
   const ownerObj = allUsers?.find(({ _id }) => _id === dataTask.userId);
-  const contributors = dataTask.users.map((contributorId) =>
-    allUsers?.find(({ _id }) => contributorId === _id)
-  );
+  const contributors = dataTask.users.reduce((acc: User[], userId) => {
+    const contributor = allUsers?.find(({ _id }) => userId === _id);
+    return contributor ? [...acc, contributor] : acc;
+  }, []);
 
   const getModalProps = () => {
     switch (modalType) {
@@ -145,11 +147,9 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
             {contributors.length && (
               <>
                 <Typography variant="body1">Users: </Typography>
-                {contributors.map((contributor) => {
-                  if (contributor) {
-                    return <UserChip key={contributor._id} login={contributor.login} />;
-                  }
-                })}
+                {contributors.map((contributor) => (
+                  <UserChip key={contributor._id} login={contributor.login} />
+                ))}
               </>
             )}
           </>
@@ -177,12 +177,13 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
         >
           <DeleteIcon fontSize="small" />
         </IconButton>
-        <Typography component="h3" mt={1} variant={'body1'}>
+        <Typography component="h3" mt={1} variant={'h6'}>
           {title}
         </Typography>
-        <Typography component="p" variant={'body2'}>
-          {description}
+        <Typography component="p" variant={'body1'}>
+          {description.length > 24 ? `${description.slice(0, 24)}...` : description}
         </Typography>
+        <RoundUsersAvatars logins={contributors.map(({ login }) => login)} />
         <Typography component="p"> Order:{order}</Typography>
       </Card>
       <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
