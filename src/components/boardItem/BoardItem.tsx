@@ -1,4 +1,4 @@
-import { Alert, Button, ButtonGroup, CircularProgress } from '@mui/material';
+import { Alert, Button, CircularProgress } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import './boardItem.scss';
@@ -94,19 +94,27 @@ export default function BoardItem(): JSX.Element {
 
       <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
         {dataColumns &&
-          dataColumns.map((dataColumn) => {
-            const tasksByColumn = dataTasksByBoardId?.filter(
-              (item) => item.columnId === dataColumn._id
-            );
-            return (
-              <TasksList
-                key={dataColumn._id}
-                dataColumn={dataColumn}
-                dataTasks={tasksByColumn}
-                onDeleteColumn={onDeleteColumn}
-              />
-            );
-          })}
+          [...dataColumns]
+            .sort((a, b) => {
+              if (a.order > b.order) {
+                return 1;
+              } else {
+                return -1;
+              }
+            })
+            .map((dataColumn) => {
+              const tasksByColumn = dataTasksByBoardId?.filter(
+                (item) => item.columnId === dataColumn._id
+              );
+              return (
+                <TasksList
+                  key={dataColumn._id}
+                  dataColumn={dataColumn}
+                  dataTasks={tasksByColumn}
+                  onDeleteColumn={onDeleteColumn}
+                />
+              );
+            })}
 
         <Box className="board-add-list board-column">
           <Button

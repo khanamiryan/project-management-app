@@ -29,8 +29,11 @@
   position: relative;
   margin: 10px 0;
   overflow-y:auto;
+  min-height: 30px;
   max-height: calc(100vh - 400px);
   padding: 0 5px;
+  
+
 
 }
 
