@@ -41,7 +41,7 @@ export default function TasksList({
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTasksSet] = useUpdateTasksSetMutation();
   const [addTask] = useAddTaskMutation();
-  const { handleSubmit, control } = useForm<TaskFormFields>({
+  const { handleSubmit, control, reset } = useForm<TaskFormFields>({
     defaultValues: {
       title: '',
       description: '',
@@ -115,6 +115,7 @@ export default function TasksList({
       users: users,
     });
     closeModal();
+    reset();
   };
 
   const getModalProps = () => {

@@ -54,6 +54,7 @@ i18n
             toast: {
               onSuccesDelete: 'You deleted the board',
               onSuccesLeave: 'You left the board',
+              onSuccesUpdate: 'Saved',
             },
           },
           modal: {
@@ -120,6 +121,7 @@ i18n
             toast: {
               onSuccesDelete: 'Вы удалили доску',
               onSuccesLeave: 'Вы покинули доску',
+              onSuccesUpdate: 'Сохранено',
             },
           },
           modal: {

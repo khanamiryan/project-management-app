@@ -56,7 +56,6 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
-  const isSuccess = deleteResult.isSuccess;
 
   const onClickDelete = () => {
     setModalType('delete');
@@ -83,15 +82,22 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (deleteResult.isSuccess) {
       dispatch(
         showToast({
-          message: t(isOwner ? 'boards.toast.onSuccesDelete' : 'boards.toast.onSuccesLeave'),
+          message: t('boards.toast.onSuccesDelete'),
+          type: 'success',
+        })
+      );
+    } else if (updateResult.isSuccess) {
+      dispatch(
+        showToast({
+          message: t(isOwner ? 'boards.toast.onSuccesUpdate' : 'boards.toast.onSuccesLeave'),
           type: 'success',
         })
       );
     }
-  }, [dispatch, isOwner, isSuccess]);
+  }, [deleteResult.isSuccess, updateResult.isSuccess, dispatch, isOwner, t]);
 
   const ownerObj = allUsers?.find(({ _id }) => _id === board.owner);
   const contributors = board.users.reduce((acc: User[], userId) => {
@@ -110,9 +116,11 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
           {board.title}
         </Typography>
         <ButtonGroup>
-          <IconButton onClick={onClickEdit}>
-            <EditIcon fontSize="large" />
-          </IconButton>
+          {isOwner && (
+            <IconButton onClick={onClickEdit}>
+              <EditIcon fontSize="large" />
+            </IconButton>
+          )}
           <IconButton onClick={onClickDelete}>
             <DeleteIcon fontSize="large" />
           </IconButton>
