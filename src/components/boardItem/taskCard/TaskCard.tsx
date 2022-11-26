@@ -123,6 +123,9 @@ export default function TaskCard({ dataTask, onDelete }: taskCardProps): JSX.Ele
               control={control}
               multiline
               maxRows={6}
+              rules={{
+                required: 'description is required',
+              }}
             />
             <UsersSelect
               onUserSelect={onShare}

@@ -163,6 +163,9 @@ export default function TasksList({
               control={control}
               multiline
               maxRows={6}
+              rules={{
+                required: 'description is required',
+              }}
             />
             <UsersSelect
               onUserSelect={onShare}
