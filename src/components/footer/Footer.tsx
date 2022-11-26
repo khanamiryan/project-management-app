@@ -15,8 +15,7 @@ const Footer = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: (theme) =>
-          theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800],
+        backgroundColor: (theme) => theme.palette.grey[800],
       }}
       // elevation={3}
     >

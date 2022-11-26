@@ -15,7 +15,10 @@ export default function Layout(): JSX.Element {
     <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', flexGrow: 1 }}>
       <CssBaseline enableColorScheme />
       <Header />
-      <Container component={'main'}>
+      <Container
+        component={'main'}
+        sx={{ position: 'relative', flexDirection: 'column', flexGrow: 1 }}
+      >
         <Outlet />
       </Container>
       <Toast {...state} />
