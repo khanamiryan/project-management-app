@@ -7,7 +7,6 @@ export default function SignUpRoute(): JSX.Element {
   const { t } = useTranslation();
   return (
     <>
-      <h2>{t('signUpTitle')}</h2>
       <SignUp />
     </>
   );

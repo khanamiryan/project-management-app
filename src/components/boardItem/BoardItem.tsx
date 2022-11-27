@@ -81,7 +81,7 @@ export default function BoardItem(): JSX.Element {
   });
 
   return (
-    <>
+    <Box className={'board'}>
       <Stack className="board-header">
         {(isBoardLoading || isTasksLoading || isColumnsLoading) && <CircularProgress size={80} />}
         {isBoardError && (
@@ -92,7 +92,16 @@ export default function BoardItem(): JSX.Element {
         {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
       </Stack>
 
-      <Stack className="board-body" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
+      <Stack
+        className="board-body"
+        direction="row"
+        spacing={{ xs: 1, sm: 2, md: 3 }}
+        sx={{
+          margin: 0,
+          display: 'flex',
+          maxHeight: '100%',
+        }}
+      >
         {dataColumns &&
           [...dataColumns]
             .sort((a, b) => {
@@ -137,6 +146,6 @@ export default function BoardItem(): JSX.Element {
           closeModal={() => setOpenModalCreate(false)}
         ></ModalCreate>
       )}
-    </>
+    </Box>
   );
 }

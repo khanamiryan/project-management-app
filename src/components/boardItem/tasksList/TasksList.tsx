@@ -245,62 +245,64 @@ export default function TasksList({
 
   return (
     <>
-      <Card className="board-column" variant="outlined" ref={ref}>
-        <Box className="column-name">
-          {!editTitleColumn && (
-            <Stack
-              className="column-title"
-              direction="row"
-              spacing={2}
-              onClick={() => setEditTitleColumn(!editTitleColumn)}
-            >
-              <Typography variant={'h5'}>{title}</Typography>{' '}
-              <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
-              <p>order: {dataColumn.order}</p>
-            </Stack>
-          )}
-          {editTitleColumn && (
-            <Stack className="column-title-edit" direction="row" spacing={2}>
-              <Input
-                onChange={(e) => {
-                  setNewColumnTitle(e.currentTarget.value);
-                }}
-                value={newColumnTitle}
-              ></Input>
-              <ButtonGroup>
-                <Button onClick={handleUpdateColumn}>update</Button>
-                <Button onClick={() => setEditTitleColumn(!editTitleColumn)}>no</Button>
-              </ButtonGroup>
-            </Stack>
-          )}
-        </Box>
+      <Box className="board-column">
+        <Card variant="outlined" ref={ref} className="board-column-inner">
+          <Box className="column-name">
+            {!editTitleColumn && (
+              <Stack
+                className="column-title"
+                direction="row"
+                spacing={2}
+                onClick={() => setEditTitleColumn(!editTitleColumn)}
+              >
+                <Typography variant={'h5'}>{title}</Typography>{' '}
+                <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
+                <p>order: {dataColumn.order}</p>
+              </Stack>
+            )}
+            {editTitleColumn && (
+              <Stack className="column-title-edit" direction="row" spacing={2}>
+                <Input
+                  onChange={(e) => {
+                    setNewColumnTitle(e.currentTarget.value);
+                  }}
+                  value={newColumnTitle}
+                ></Input>
+                <ButtonGroup>
+                  <Button onClick={handleUpdateColumn}>update</Button>
+                  <Button onClick={() => setEditTitleColumn(!editTitleColumn)}>no</Button>
+                </ButtonGroup>
+              </Stack>
+            )}
+          </Box>
 
-        <Stack className="tasks-list" direction={'column'} spacing={1} ref={dropRefCard}>
-          {dataTasks &&
-            [...dataTasks]
-              .sort((a, b) => {
-                if (a.order > b.order) {
-                  return 1;
-                } else {
-                  return -1;
-                }
-              })
-              .map((task) => {
-                return (
-                  <TaskCard
-                    key={task._id}
-                    dataTask={task}
-                    dataTasks={dataTasks}
-                    onDelete={onDeleteTask}
-                    //ref={refTask}
-                  ></TaskCard>
-                );
-              })}
-        </Stack>
-        <Button variant="contained" fullWidth onClick={handleAddTask}>
-          Add task
-        </Button>
-      </Card>
+          <Stack className="tasks-list" direction={'column'} spacing={1} ref={dropRefCard}>
+            {dataTasks &&
+              [...dataTasks]
+                .sort((a, b) => {
+                  if (a.order > b.order) {
+                    return 1;
+                  } else {
+                    return -1;
+                  }
+                })
+                .map((task) => {
+                  return (
+                    <TaskCard
+                      key={task._id}
+                      dataTask={task}
+                      dataTasks={dataTasks}
+                      onDelete={onDeleteTask}
+                      //ref={refTask}
+                    ></TaskCard>
+                  );
+                })}
+          </Stack>
+          <Button variant="contained" fullWidth onClick={handleAddTask}>
+            Add task
+          </Button>
+        </Card>
+      </Box>
       <Modal open={openModal} {...getModalProps()} onClickCancel={closeModal}>
         {getModalContent()}
       </Modal>

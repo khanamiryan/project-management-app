@@ -109,10 +109,10 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     <>
       <Stack
         className="board-nav"
-        direction={{ xs: 'column', sm: 'row' }}
+        direction={{ xs: 'row', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
       >
-        <Typography variant="h4" className="board-title">
+        <Typography variant={'h3'} component="h1" className="board-title">
           {board.title}
         </Typography>
         <ButtonGroup>
