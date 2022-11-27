@@ -2,9 +2,10 @@ import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import React, { useEffect, useState } from 'react';
-import { Board, BoardFormFields } from 'types/types';
+import { Board, BoardFormFields, User } from 'types/types';
 import { useTranslation } from 'react-i18next';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
+import { useGetUsersQuery } from 'services/users.api';
 import { useAppSelector, useAppDispatch } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { showToast } from 'store/toastSlice';
@@ -12,11 +13,13 @@ import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
+import UserChip from 'components/UserChip/UserChip';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'delete' | 'edit'>('delete');
   const { id: currentUserId } = useAppSelector(selectUser);
+  const { data: allUsers } = useGetUsersQuery('');
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const isOwner = currentUserId === board.owner;
@@ -53,7 +56,6 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
-  const isSuccess = deleteResult.isSuccess;
 
   const onClickDelete = () => {
     setModalType('delete');
@@ -80,15 +82,28 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (deleteResult.isSuccess) {
       dispatch(
         showToast({
-          message: t(isOwner ? 'boards.toast.onSuccesDelete' : 'boards.toast.onSuccesLeave'),
+          message: t('boards.toast.onSuccesDelete'),
+          type: 'success',
+        })
+      );
+    } else if (updateResult.isSuccess) {
+      dispatch(
+        showToast({
+          message: t(isOwner ? 'boards.toast.onSuccesUpdate' : 'boards.toast.onSuccesLeave'),
           type: 'success',
         })
       );
     }
-  }, [dispatch, isOwner, isSuccess]);
+  }, [deleteResult.isSuccess, updateResult.isSuccess, dispatch, isOwner, t]);
+
+  const ownerObj = allUsers?.find(({ _id }) => _id === board.owner);
+  const contributors = board.users.reduce((acc: User[], userId) => {
+    const contributor = allUsers?.find(({ _id }) => userId === _id);
+    return contributor ? [...acc, contributor] : acc;
+  }, []);
 
   return (
     <>
@@ -101,14 +116,28 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
           {board.title}
         </Typography>
         <ButtonGroup>
-          <IconButton onClick={onClickEdit}>
-            <EditIcon fontSize="large" />
-          </IconButton>
+          {isOwner && (
+            <IconButton onClick={onClickEdit}>
+              <EditIcon fontSize="large" />
+            </IconButton>
+          )}
           <IconButton onClick={onClickDelete}>
             <DeleteIcon fontSize="large" />
           </IconButton>
         </ButtonGroup>
       </Stack>
+
+      {/* //TODO  вынести в отдельный компонент*/}
+      {ownerObj && (
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
+          <UserChip login={ownerObj.login} isOwner />
+          {contributors.length &&
+            contributors.map((contributor) => (
+              <UserChip key={contributor._id} login={contributor.login} />
+            ))}
+        </Stack>
+      )}
+
       <Modal
         open={modalOpen}
         title={modalType === 'delete' ? modalDeleteTitle : 'Edit board'}

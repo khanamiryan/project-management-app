@@ -82,15 +82,15 @@ export default function BoardItem(): JSX.Element {
 
   return (
     <Box className={'board'}>
-      <Box className="board-header">
-        {isBoardLoading && <CircularProgress size={80} />}
+      <Stack className="board-header">
+        {(isBoardLoading || isTasksLoading || isColumnsLoading) && <CircularProgress size={80} />}
         {isBoardError && (
           <Alert variant="outlined" severity="error">
             {t('boards.serverError')}
           </Alert>
         )}
         {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
-      </Box>
+      </Stack>
 
       <Stack
         className="board-body"

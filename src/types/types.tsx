@@ -5,6 +5,12 @@ export type Board = {
   users: string[];
 };
 
+export type User = {
+  _id: string;
+  name: string;
+  login: string;
+};
+
 export interface IColumn {
   _id: string;
   title: string;
@@ -53,11 +59,6 @@ export interface IUserResponse {
   _id: string;
   login: string;
 }
-export type User = {
-  _id: 'string';
-  name: 'string';
-  login: 'string';
-};
 export type DecodedToken = {
   id: string;
   login: string;
@@ -66,3 +67,5 @@ export type DecodedToken = {
 };
 
 export type BoardFormFields = { title: string; users: string[] };
+
+export type TaskFormFields = { title: string; description: string; users: string[] };
