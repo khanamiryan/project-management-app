@@ -85,7 +85,10 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
               wrapperUpdateTasksSet
             );
           }
-        } else if (dataTaskDrag && columnIdDrop && !dataTasksDrop) {
+        } else if (
+          dataTaskDrag &&
+          columnIdDrop /*&& (!dataTasksDrop || dataTasksDrop.length === 0)*/
+        ) {
           dndAddTaskToEmptyColumn(dataTask, dataTasks, columnIdDrop, wrapperUpdateTasksSet);
         }
       },

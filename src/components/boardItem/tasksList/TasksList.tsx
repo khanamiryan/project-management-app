@@ -75,7 +75,7 @@ export default function TasksList({
         isDragging: monitor.isDragging(),
       }),
     }),
-    [dataColumns]
+    [dataColumns, dataColumn]
   );
   // todo: styles for isOver elements
   const [{ isOver }, dropRef] = useDrop(
@@ -86,7 +86,7 @@ export default function TasksList({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [dataColumns]
+    [dataColumns, dataColumn]
   );
 
   // todo добавление карточки в пустой столбец
@@ -95,13 +95,9 @@ export default function TasksList({
       accept: 'task',
       drop: (_itemDrag, monitor) => {
         console.log('дроп из списка', monitor.didDrop());
-        console.log('_item', _itemDrag);
         if (monitor.didDrop()) {
-          console.log('дроп из карточки monitor diddrop');
           return;
         }
-        console.log('дроп из карточки monitor NOT diddrop', dataTasks);
-
         return { dataTasks, columnIdDrop: columnId };
       },
       collect: (monitor) => ({
@@ -109,7 +105,7 @@ export default function TasksList({
         isOverCurrentCard: !!monitor.isOver({ shallow: true }),
       }),
     }),
-    [dataColumns]
+    [dataColumns, dataColumn]
   );
 
   dragRef(dropRef(ref));
