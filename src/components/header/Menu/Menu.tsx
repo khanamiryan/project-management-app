@@ -1,19 +1,7 @@
-import {
-  Box,
-  Button,
-  Menu,
-  MenuItem,
-  Typography,
-  Link,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-} from '@mui/material';
+import { Box, Button, Menu, MenuItem, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface IHeaderMenuItemsInterface {
   name: string;
@@ -38,8 +26,6 @@ const HeaderMenu = ({ items, icon, text, alwaysIcon = false }: IHeaderMenu) => {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-
-  const { t } = useTranslation();
 
   return (
     <>

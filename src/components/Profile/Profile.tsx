@@ -69,13 +69,7 @@ const Profile = () => {
 
   return (
     <Card component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
-      <CardContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <CardContent className="inner">
         {/*{isError && <Alert severity="error">{error!.data!.message}</Alert>}*/}
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <AccountBoxIcon />

@@ -6,6 +6,7 @@ import {
   useScrollTrigger,
   Box,
   Avatar,
+  Link,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import React, { useState } from 'react';
@@ -19,6 +20,7 @@ import { api } from '../../services/api';
 import { showToast } from '../../store/toastSlice';
 import HeaderMenu from './Menu/Menu';
 import TranslateIcon from '@mui/icons-material/Translate';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useUser } from '../../hooks/useUser';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -50,7 +52,7 @@ const Header = () => {
     { name: t('menu.boards'), url: '/boards' },
     // { name: 'Beta board', url: '/boards/636cd10e96274bebf760a073' },
     { name: t('menu.profilePage'), url: '/profile' },
-    { name: 'Add board', onClick: onClickAddBoard },
+    { name: 'Add board', onClick: onClickAddBoard, icon: <AddCircleIcon sx={{ ml: 0.5 }} /> },
   ];
   const userMenu = [
     { name: t('menu.signIn'), url: '/login' },
@@ -59,11 +61,7 @@ const Header = () => {
 
   const userAuthorizedMenu = [
     { name: t('Go to Main Page'), url: '/' },
-    {
-      name: t('menu.signOut'),
-      icon: <LogoutIcon sx={{ ml: 0.5 }} />,
-      onClick: handleSignOut,
-    },
+    { name: t('menu.signOut'), onClick: handleSignOut, icon: <LogoutIcon sx={{ ml: 0.5 }} /> },
   ];
 
   const langs = [
@@ -79,11 +77,20 @@ const Header = () => {
         elevation={trigger ? 3 : 0}
         color={trigger ? 'secondary' : 'primary'}
         position="sticky"
-        sx={{ mb: 2 }}
-        //sx={{ mb: 2, py: trigger ? 0.1 : 1 }}
+        sx={{
+          py: trigger ? 0 : 0.3,
+          mb: 2,
+          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+        }}
       >
         <Toolbar component="nav">
-          <Typography variant="h6" component="h3">
+          <Typography
+            className="logo"
+            variant="h6"
+            component={Link}
+            href="/"
+            color={trigger ? 'primary.contrastText' : 'secondary.contrastText'}
+          >
             Super boards
           </Typography>
           {user.loggedIn && <HeaderMenu items={pages} icon={<MenuIcon />} />}

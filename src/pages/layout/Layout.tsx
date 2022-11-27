@@ -12,13 +12,10 @@ export default function Layout(): JSX.Element {
   const state = useAppSelector((state) => state.toast);
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', flexGrow: 1 }}>
+    <Box className="layout">
       <CssBaseline enableColorScheme />
       <Header />
-      <Container
-        component={'main'}
-        sx={{ position: 'relative', flexDirection: 'column', flexGrow: 1 }}
-      >
+      <Container component="main" className="main">
         <Outlet />
       </Container>
       <Toast {...state} />

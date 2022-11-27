@@ -45,13 +45,7 @@ const SignUp = () => {
   const { t } = useTranslation();
   return (
     <Card component="form" className="SignUpForm" onSubmit={handleSubmit(onSubmit)}>
-      <CardContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <CardContent className="inner">
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <HowToRegIcon />
         </Avatar>

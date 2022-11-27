@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './SignIn.scss';
-import { Avatar, Box, Button, Link, Typography, Card, CardContent } from '@mui/material';
+import { Avatar, Box, Button, Link, Typography, Card, CardContent, Divider } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
 import { useAppDispatch } from '../../store/redux.hooks';
@@ -46,13 +46,7 @@ const SignIn = () => {
 
   return (
     <Card component="form" onSubmit={handleSubmit(onSubmit)} className="SignInForm">
-      <CardContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <CardContent className="inner">
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <LoginIcon />
         </Avatar>
@@ -79,16 +73,11 @@ const SignIn = () => {
           autoComplete="password"
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={isLoading}
-          fullWidth
-          sx={{ mb: 2, mt: 1 }}
-        >
+        <Button type="submit" variant="contained" disabled={isLoading} fullWidth>
           {t('form.fields.signIn')}
           {isLoading && '...'}
         </Button>
+        <Divider />
 
         <Link href="/registration" margin="normal">
           {t('form.noAccount')}
