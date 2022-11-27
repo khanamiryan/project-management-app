@@ -1,4 +1,4 @@
-import { Stack, ButtonGroup, IconButton } from '@mui/material';
+import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import React, { useEffect, useState } from 'react';
@@ -94,10 +94,12 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     <>
       <Stack
         className="board-nav"
-        direction={{ xs: 'column', sm: 'row' }}
+        direction={{ xs: 'row', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
       >
-        <h1 className="board-title">{board.title}</h1>
+        <Typography variant={'h3'} component="h1" className="board-title">
+          {board.title}
+        </Typography>
         <ButtonGroup>
           <IconButton onClick={onClickEdit}>
             <EditIcon fontSize="large" />

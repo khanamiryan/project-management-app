@@ -8,17 +8,46 @@ import store from './store/store';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { createTheme, ThemeProvider } from '@mui/material';
+import { LinkProps } from '@mui/material/Link';
+import LinkRouter from './utils/LinkRouter';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const theme = createTheme({
+  components: {
+    MuiLink: {
+      defaultProps: {
+        component: LinkRouter,
+      } as LinkProps,
+    },
+    MuiButtonBase: {
+      defaultProps: {
+        LinkComponent: LinkRouter,
+      },
+    },
+  },
+  palette: {
+    primary: {
+      main: '#233456',
+      contrastText: '#fafafa',
+    },
+    secondary: {
+      main: '#334561',
+      contrastText: '#fafafa',
+    },
+  },
+});
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store({})}>
-        <DndProvider backend={HTML5Backend}>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </DndProvider>
+        <ThemeProvider theme={theme}>
+          <DndProvider backend={HTML5Backend}>
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </DndProvider>
+        </ThemeProvider>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>

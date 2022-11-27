@@ -10,7 +10,6 @@ export default function SignInRoute() {
   const { t } = useTranslation();
   return (
     <>
-      <h2>{t('signInTitle')}</h2>
       {<SignIn />}
       {/*{loggedIn ? <h3>You are already logged in</h3> : <SignIn />}*/}
     </>

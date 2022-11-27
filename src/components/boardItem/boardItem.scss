@@ -1,21 +1,33 @@
 
-.board-header{
-  display:flex;
+.board {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.board-header {
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 2rem;
   margin: 1rem 0;
 
-  .board-title{
+  .board-title {
     display: inline-block;
     margin-right: auto;
   }
-  .board-nav{
+
+  .board-nav {
     width: 100%;
   }
 }
 
-.board-body{
+.board-body {
   display: flex;
   flex-grow: 1;
   overflow-y: hidden;
@@ -27,14 +39,13 @@
 }
 
 
-
-
-.board-add-list{
-  display:flex;
+.board-add-list {
+  display: flex;
   justify-content: center;
-  .button-add-list{
-    margin: 0.5rem;
+
+  .button-add-list {
+    margin: 0rem;
     max-height: 50px;
- 
+
   }
 }

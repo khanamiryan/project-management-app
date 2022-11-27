@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import './Profile.scss';
 import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Box } from '@mui/system';
-import { Button } from '@mui/material';
 
+import { Button, Typography, Box, Paper, Card, Grid, Avatar, CardContent } from '@mui/material';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useAppDispatch } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
 import { Warning } from '@mui/icons-material';
@@ -27,6 +27,7 @@ const Profile = () => {
   const [setUserInfo, { isLoading }] = useSetUserInfoMutation();
   const [deleteUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const {
     handleSubmit,
     control,
@@ -56,7 +57,7 @@ const Profile = () => {
       .unwrap()
       .then(() => {
         setOpen(false);
-        dispatch(showToast({ message: 'Success to delete user', type: 'success' }));
+        dispatch(showToast({ message: t('Success to delete user'), type: 'success' }));
         navigate('/');
       })
       .catch((error) => {
@@ -64,47 +65,51 @@ const Profile = () => {
       });
   };
 
-  const [open, setOpen] = useState(false);
-
   const { t } = useTranslation();
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
-      {/*{isError && <Alert severity="error">{error!.data!.message}</Alert>}*/}
+    <Card component="form" onSubmit={handleSubmit(onSubmit)} className="ProfileForm">
+      <CardContent className="inner">
+        {/*{isError && <Alert severity="error">{error!.data!.message}</Alert>}*/}
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <AccountBoxIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Profile
+        </Typography>
 
-      <Modal
-        confirmButtonText={isDeleteLoading ? 'Deleting...' : 'Confirm'}
-        open={open}
-        onClickCancel={() => {
-          setOpen(false);
-        }}
-        onClickConfirm={handleDeleteUser}
-      >
-        <>
-          <Warning color="error" />
-          {t('sureDeleteUser')}
-        </>
-      </Modal>
+        <Modal
+          confirmButtonText={isDeleteLoading ? 'Deleting...' : 'Confirm Delete'}
+          open={open}
+          onClickCancel={() => {
+            setOpen(false);
+          }}
+          onClickConfirm={handleDeleteUser}
+        >
+          <Box sx={{ display: 'flex' }}>
+            <Warning color="error" sx={{ mr: 0.5 }} />
+            <Typography>{t('sureDeleteUser')}</Typography>
+          </Box>
+        </Modal>
 
-      <div>
         <InputText
           name="name"
           label={t('form.fields.name')}
           autoComplete="off"
           control={control}
           rules={rules.name}
+          fullWidth
         />
-      </div>
-      <div>
+
         <InputText
           name="login"
           label={t('form.fields.login')}
           autoComplete="off"
           control={control}
           rules={rules.login}
+          fullWidth
         />
-      </div>
-      <div>
+
         <InputText
           name="password"
           control={control}
@@ -112,15 +117,22 @@ const Profile = () => {
           margin="normal"
           label={t('form.fields.newPassword')}
           type="password"
+          fullWidth
           autoComplete="new-password"
         />
-      </div>
 
-      <Button variant={'contained'} type="submit" disabled={!isDirty || isLoading}>
-        {t('form.fields.save')} {isLoading && '...'}
-      </Button>
-      <Button onClick={() => setOpen(true)}>{t('form.fields.deleteUser')}</Button>
-    </Box>
+        <Grid container sx={{ mt: 3 }}>
+          <Grid item xs>
+            <Button variant={'contained'} type="submit" disabled={!isDirty || isLoading}>
+              {t('form.fields.save')} {isLoading && '...'}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button onClick={() => setOpen(true)}>{t('form.fields.deleteUser')}</Button>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
   );
 };
 
