@@ -17,7 +17,6 @@ import {
   dndUpdateTasksBetweenColumn,
   dndUpdateTasksInsideColumn,
 } from 'services/dndSortColumns';
-import './taskCard.scss';
 import RoundUsersAvatars from 'components/RoundUsersAvatars/RoundUsersAvatars';
 
 type ModalType = 'delete' | 'edit' | 'view';
@@ -261,10 +260,9 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     <>
       <Card
         ref={refTask}
-        className="task-card"
         variant="outlined"
         onClick={handleShowTask}
-        sx={{ position: 'relative' }}
+        sx={{ position: 'relative', overflow: 'visible', padding: '5px' }}
       >
         <IconButton
           onClick={(e) => handleDeleteTask(e)}
