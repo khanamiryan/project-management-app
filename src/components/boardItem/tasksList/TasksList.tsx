@@ -56,7 +56,10 @@ export default function TasksList({
   const closeModal = () => setOpenModal(false);
   const [updateColumnsSet] = useUpdateColumnsSetMutation();
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
-  const wrapperUpdateColumnsSet = (data: Pick<IColumn, '_id' | 'order'>[]) => {
+  const wrapperUpdateColumnsSet = (data: {
+    set: Pick<IColumn, '_id' | 'order'>[];
+    boardId: string;
+  }) => {
     updateColumnsSet(data);
   };
 
@@ -95,7 +98,6 @@ export default function TasksList({
     () => ({
       accept: 'task',
       drop: (_itemDrag, monitor) => {
-        console.log('дроп из списка', monitor.didDrop());
         if (monitor.didDrop()) {
           return;
         }
@@ -158,7 +160,7 @@ export default function TasksList({
           };
         }
       });
-      updateTasksSet(set);
+      updateTasksSet({ set: set, boardId: boardId });
     }
   };
 
@@ -261,8 +263,8 @@ export default function TasksList({
 
   return (
     <>
-      <Box className="board-column">
-        <Card variant="outlined" ref={ref} className="board-column-inner" sx={{ ...styleDnD }}>
+      <Box className="board-column" sx={}>
+        <Card variant="outlined" ref={ref} className="board-column-inner">
           <Box className="column-name">
             {!editTitleColumn && (
               <Stack

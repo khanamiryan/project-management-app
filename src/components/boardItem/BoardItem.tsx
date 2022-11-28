@@ -64,7 +64,7 @@ export default function BoardItem(): JSX.Element {
           };
         }
       });
-      updateColumsSet(set);
+      updateColumsSet({ set: set, boardId: selectedColumn.boardId });
     }
   };
 
