@@ -124,7 +124,12 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const styleDnD = {
     opacity: isDragging ? 0 : 1,
     cursor: 'move',
+    //height: isDragging ? 0 : 'inherit',
+
+    //paddingTop: isOver ? '110px' : 0,
+    //transition: 'all 0.5s',
   };
+  // todo if(order<orderdrop) { return paddingBottom } else{ return paddingTop} ??
 
   const closeModal = () => setOpenModal(false);
 

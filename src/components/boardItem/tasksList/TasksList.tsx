@@ -255,6 +255,7 @@ export default function TasksList({
   const styleDnD = {
     opacity: isDragging ? 0 : 1,
     cursor: 'move,',
+    //paddingLeft: isOver  ? '300px' : 0,
   };
   const styleDnDForCard = {
     minHeight: isOverCard ? '110px!important' : '30px',
@@ -263,7 +264,7 @@ export default function TasksList({
 
   return (
     <>
-      <Box className="board-column" sx={}>
+      <Box className="board-column" sx={styleDnD}>
         <Card variant="outlined" ref={ref} className="board-column-inner">
           <Box className="column-name">
             {!editTitleColumn && (
