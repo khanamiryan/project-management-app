@@ -1,19 +1,9 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  Divider,
-  Grid,
-  Link,
-  List,
-  ListItem,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Avatar, Box, Button, Card, Divider, Grid, Link, Typography } from '@mui/material';
 import React from 'react';
 import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import './mainPage.scss';
-import { text } from 'stream/consumers';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 let theme = createTheme();
 theme = responsiveFontSizes(theme);
@@ -40,10 +30,15 @@ const developers = [
 ];
 
 const firstTextBlock =
-  '"The SuperBoards" is by far the best application for project management*. The unsurpassed functionality of our application for team work management will allow you to plan and control every stage of the project.';
+  '"The SuperBoards" is by far the best application for project management*. The unsurpassed functionality of our app for team work management will allow you to plan and control every stage of the project.';
 const footnote = '*According to the developers of this application.';
+const secondTextBlock =
+  'Create as many columns as you want and fill them with any number of tasks. You can add team members to boards and tasks. You can even drag and drop elements with the mouse if that makes you happy.';
 
 export default function MainPage(): JSX.Element {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
   return (
     <ThemeProvider theme={theme}>
       <Grid container spacing={2} justifyContent="center">
@@ -52,17 +47,35 @@ export default function MainPage(): JSX.Element {
           display="flex"
           flexDirection="column"
           alignItems="center"
-          justifyContent="center"
+          justifyContent="space-evenly"
           xs={12}
           sm={6}
           md={6}
         >
-          <Typography variant="h2" textAlign="center">
-            Super boards
-          </Typography>
-          <Typography variant="h4" textAlign="center">
-            superpower for you projects
-          </Typography>
+          <Box>
+            <Typography variant="h2" textAlign="center">
+              Super boards
+            </Typography>
+            <Typography variant="h4" textAlign="center">
+              superpower for you projects
+            </Typography>
+          </Box>
+          <Box textAlign={'center'}>
+            <Button
+              variant="outlined"
+              sx={{ m: 1, minWidth: '150px' }}
+              onClick={() => navigate('/login')}
+            >
+              {t('form.fields.signIn')}
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ m: 1, minWidth: '150px' }}
+              onClick={() => navigate('/registration')}
+            >
+              {t('form.fields.signup')}
+            </Button>
+          </Box>
         </Grid>
         <Grid
           item
@@ -98,7 +111,7 @@ export default function MainPage(): JSX.Element {
         ></Grid>
         <Grid item xs={12} sm={6} md={6}>
           <Typography
-            variant="h4"
+            variant="h5"
             component="p"
             sx={{ textAlign: { xs: 'center', sm: 'justify' } }}
           >
@@ -123,12 +136,11 @@ export default function MainPage(): JSX.Element {
       <Grid container spacing={2} justifyContent="center" alignItems={'center'}>
         <Grid item xs={12} sm={6} md={6}>
           <Typography
-            variant="h4"
+            variant="h5"
             component="p"
             sx={{ textAlign: { xs: 'center', sm: 'justify' } }}
           >
-            Airtable is your organizations single source of truth. Its how teams, data, and
-            workflows are deeply connected by apps anyone can build.
+            {secondTextBlock}
           </Typography>
         </Grid>
         <Grid
