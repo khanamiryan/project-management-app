@@ -203,7 +203,7 @@ export default function MainPage(): JSX.Element {
           })}
         </Grid>
 
-        <Divider />
+        <Divider sx={{ mt: 2, mb: 2 }} />
 
         <Typography variant="h6" component={'p'} textAlign="center">
           This app was created as the final task of the{' '}
