@@ -60,7 +60,8 @@ export default function TasksList({
     updateColumnsSet(data);
   };
 
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const refColumn = useRef<HTMLDivElement | null>(null);
 
   // todo: styles for isDragging components
 
@@ -109,6 +110,7 @@ export default function TasksList({
   );
 
   dragRef(dropRef(ref));
+  dropRefCard(refColumn);
   //dropRefCard(dragRef(dropRef(ref)));
 
   const confirmDeleteColumn = () => {
@@ -238,11 +240,29 @@ export default function TasksList({
       }
     }
   };
+  /*const style = {
+    position: 'absolute',
+    width: '280px',
+    minWidth: '280px',
+    height: '100%',
+    border: '1px solid gray',
+    backgroundColor: 'white',
+    padding: '0.5rem 1rem',
+    cursor: 'move',
+  };*/
+  const styleDnD = {
+    opacity: isDragging ? 0 : 1,
+    cursor: 'move,',
+  };
+  const styleDnDForCard = {
+    minHeight: isOverCard ? '110px!important' : '30px',
+    transition: 'all .5s',
+  };
 
   return (
     <>
       <Box className="board-column">
-        <Card variant="outlined" ref={ref} className="board-column-inner">
+        <Card variant="outlined" ref={ref} className="board-column-inner" sx={{ ...styleDnD }}>
           <Box className="column-name">
             {!editTitleColumn && (
               <Stack
@@ -272,7 +292,13 @@ export default function TasksList({
             )}
           </Box>
 
-          <Stack className="tasks-list" direction={'column'} spacing={1} ref={dropRefCard}>
+          <Stack
+            className="tasks-list"
+            direction={'column'}
+            spacing={1}
+            ref={refColumn}
+            sx={{ ...styleDnDForCard }}
+          >
             {dataTasks &&
               [...dataTasks]
                 .sort((a, b) => {

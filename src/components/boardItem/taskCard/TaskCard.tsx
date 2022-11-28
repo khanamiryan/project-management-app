@@ -52,6 +52,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const wrapperUpdateTasksSet = (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => {
     updateTasksSet(data);
   };
+
   const refTask = useRef(null);
   //todo: styles for isDragging component
   const [{ isDragging }, dragRefTask] = useDrag(
@@ -119,6 +120,11 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   );
 
   dragRefTask(dropRefTask(refTask));
+
+  const styleDnD = {
+    opacity: isDragging ? 0 : 1,
+    cursor: 'move',
+  };
 
   const closeModal = () => setOpenModal(false);
 
@@ -265,7 +271,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
         ref={refTask}
         variant="outlined"
         onClick={handleShowTask}
-        sx={{ position: 'relative', overflow: 'visible', padding: '5px' }}
+        sx={{ position: 'relative', overflow: 'visible', padding: '5px', ...styleDnD }}
       >
         <IconButton
           onClick={(e) => handleDeleteTask(e)}
