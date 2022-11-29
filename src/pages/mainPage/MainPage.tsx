@@ -4,9 +4,9 @@ import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/s
 import './mainPage.scss';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { theme } from 'index';
 
-let theme = createTheme();
-theme = responsiveFontSizes(theme);
+const welcomPageTheme = responsiveFontSizes(theme);
 
 const developers = [
   {
@@ -40,7 +40,7 @@ export default function MainPage(): JSX.Element {
   const navigate = useNavigate();
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={welcomPageTheme}>
       <Grid container spacing={2} justifyContent="center">
         <Grid
           item
