@@ -6,13 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { theme } from 'index';
 
-const welcomPageTheme = responsiveFontSizes(theme);
-
 const developers = [
   {
     url: 'https://github.com/khanamiryan',
     name: 'Ashot Khanamiryan',
-    imageSrc: 'https://avatars.githubusercontent.com/u/6542341?s=64&v=4',
+    imageSrc: 'https://avatars.githubusercontent.com/u/6542341?s=256&v=4',
     role: 'team lead, developer',
   },
   {
@@ -36,11 +34,12 @@ const secondTextBlock =
   'Create as many columns as you want and fill them with any number of tasks. You can add team members to boards and tasks. You can even drag and drop elements with the mouse if that makes you happy.';
 
 export default function MainPage(): JSX.Element {
+  const welcomePageTheme = responsiveFontSizes(theme);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
-    <ThemeProvider theme={welcomPageTheme}>
+    <ThemeProvider theme={welcomePageTheme}>
       <Grid container spacing={2} justifyContent="center">
         <Grid
           item
