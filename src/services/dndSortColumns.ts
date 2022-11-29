@@ -20,7 +20,7 @@ export const dndUpdateColumns = (
   dataColumnDrag: IColumn,
   monitor: DragSourceMonitor<IColumn, unknown>,
   dataColumns: IColumn[] | undefined,
-  updateColumnsSet: (data: Pick<IColumn, '_id' | 'order'>[]) => void
+  updateColumnsSet: (data: { set: Pick<IColumn, '_id' | 'order'>[]; boardId: string }) => void
 ) => {
   interface IDropResult {
     dataColumn: typeof dataColumnDrag;
@@ -60,7 +60,7 @@ export const dndUpdateColumns = (
         }
       });
     if (newDataColumnsPATCH) {
-      updateColumnsSet(newDataColumnsPATCH);
+      updateColumnsSet({ set: newDataColumnsPATCH, boardId: dataColumnDrag.boardId });
     }
   }
 };
@@ -69,7 +69,10 @@ export const dndUpdateTasksInsideColumn = (
   dataTaskDrag: ITask,
   dataTaskDrop: ITask,
   dataTasks: ITask[] | undefined,
-  updateTasksSet: (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => void
+  updateTasksSet: (data: {
+    set: Pick<ITask, '_id' | 'order' | 'columnId'>[];
+    boardId: string;
+  }) => void
 ) => {
   const { order: orderDrag } = dataTaskDrag;
   const { order: orderDrop } = dataTaskDrop;
@@ -104,7 +107,7 @@ export const dndUpdateTasksInsideColumn = (
       }
     });
   if (newDataTasksPATCH) {
-    updateTasksSet(newDataTasksPATCH);
+    updateTasksSet({ set: newDataTasksPATCH, boardId: dataTaskDrag.boardId });
   }
 };
 
@@ -113,7 +116,10 @@ export const dndUpdateTasksBetweenColumn = (
   dataTaskDrop: ITask,
   dataTasks: ITask[],
   dataTasksDrop: ITask[],
-  updateTasksSet: (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => void
+  updateTasksSet: (data: {
+    set: Pick<ITask, '_id' | 'order' | 'columnId'>[];
+    boardId: string;
+  }) => void
 ) => {
   const dataTasksAfterDrag = getTasksAfterDelTask(dataTasks, dataTaskDrag);
 
@@ -133,18 +139,21 @@ export const dndUpdateTasksBetweenColumn = (
       columnId: dataTaskDrop.columnId,
     },
   ]);
-  updateTasksSet(setTasks);
+  updateTasksSet({ set: setTasks, boardId: dataTaskDrag.boardId });
 };
 
 export const dndAddTaskToEmptyColumn = (
   dataTaskDrag: ITask,
   dataTasks: ITask[],
   columnId: string,
-  updateTasksSet: (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => void
+  updateTasksSet: (data: {
+    set: Pick<ITask, '_id' | 'order' | 'columnId'>[];
+    boardId: string;
+  }) => void
 ) => {
   const dataTasksAfterDrag = getTasksAfterDelTask(dataTasks, dataTaskDrag);
   const setTasks = dataTasksAfterDrag.concat([
     { _id: dataTaskDrag._id, order: 1, columnId: columnId },
   ]);
-  updateTasksSet(setTasks);
+  updateTasksSet({ set: setTasks, boardId: dataTaskDrag.boardId });
 };

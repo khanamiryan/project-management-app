@@ -34,6 +34,7 @@ type taskCardProps = {
   dataTasks: ITask[];
   onDelete: (task: ITask) => void;
 };
+
 export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>('view');
@@ -52,7 +53,10 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
   const [updateTasksSet] = useUpdateTasksSetMutation();
-  const wrapperUpdateTasksSet = (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => {
+  const wrapperUpdateTasksSet = (data: {
+    set: Pick<ITask, '_id' | 'order' | 'columnId'>[];
+    boardId: string;
+  }) => {
     updateTasksSet(data);
   };
 
@@ -89,10 +93,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
               wrapperUpdateTasksSet
             );
           }
-        } else if (
-          dataTaskDrag &&
-          columnIdDrop /*&& (!dataTasksDrop || dataTasksDrop.length === 0)*/
-        ) {
+        } else if (dataTaskDrag && columnIdDrop) {
           dndAddTaskToEmptyColumn(dataTask, dataTasks, columnIdDrop, wrapperUpdateTasksSet);
         }
       },
@@ -108,7 +109,6 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     () => ({
       accept: 'task',
       drop: (_item, monitor) => {
-        console.log('дроп из карточки', monitor.didDrop());
         if (monitor.didDrop()) {
           return;
         }
@@ -127,7 +127,12 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const styleDnD = {
     opacity: isDragging ? 0 : 1,
     cursor: 'move',
+    //height: isDragging ? 0 : 'inherit',
+
+    //paddingTop: isOver ? '110px' : 0,
+    //transition: 'all 0.5s',
   };
+  // todo if(order<orderdrop) { return paddingBottom } else{ return paddingTop} ??
 
   const closeModal = () => setOpenModal(false);
 
@@ -211,6 +216,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
               maxRows={6}
               rules={rules.taskDescription}
             />
+
             <UsersSelect
               onUserSelect={onShare}
               selectedUsersId={dataTask.users}
@@ -275,7 +281,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
           <DeleteIcon fontSize="small" />
         </IconButton>
         <Typography component="h3" mt={1} variant={'h6'}>
-          {title}
+          {title} order: {dataTask.order}
         </Typography>
         <Typography component="p" variant={'body1'}>
           {description.length > 24 ? `${description.slice(0, 24)}...` : description}
