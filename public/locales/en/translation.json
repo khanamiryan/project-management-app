@@ -103,5 +103,22 @@
     }
   },
   "profileTitle": "Profile",
-  "pageNotFound": "Page not found"
+  "pageNotFound": "Page not found",
+  "welcom": {
+    "slogan": "superpower for you projects",
+    "firstTextBlock": "SuperBoards is by far the best application for project management*. The unsurpassed functionality of our app for team work management will allow you to plan and control every stage of the project.",
+    "footnote": "*According to the developers of this application.",
+    "secondTextBlock": "Create as many columns as you want and fill them with any number of tasks. You can add team members to boards and tasks. You can even drag and drop elements with the mouse if that makes you happy.",
+    "developers": "Development team",
+    "schoolInfoFirstPart": "This app was created as the final task of ",
+    "schoolInfoSecondPart": "the React course of the Rolling Scopes School."    
+  },
+  "developers": {
+    "ashot": "Ashot Khanamiryan",
+    "henadzi": "Henadzi Suhakou",
+    "siarhei": "Siarhei Hancharyk",
+    "developer": "developer",
+    "lead": "team lead"
+  } 
+  
 }
