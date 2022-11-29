@@ -1,3 +1,5 @@
+// noinspection AllyPlainJsInspection
+
 import { Box, Button, Dialog, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
 //import Modal from 'components/Modal/Modal';
@@ -12,6 +14,8 @@ import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { ITask } from 'types/types';
 import './ModalCreate.scss';
+import { rules } from '../../../utils/validation.utils';
+import { useTranslation } from 'react-i18next';
 
 interface ICreateModalProps {
   type: 'List' | 'Task';
@@ -50,6 +54,7 @@ export default function ModalCreate({
   const [addColumn] = useAddColumnMutation();
   const [addTask] = useAddTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+  const { t } = useTranslation();
   const onSubmit: SubmitHandler<FieldValues> = ({ name, description }) => {
     if (taskData) {
       console.log('taskData');
@@ -99,46 +104,26 @@ export default function ModalCreate({
     <Dialog open={openModal} onClose={closeModal} className="modal-form">
       <Box component="form" className="column-create-form" onSubmit={handleSubmit(onSubmit)}>
         <Typography variant="h4" component="h3">
-          {`${action} ${type}`}
+          {t(action)} {t(type)}
         </Typography>
         <InputText
           name="name"
-          label={`${type} name`}
-          autoComplete={`${type} name`}
+          label={t('form.fields.typeName', { type: t(type) })}
+          autoComplete={t('form.fields.typeName', { type: t(type) }) as string}
           control={control}
-          rules={{
-            required: 'title is required',
-            minLength: {
-              value: 3,
-              message: 'Column name is too short',
-            },
-            maxLength: {
-              value: 20,
-              message: 'No more then 20 letters',
-            },
-          }}
+          rules={rules.columnName}
         />
         {type === 'Task' && (
           <InputText
             name="description"
-            label={`${type} description`}
-            autoComplete={`${type} description`}
+            label={t('form.fields.typeDescription', { type: t(type) })}
+            autoComplete={t('form.fields.typeDescription', { type: t(type) }) as string}
             control={control}
-            rules={{
-              required: 'description is required',
-              minLength: {
-                value: 3,
-                message: 'Description is too short',
-              },
-              maxLength: {
-                value: 50,
-                message: 'No more then 50 letters',
-              },
-            }}
+            rules={rules.columnDescription}
           />
         )}
-        <Button type="submit">Submit</Button>
-        <Button onClick={handleCancel}>Close</Button>
+        <Button type="submit">{t('modal.submit')}</Button>
+        <Button onClick={handleCancel}>{t('modal.close')}</Button>
       </Box>
     </Dialog>
   );

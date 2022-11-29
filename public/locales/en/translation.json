@@ -1,0 +1,107 @@
+{
+  "signUpTitle": "Sign Up",
+  "signInTitle": "Sign In",
+  "welcome": "Welcome, {{name}}",
+  "Add": "Add",
+  "Edit": "Edit",
+  "List": "List",
+  "Task": "Task",
+  "menu": {
+    "mainPage": "Main Page",
+    "profilePage": "Profile",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "boards": "Boards",
+    "addBoard": "Add board",
+    "goToMainPage": "Go to Main page"
+  },
+  "auth": {
+    "signup": "Sign Up",
+    "signIn": "Sign in",
+    "save": "Save",
+    "deleteUser": "Delete User",
+    "noAccount": "Don't have an account? Sign Up",
+    "haveAccount": "Have an account? Sign in",
+    "toast": {
+      "signOutSuccess": "Successfully signed out",
+      "successUserDelete": "Successfully deleted the user",
+      "successToSignUp": "Successfully signed up",
+      "successToSignIn": "Successfully signed in",
+      "successSetUserInfo": "Profile successfully updated"
+    }
+  },
+  "form": {
+    "fields": {
+      "password": "Password",
+      "newPassword": "New password",
+      "login": "Login",
+      "name": "Name",
+      "save": "Save",
+      "typeName": "{{type}} name",
+      "typeTitle": "{{type}} title",
+      "typeDescription": "{{type}} description",
+      "taskDescription": "Task description",
+      "taskTitle": "Task title",
+      "boardTitle": "Title"
+    },
+    "errors": {
+      "noName": "Name is required",
+      "noLogin": "Login is required",
+      "noPassword": "Password is required",
+      "noTitle": "Title is required",
+      "noDescription": "Description is required",
+      "shortName": "Name is too short",
+      "shortLogin": "Login is too short",
+      "shortPassword": "Password is too short",
+      "shortColumnName": "Column name is too short",
+      "shortDescription": "Description is too short",
+      "noMoreThan18Letters": "No more than 18 letters",
+      "noMoreThan20Letters": "No more then 20 letters",
+      "noMoreThen50Letters": "No more then 50 letters"
+    }
+  },
+  "boards": {
+    "myBoards": "My boards",
+    "serverError": "Oops! A Server error occurred.",
+    "roleIsOwner": "Role: owner",
+    "roleIsContributor": "Role: contributor",
+    "open": "OPEN BOARD",
+    "toast": {
+      "onSuccessDelete": "You deleted the board",
+      "onSuccessLeave": "You left the board",
+      "onSuccessUpdate": "Saved"
+    }
+  },
+  "task": {
+    "toast": {}
+  },
+  "modal": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "close": "Close",
+    "submit": "Submit",
+    "board": {
+      "onDeleteTitle": "Delete the board",
+      "onLeaveTitle": "Leave the board",
+      "onDeleteText": "It's irreversible. If you delete this board, you won't be able to restore it.",
+      "onLeaveText": "It's irreversible. If you leave this board, you won't be able to restore it.",
+      "share": "Share"
+    },
+    "user": {
+      "sureDeleteUser": "Are you sure to delete user?",
+      "confirmDelete": "Confirm Delete",
+      "deleting": "Deleting..."
+    },
+    "task": {
+      "confirmDeleteTask": "Do you really want to remove task \"{{title}}\"?",
+      "editTask": "Edit task \"{{title}}\"",
+      "deleteReally": "if you delete this task you will not be able to restore it",
+      "creator": "Creator:",
+      "users": "Users:"
+    }
+  },
+  "profileTitle": "Profile",
+  "pageNotFound": "Page not found"
+}

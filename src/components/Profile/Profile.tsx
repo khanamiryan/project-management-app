@@ -3,7 +3,7 @@ import './Profile.scss';
 import InputText from '../InputText/InputText';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { Button, Typography, Box, Paper, Card, Grid, Avatar, CardContent } from '@mui/material';
+import { Button, Typography, Box, Card, Grid, Avatar, CardContent } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useAppDispatch } from '../../store/redux.hooks';
 import Modal from '../Modal/Modal';
@@ -44,11 +44,11 @@ const Profile = () => {
     setUserInfo({ ...data, id: user.id })
       .unwrap()
       .then(() => {
-        dispatch(showToast({ type: 'success', message: 'Success!' }));
+        dispatch(showToast({ type: 'success', message: t('auth.toast.successSetUserInfo') }));
         navigate('/boards');
       })
       .catch((error) => {
-        dispatch(showToast({ message: error.data.message }));
+        dispatch(showToast({ message: t(error.data.message) }));
       });
   };
 
@@ -57,11 +57,11 @@ const Profile = () => {
       .unwrap()
       .then(() => {
         setOpen(false);
-        dispatch(showToast({ message: t('Success to delete user'), type: 'success' }));
+        dispatch(showToast({ message: t('auth.toast.successUserDelete'), type: 'success' }));
         navigate('/');
       })
       .catch((error) => {
-        dispatch(showToast({ message: error.data.message }));
+        dispatch(showToast({ message: t(error.data.message) }));
       });
   };
 
@@ -75,11 +75,13 @@ const Profile = () => {
           <AccountBoxIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Profile
+          {t('profileTitle')}
         </Typography>
 
         <Modal
-          confirmButtonText={isDeleteLoading ? 'Deleting...' : 'Confirm Delete'}
+          confirmButtonText={
+            t(isDeleteLoading ? 'modal.user.deleting' : 'modal.user.confirmDelete')!
+          }
           open={open}
           onClickCancel={() => {
             setOpen(false);
@@ -88,7 +90,7 @@ const Profile = () => {
         >
           <Box sx={{ display: 'flex' }}>
             <Warning color="error" sx={{ mr: 0.5 }} />
-            <Typography>{t('sureDeleteUser')}</Typography>
+            <Typography>{t('modal.user.sureDeleteUser')}</Typography>
           </Box>
         </Modal>
 
@@ -122,13 +124,15 @@ const Profile = () => {
         />
 
         <Grid container sx={{ mt: 3 }}>
-          <Grid item xs>
+          <Grid item>
+            <Button size="small" color="error" onClick={() => setOpen(true)}>
+              {t('auth.deleteUser')}
+            </Button>
+          </Grid>
+          <Grid item xs textAlign={'right'}>
             <Button variant={'contained'} type="submit" disabled={!isDirty || isLoading}>
               {t('form.fields.save')} {isLoading && '...'}
             </Button>
-          </Grid>
-          <Grid item>
-            <Button onClick={() => setOpen(true)}>{t('form.fields.deleteUser')}</Button>
           </Grid>
         </Grid>
       </CardContent>

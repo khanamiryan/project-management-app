@@ -14,6 +14,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import UserChip from 'components/UserChip/UserChip';
+import { rules } from '../../../utils/validation.utils';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -39,12 +40,10 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     <>
       <InputText
         name="title"
-        label={t('modal.board.onCreateTitle')}
+        label={t('form.fields.boardTitle')}
         autoComplete="title"
         control={control}
-        rules={{
-          required: t('modal.board.errorTitleMessage') as string,
-        }}
+        rules={rules.boardInfo}
         inputProps={{
           style: { fontSize: '1.2rem' },
         }}
@@ -85,14 +84,14 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     if (deleteResult.isSuccess) {
       dispatch(
         showToast({
-          message: t('boards.toast.onSuccesDelete'),
+          message: t('boards.toast.onSuccessDelete'),
           type: 'success',
         })
       );
     } else if (updateResult.isSuccess) {
       dispatch(
         showToast({
-          message: t(isOwner ? 'boards.toast.onSuccesUpdate' : 'boards.toast.onSuccesLeave'),
+          message: t(isOwner ? 'boards.toast.onSuccessUpdate' : 'boards.toast.onSuccessLeave'),
           type: 'success',
         })
       );
