@@ -1,4 +1,6 @@
 // noinspection AllyPlainJsInspection
+//TODO эта модалка создает только колонки,
+// функционал создания тасков теперь в другом компоненте, ее можно рефакторить
 
 import { Box, Button, Dialog, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
@@ -108,8 +110,8 @@ export default function ModalCreate({
         </Typography>
         <InputText
           name="name"
-          label={t('form.fields.typeName', { type: t(type) })}
-          autoComplete={t('form.fields.typeName', { type: t(type) }) as string}
+          label={t('form.fields.columnTitle')}
+          autoComplete={t('form.fields.columnTitle') as string}
           control={control}
           rules={rules.columnName}
         />

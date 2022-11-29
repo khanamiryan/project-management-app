@@ -139,7 +139,7 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
 
       <Modal
         open={modalOpen}
-        title={modalType === 'delete' ? modalDeleteTitle : 'Edit board'}
+        title={modalType === 'delete' ? modalDeleteTitle : (t('modal.board.editBoard') as string)}
         onClickConfirm={modalType === 'delete' ? onBoardDelete : handleSubmit(onBoardEdit)}
         onClickCancel={onModalClose}
       >

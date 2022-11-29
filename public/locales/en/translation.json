@@ -100,6 +100,10 @@
       "deleteReally": "if you delete this task you will not be able to restore it",
       "creator": "Creator:",
       "users": "Users:"
+    },
+      "column": {
+      "confirmDeleteColumn": "Do you really want to remove column \"{{title}}\"?",
+      "deleteReally": "If you delete this column you will not be able to restore it"
     }
   },
   "profileTitle": "Profile",
