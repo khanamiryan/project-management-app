@@ -97,7 +97,7 @@ export default function MainPage(): JSX.Element {
         container
         spacing={2}
         justifyContent="center"
-        alignItems={'center'}
+        alignItems={'stretch'}
         flexWrap="wrap-reverse"
       >
         <Grid
@@ -109,7 +109,16 @@ export default function MainPage(): JSX.Element {
           src="/assets/jpg/board_4_800.jpg"
           alt="board"
         ></Grid>
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid
+          item
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="space-evenly"
+          xs={12}
+          sm={6}
+          md={6}
+        >
           <Typography
             variant="h5"
             component="p"
