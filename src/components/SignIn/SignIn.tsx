@@ -12,10 +12,11 @@ import { rules } from '../../utils/validation.utils';
 import { useSignInUserMutation } from '../../services/auth.api';
 import { useUser } from '../../hooks/useUser';
 import { ISignInForm } from '../../types/types';
+import { useGetUserQuery } from '../../services/users.api';
 
 const SignIn = () => {
   const [signInUser, { isLoading }] = useSignInUserMutation();
-
+  // const [getinfp,{isLoading:isInfoLoading}] = useGetUserQuery()
   const { handleSubmit, control, setError } = useForm<ISignInForm>({
     defaultValues: {
       login: '',
@@ -36,6 +37,11 @@ const SignIn = () => {
   const onSubmit: SubmitHandler<ISignInForm> = ({ login, password }) => {
     signInUser({ login, password })
       .unwrap()
+      .then(({ token }) => {
+        if (token.length) {
+          dispatch(showToast({ message: t('auth.toast.successToSignIn'), type: 'success' }));
+        }
+      })
       .catch((e) => {
         dispatch(showToast({ message: e.data.message }));
         setError('login', { type: 'custom', message: '' });

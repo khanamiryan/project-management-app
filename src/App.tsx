@@ -14,28 +14,18 @@ import { useUser } from './hooks/useUser';
 import { useUserInit } from './hooks/useUserInit';
 
 import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
+import { useCurrentUser } from './hooks/useCurrentUser';
 
 function App() {
-  const user = useUser();
-  const { isLoading } = useUserInit(); //may be some memo or useeffect or change the place?
+  const { isLoading, loggedIn } = useCurrentUser();
 
-  // const pages = [
-  //   { name: t('menu.mainPage'), url: '/' },
-  //   { name: t('menu.boards'), url: '/boards' },
-  //   { name: t('menu.profilePage'), url: '/profile' },
-  //   { name: t('menu.signIn'), url: '/login' },
-  //   { name: t('menu.signUp'), url: '/registration' },
-  // ];
-  // console.log(pages);
-  //
-  //
   return (
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<MainPage />} />
           <Route
-            element={isLoading ? <LoadingBackdrop /> : <ProtectedRoute isAllowed={user.loggedIn} />}
+            element={isLoading ? <LoadingBackdrop /> : <ProtectedRoute isAllowed={loggedIn} />}
           >
             <Route path="boards" element={<Boards />} />
             <Route path="boards/:id" element={<Board />} />
@@ -48,7 +38,7 @@ function App() {
               isLoading ? (
                 <LoadingBackdrop />
               ) : (
-                <ProtectedRoute isAllowed={!user.loggedIn} redirectPath={'/boards'} />
+                <ProtectedRoute isAllowed={!loggedIn} redirectPath={'/boards'} />
               )
             }
           >

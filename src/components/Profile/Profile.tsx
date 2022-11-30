@@ -14,15 +14,11 @@ import { useTranslation } from 'react-i18next';
 import { useDeleteUserMutation, useSetUserInfoMutation } from '../../services/users.api';
 import { useUser } from '../../hooks/useUser';
 import { useNavigate } from 'react-router-dom';
-
-export interface IProfile {
-  name: string;
-  login: string;
-  password: string;
-}
+import { IProfile } from '../../types/types';
+import { LoggedInUser, useCurrentUser } from '../../hooks/useCurrentUser';
 
 const Profile = () => {
-  const user = useUser();
+  const user = useCurrentUser() as LoggedInUser;
   const dispatch = useAppDispatch();
   const [setUserInfo, { isLoading }] = useSetUserInfoMutation();
   const [deleteUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();

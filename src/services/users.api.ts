@@ -1,12 +1,11 @@
-import { IUserInfo, IUserResponse, User } from 'types/types';
+import { IUserInfo, IUserResponse } from 'types/types';
 import { api } from './api';
 import { Endpoint, HTTPMethod } from './api.constants';
 import { signOutReducer } from '../store/userSlice';
-import { IProfile } from '../components/Profile/Profile';
 
 export const usersApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], string>({
+    getUsers: builder.query<IUserResponse[], string>({
       query: () => ({
         url: Endpoint.USERS,
       }),
@@ -30,7 +29,7 @@ export const usersApi = api.injectEndpoints({
       },
     }),
 
-    setUserInfo: builder.mutation<IUserResponse, IProfile & { id: string }>({
+    setUserInfo: builder.mutation<IUserResponse, IUserInfo>({
       query: ({ id, ...user }) => ({
         url: `${Endpoint.USERS}${id}`,
         method: HTTPMethod.PUT,
