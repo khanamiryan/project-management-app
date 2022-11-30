@@ -27,8 +27,8 @@ export const rules = {
       message: 'form.errors.shortColumnName',
     },
     maxLength: {
-      value: 20,
-      message: 'form.errors.noMoreThan20Letters',
+      value: 16,
+      message: 'form.errors.noMoreThan16Letters',
     },
   },
   columnDescription: {
