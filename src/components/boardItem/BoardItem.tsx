@@ -11,12 +11,13 @@ import {
 } from './../../services/board.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
-import { useAppSelector } from 'store/redux.hooks';
+import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { useGetBoardByIdQuery } from 'services/boards.api';
-import { IColumn } from 'types/types';
+import { IColumn, ServerError } from 'types/types';
 import { t } from 'i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
+import { showToast } from 'store/toastSlice';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
@@ -26,11 +27,13 @@ export default function BoardItem(): JSX.Element {
   const { id: userId } = useAppSelector(selectUser);
   const [deleteColumn] = useDeleteColumnMutation();
   const [updateColumsSet] = useUpdateColumnsSetMutation();
+  const dispatch = useAppDispatch();
 
   const {
     data: dataCurrentBoard,
     isLoading: isBoardLoading,
     isError: isBoardError,
+    error: boardError,
   } = useGetBoardByIdQuery(idBoard);
   const {
     data: dataColumns,
@@ -79,6 +82,21 @@ export default function BoardItem(): JSX.Element {
       navigate('/boards/');
     }
   });
+
+  useEffect(() => {
+    if (boardError) {
+      console.log(boardError);
+      dispatch(
+        showToast({
+          message: (boardError as ServerError).data.message || t('boards.serverError'),
+          type: 'error',
+        })
+      );
+      if ((boardError as ServerError).status === 404) {
+        navigate('/boards/');
+      }
+    }
+  }, [boardError, dispatch, navigate]);
 
   return (
     <Box className={'board'}>
