@@ -17,6 +17,7 @@ import UserChip from 'components/UserChip/UserChip';
 import { rules } from '../../../utils/validation.utils';
 import { useCurrentUser } from '../../../hooks/useCurrentUser';
 import { useNavigate } from 'react-router-dom';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -109,6 +110,7 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
 
   return (
     <>
+      {isLoading && <LoadingShadow />}
       <Stack
         className="board-nav"
         direction={{ xs: 'row', sm: 'row' }}
