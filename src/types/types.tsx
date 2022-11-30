@@ -66,3 +66,11 @@ export type DecodedToken = {
 export type BoardFormFields = { title: string; users: string[] };
 
 export type TaskFormFields = { title: string; description: string; users: string[] };
+
+export type ServerError = {
+  status: number;
+  data: {
+    statusCode: number;
+    message: string;
+  };
+};

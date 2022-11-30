@@ -110,8 +110,9 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
         className="board-nav"
         direction={{ xs: 'row', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
+        sx={{ pl: 1 }}
       >
-        <Typography variant={'h3'} component="h1" className="board-title">
+        <Typography variant={'h4'} component="h2" className="board-title">
           {board.title}
         </Typography>
         <ButtonGroup>
@@ -128,7 +129,7 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
 
       {/* //TODO  вынести в отдельный компонент*/}
       {ownerObj && (
-        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, pl: 1 }}>
           <UserChip login={ownerObj.login} isOwner />
           {contributors.length &&
             contributors.map((contributor) => (
