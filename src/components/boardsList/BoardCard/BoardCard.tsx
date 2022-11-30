@@ -55,7 +55,7 @@ const BoardCard = ({ board }: { board: Board }) => {
     if (isSucces) {
       dispatch(
         showToast({
-          message: t(isOwner ? 'boards.toast.onSuccesDelete' : 'boards.toast.onSuccesLeave'),
+          message: t(isOwner ? 'boards.toast.onSuccessDelete' : 'boards.toast.onSuccessLeave'),
           type: 'success',
         })
       );

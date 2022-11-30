@@ -1,9 +1,3 @@
-// UseControllerProps<TFieldValues extends FieldValues = FieldValues, TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>
-// : Omit<
-// RegisterOptions<TFieldValues, TName>,
-// 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
-// >
-
 export const rules = {
   login: {
     required: 'form.errors.noLogin',
@@ -25,5 +19,40 @@ export const rules = {
       value: 3,
       message: 'form.errors.shortName',
     },
+  },
+  columnName: {
+    required: 'form.errors.noTitle',
+    minLength: {
+      value: 3,
+      message: 'form.errors.shortColumnName',
+    },
+    maxLength: {
+      value: 20,
+      message: 'form.errors.noMoreThan20Letters',
+    },
+  },
+  columnDescription: {
+    required: 'form.errors.noDescription',
+    minLength: {
+      value: 3,
+      message: 'form.errors.shortDescription',
+    },
+    maxLength: {
+      value: 50,
+      message: 'form.errors.noMoreThen50Letters',
+    },
+  },
+  taskTitle: {
+    required: 'form.errors.noTitle',
+    maxLength: {
+      value: 18,
+      message: 'form.errors.noMoreThan18Letters',
+    },
+  },
+  taskDescription: {
+    required: 'form.errors.noDescription',
+  },
+  boardInfo: {
+    required: 'form.errors.noTitle',
   },
 };

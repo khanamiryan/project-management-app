@@ -1,42 +1,36 @@
 import { Avatar, Box, Button, Card, Divider, Grid, Link, Typography } from '@mui/material';
 import React from 'react';
-import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import './mainPage.scss';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { theme } from 'index';
 
-const developers = [
-  {
-    url: 'https://github.com/khanamiryan',
-    name: 'Ashot Khanamiryan',
-    imageSrc: 'https://avatars.githubusercontent.com/u/6542341?s=256&v=4',
-    role: 'team lead, developer',
-  },
-  {
-    url: 'https://github.com/utyfjs',
-    name: 'Henadzi Suhakou',
-    imageSrc: '/assets/jpg/henadzi.jpg',
-    role: 'developer',
-  },
-  {
-    url: 'https://github.com/siarheiha',
-    name: 'Siarhei Hancharyk',
-    imageSrc: '/assets/jpg/siarhei.jpg',
-    role: 'developer',
-  },
-];
-
-const firstTextBlock =
-  '"The SuperBoards" is by far the best application for project management*. The unsurpassed functionality of our app for team work management will allow you to plan and control every stage of the project.';
-const footnote = '*According to the developers of this application.';
-const secondTextBlock =
-  'Create as many columns as you want and fill them with any number of tasks. You can add team members to boards and tasks. You can even drag and drop elements with the mouse if that makes you happy.';
-
 export default function MainPage(): JSX.Element {
   const welcomePageTheme = responsiveFontSizes(theme);
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const developers = [
+    {
+      url: 'https://github.com/khanamiryan',
+      name: t('developers.ashot'),
+      imageSrc: 'https://avatars.githubusercontent.com/u/6542341?s=256&v=4',
+      role: `${t('developers.lead')}, ${t('developers.developer')}`,
+    },
+    {
+      url: 'https://github.com/utyfjs',
+      name: t('developers.henadzi'),
+      imageSrc: '/assets/jpg/henadzi.jpg',
+      role: t('developers.developer'),
+    },
+    {
+      url: 'https://github.com/siarheiha',
+      name: t('developers.siarhei'),
+      imageSrc: '/assets/jpg/siarhei.jpg',
+      role: t('developers.developer'),
+    },
+  ];
 
   return (
     <ThemeProvider theme={welcomePageTheme}>
@@ -53,10 +47,10 @@ export default function MainPage(): JSX.Element {
         >
           <Box>
             <Typography variant="h2" textAlign="center">
-              Super boards
+              SuperBoards
             </Typography>
             <Typography variant="h4" textAlign="center">
-              superpower for you projects
+              {t('welcom.slogan')}
             </Typography>
           </Box>
           <Box textAlign={'center'}>
@@ -65,14 +59,14 @@ export default function MainPage(): JSX.Element {
               sx={{ m: 1, minWidth: '150px' }}
               onClick={() => navigate('/login')}
             >
-              {t('form.fields.signIn')}
+              {t('menu.signIn')}
             </Button>
             <Button
               variant="contained"
               sx={{ m: 1, minWidth: '150px' }}
               onClick={() => navigate('/registration')}
             >
-              {t('form.fields.signup')}
+              {t('menu.signUp')}
             </Button>
           </Box>
         </Grid>
@@ -123,7 +117,7 @@ export default function MainPage(): JSX.Element {
             component="p"
             sx={{ textAlign: { xs: 'center', sm: 'justify' } }}
           >
-            {firstTextBlock}
+            {t('welcom.firstTextBlock')}
           </Typography>
           <Divider />
           <Typography
@@ -132,7 +126,7 @@ export default function MainPage(): JSX.Element {
             color={'text.secondary'}
             sx={{ textAlign: { xs: 'center', sm: 'justify' } }}
           >
-            {footnote}
+            {t('welcom.footnote')}
           </Typography>
         </Grid>
       </Grid>
@@ -148,7 +142,7 @@ export default function MainPage(): JSX.Element {
             component="p"
             sx={{ textAlign: { xs: 'center', sm: 'justify' } }}
           >
-            {secondTextBlock}
+            {t('welcom.secondTextBlock')}
           </Typography>
         </Grid>
         <Grid
@@ -167,7 +161,7 @@ export default function MainPage(): JSX.Element {
       {/* section 4 */}
       <Box>
         <Typography variant="h4" textAlign={'center'} sx={{ m: 4 }}>
-          Developers team{' '}
+          {t('welcom.developers')}
         </Typography>
         <Grid
           container
@@ -214,10 +208,10 @@ export default function MainPage(): JSX.Element {
         <Divider sx={{ mt: 2, mb: 2 }} />
 
         <Typography variant="h6" component={'p'} textAlign="center">
-          This app was created as the final task of the{' '}
+          {t('welcom.schoolInfoFirstPart')}
           {
             <Link href="https://rs.school/react/" target="_blank">
-              React course of the Rolling Scopes School.
+              {t('welcom.schoolInfoSecondPart')}
             </Link>
           }
         </Typography>

@@ -15,7 +15,7 @@ const Author = ({ name, imageSrc, url }: AuthorType) => {
       className="author-link"
     >
       <Avatar
-        alt="name"
+        alt={name}
         src={imageSrc}
         sx={{ mr: { md: 1 }, width: { xs: 24, md: 32 }, height: { xs: 24, md: 32 } }}
       />

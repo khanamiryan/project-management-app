@@ -22,6 +22,7 @@ import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
+import { t } from 'i18next';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -56,11 +57,15 @@ export default function TasksList({
   const closeModal = () => setOpenModal(false);
   const [updateColumnsSet] = useUpdateColumnsSetMutation();
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
-  const wrapperUpdateColumnsSet = (data: Pick<IColumn, '_id' | 'order'>[]) => {
+  const wrapperUpdateColumnsSet = (data: {
+    set: Pick<IColumn, '_id' | 'order'>[];
+    boardId: string;
+  }) => {
     updateColumnsSet(data);
   };
 
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const refColumn = useRef<HTMLDivElement | null>(null);
 
   // todo: styles for isDragging components
 
@@ -75,7 +80,7 @@ export default function TasksList({
         isDragging: monitor.isDragging(),
       }),
     }),
-    [dataColumns]
+    [dataColumns, dataColumn]
   );
   // todo: styles for isOver elements
   const [{ isOver }, dropRef] = useDrop(
@@ -86,7 +91,7 @@ export default function TasksList({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [dataColumns]
+    [dataColumns, dataColumn]
   );
 
   // todo добавление карточки в пустой столбец
@@ -94,14 +99,9 @@ export default function TasksList({
     () => ({
       accept: 'task',
       drop: (_itemDrag, monitor) => {
-        console.log('дроп из списка', monitor.didDrop());
-        console.log('_item', _itemDrag);
         if (monitor.didDrop()) {
-          console.log('дроп из карточки monitor diddrop');
           return;
         }
-        console.log('дроп из карточки monitor NOT diddrop', dataTasks);
-
         return { dataTasks, columnIdDrop: columnId };
       },
       collect: (monitor) => ({
@@ -109,10 +109,11 @@ export default function TasksList({
         isOverCurrentCard: !!monitor.isOver({ shallow: true }),
       }),
     }),
-    [dataColumns]
+    [dataColumns, dataColumn]
   );
 
   dragRef(dropRef(ref));
+  dropRefCard(refColumn);
   //dropRefCard(dragRef(dropRef(ref)));
 
   const confirmDeleteColumn = () => {
@@ -160,7 +161,7 @@ export default function TasksList({
           };
         }
       });
-      updateTasksSet(set);
+      updateTasksSet({ set: set, boardId: boardId });
     }
   };
 
@@ -187,14 +188,14 @@ export default function TasksList({
     switch (modalType) {
       case 'delete_column': {
         return {
-          title: `do you really want to remove "${title}" list?`,
+          title: t('modal.column.confirmDeleteColumn', { title }),
           onClickConfirm: confirmDeleteColumn,
         };
       }
       //add_task
       default: {
         return {
-          title: 'Add task',
+          title: t('Add') + ' ' + t('Task'),
           onClickConfirm: handleSubmit(onSubmitNewTask),
         };
       }
@@ -204,33 +205,33 @@ export default function TasksList({
   const getModalContent = () => {
     switch (modalType) {
       case 'delete_column': {
-        return 'if you delete this list you will not be able to restore it';
+        return t('modal.column.deleteReally');
       }
       default: {
         return (
           <>
             <InputText
               name="title"
-              label={`Task title`}
-              autoComplete={`Task title`}
+              label={t('form.fields.taskTitle')}
+              autoComplete={t('form.fields.taskTitle') as string}
               control={control}
               rules={{
-                required: 'title is required',
+                required: t('form.errors.noTitle') as string,
                 maxLength: {
                   value: 18,
-                  message: 'No more then 18 letters',
+                  message: t('form.errors.noMoreThan18Letters') as string,
                 },
               }}
             />
             <InputText
               name="description"
-              label={`Task description`}
-              autoComplete={`Task description`}
+              label={t('form.fields.taskDescription')}
+              autoComplete={t('form.fields.taskDescription') as string}
               control={control}
               multiline
               maxRows={6}
               rules={{
-                required: 'description is required',
+                required: t('form.errors.noDescription') as string,
               }}
             />
             <UsersSelect
@@ -242,10 +243,29 @@ export default function TasksList({
       }
     }
   };
+  /*const style = {
+    position: 'absolute',
+    width: '280px',
+    minWidth: '280px',
+    height: '100%',
+    border: '1px solid gray',
+    backgroundColor: 'white',
+    padding: '0.5rem 1rem',
+    cursor: 'move',
+  };*/
+  const styleDnD = {
+    opacity: isDragging ? 0 : 1,
+    cursor: 'move,',
+    //paddingLeft: isOver  ? '300px' : 0,
+  };
+  const styleDnDForCard = {
+    minHeight: isOverCard ? '110px!important' : '30px',
+    transition: 'all .5s',
+  };
 
   return (
     <>
-      <Box className="board-column">
+      <Box className="board-column" sx={styleDnD}>
         <Card variant="outlined" ref={ref} className="board-column-inner">
           <Box className="column-name">
             {!editTitleColumn && (
@@ -276,7 +296,13 @@ export default function TasksList({
             )}
           </Box>
 
-          <Stack className="tasks-list" direction={'column'} spacing={1} ref={dropRefCard}>
+          <Stack
+            className="tasks-list"
+            direction={'column'}
+            spacing={1}
+            ref={refColumn}
+            sx={{ ...styleDnDForCard }}
+          >
             {dataTasks &&
               [...dataTasks]
                 .sort((a, b) => {
@@ -299,7 +325,7 @@ export default function TasksList({
                 })}
           </Stack>
           <Button variant="contained" fullWidth onClick={handleAddTask}>
-            Add task
+            {t('Add') + ' ' + t('Task')}
           </Button>
         </Card>
       </Box>
