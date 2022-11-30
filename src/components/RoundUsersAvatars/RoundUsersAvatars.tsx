@@ -7,7 +7,7 @@ const RoundUsersAvatars = ({ logins, maxCount = 4 }: { logins: string[]; maxCoun
     {logins.map((login) => (
       <Avatar
         key={login}
-        alt="avatar"
+        alt={login}
         sx={{ backgroundColor: stringToColor(login), width: '30px', height: '30px' }}
       >
         {login[0]}

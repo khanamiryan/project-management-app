@@ -31,7 +31,7 @@ const SignUp = () => {
       .unwrap()
       .then(({ login }) => {
         if (login.length) {
-          dispatch(showToast({ message: 'Success to Sign Up', type: 'success' }));
+          dispatch(showToast({ message: t('auth.toast.successToSignUp'), type: 'success' }));
           // navigate('/boards');
         }
       })
@@ -39,7 +39,7 @@ const SignUp = () => {
         setError('name', { type: 'custom', message: '' });
         setError('login', { type: 'custom', message: '' });
         setError('password', { type: 'custom', message: '' });
-        dispatch(showToast({ message: e.data.message }));
+        dispatch(showToast({ message: t(e.data.message) }));
       });
   };
   const { t } = useTranslation();
@@ -88,11 +88,11 @@ const SignUp = () => {
           sx={{ mb: 2, mt: 1 }}
           fullWidth
         >
-          {t('form.fields.signup')} {isLoading && '...'}
+          {t('auth.signup')} {isLoading && '...'}
         </Button>
         <div>
           <Link href="/login" margin="normal">
-            {t('form.haveAccount')}
+            {t('auth.haveAccount')}
           </Link>
         </div>
       </CardContent>

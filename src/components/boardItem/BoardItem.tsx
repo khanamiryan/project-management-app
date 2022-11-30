@@ -64,7 +64,7 @@ export default function BoardItem(): JSX.Element {
           };
         }
       });
-      updateColumsSet(set);
+      updateColumsSet({ set: set, boardId: selectedColumn.boardId });
     }
   };
 
@@ -132,7 +132,7 @@ export default function BoardItem(): JSX.Element {
             fullWidth
             onClick={handleAddColumn}
           >
-            Add List
+            {t('Add') + ' ' + t('List')}
           </Button>
         </Box>
       </Stack>

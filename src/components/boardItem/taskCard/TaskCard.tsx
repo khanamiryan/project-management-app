@@ -18,6 +18,8 @@ import {
   dndUpdateTasksInsideColumn,
 } from 'services/dndSortColumns';
 import RoundUsersAvatars from 'components/RoundUsersAvatars/RoundUsersAvatars';
+import { useTranslation } from 'react-i18next';
+import { rules } from '../../../utils/validation.utils';
 
 type ModalType = 'delete' | 'edit' | 'view';
 
@@ -32,9 +34,11 @@ type taskCardProps = {
   dataTasks: ITask[];
   onDelete: (task: ITask) => void;
 };
+
 export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>('view');
+  const { t } = useTranslation();
   const { data: board } = useGetBoardByIdQuery(dataTask.boardId);
   const { data: allUsers } = useGetUsersQuery('');
 
@@ -49,9 +53,13 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
 
   const { title, description, _id, boardId, columnId, order } = dataTask;
   const [updateTasksSet] = useUpdateTasksSetMutation();
-  const wrapperUpdateTasksSet = (data: Pick<ITask, '_id' | 'order' | 'columnId'>[]) => {
+  const wrapperUpdateTasksSet = (data: {
+    set: Pick<ITask, '_id' | 'order' | 'columnId'>[];
+    boardId: string;
+  }) => {
     updateTasksSet(data);
   };
+
   const refTask = useRef(null);
   //todo: styles for isDragging component
   const [{ isDragging }, dragRefTask] = useDrag(
@@ -85,7 +93,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
               wrapperUpdateTasksSet
             );
           }
-        } else if (dataTaskDrag && columnIdDrop && !dataTasksDrop) {
+        } else if (dataTaskDrag && columnIdDrop) {
           dndAddTaskToEmptyColumn(dataTask, dataTasks, columnIdDrop, wrapperUpdateTasksSet);
         }
       },
@@ -101,7 +109,6 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     () => ({
       accept: 'task',
       drop: (_item, monitor) => {
-        console.log('дроп из карточки', monitor.didDrop());
         if (monitor.didDrop()) {
           return;
         }
@@ -116,6 +123,16 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   );
 
   dragRefTask(dropRefTask(refTask));
+
+  const styleDnD = {
+    opacity: isDragging ? 0 : 1,
+    cursor: 'move',
+    //height: isDragging ? 0 : 'inherit',
+
+    //paddingTop: isOver ? '110px' : 0,
+    //transition: 'all 0.5s',
+  };
+  // todo if(order<orderdrop) { return paddingBottom } else{ return paddingTop} ??
 
   const closeModal = () => setOpenModal(false);
 
@@ -154,13 +171,13 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     switch (modalType) {
       case 'delete': {
         return {
-          title: `Do you really want to remove task "${title}"?`,
+          title: t('modal.task.confirmDeleteTask', { title }),
           onClickConfirm: confirmDeleteTask,
         };
       }
       case 'edit': {
         return {
-          title: `Edit task "${title}"`,
+          title: t('modal.task.editTask', { title }),
           onClickConfirm: handleSubmit(onSubmitEditedTask),
         };
       }
@@ -168,8 +185,8 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
         return {
           title,
           onClickConfirm: handleEditTask,
-          confirmButtonText: 'EDIT',
-          cancelButtonText: 'CLOSE',
+          confirmButtonText: t('modal.edit'),
+          cancelButtonText: t('modal.close'),
         };
       }
     }
@@ -178,35 +195,28 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const getModalContent = () => {
     switch (modalType) {
       case 'delete': {
-        return 'if you delete this task you will not be able to restore it';
+        return t('modal.task.deleteReally');
       }
       case 'edit': {
         return (
           <>
             <InputText
               name="title"
-              label={`Task title`}
-              autoComplete={`Task title`}
+              label={t('form.fields.taskTitle')}
+              autoComplete={t('form.fields.taskTitle') as string}
               control={control}
-              rules={{
-                required: 'title is required',
-                maxLength: {
-                  value: 18,
-                  message: 'No more then 18 letters',
-                },
-              }}
+              rules={rules.taskTitle}
             />
             <InputText
               name="description"
-              label={`Task description`}
-              autoComplete={`Task description`}
+              label={t('form.fields.taskDescription')}
+              autoComplete={t('form.fields.taskDescription') as string}
               control={control}
               multiline
               maxRows={6}
-              rules={{
-                required: 'description is required',
-              }}
+              rules={rules.taskDescription}
             />
+
             <UsersSelect
               onUserSelect={onShare}
               selectedUsersId={dataTask.users}
@@ -226,7 +236,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
             )}
             <Box>
               <Typography variant="body1" component={'span'}>
-                Creator:{' '}
+                {t('modal.task.creator')}
               </Typography>
               {ownerObj && <UserChip login={ownerObj.login} isOwner />}
             </Box>
@@ -236,7 +246,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
                 <Divider />
                 <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
                   <Typography variant="body1" component={'span'}>
-                    Users:{' '}
+                    {t('modal.task.users')}
                   </Typography>
                   {contributors.map((contributor) => (
                     <UserChip key={contributor._id} login={contributor.login} />
@@ -262,7 +272,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
         ref={refTask}
         variant="outlined"
         onClick={handleShowTask}
-        sx={{ position: 'relative', overflow: 'visible', padding: '5px' }}
+        sx={{ position: 'relative', overflow: 'visible', padding: '5px', ...styleDnD }}
       >
         <IconButton
           onClick={(e) => handleDeleteTask(e)}
@@ -271,7 +281,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
           <DeleteIcon fontSize="small" />
         </IconButton>
         <Typography component="h3" mt={1} variant={'h6'}>
-          {title}
+          {title} order: {dataTask.order}
         </Typography>
         <Typography component="p" variant={'body1'}>
           {description.length > 24 ? `${description.slice(0, 24)}...` : description}
