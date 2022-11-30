@@ -1,5 +1,8 @@
-import { Box, Button, ButtonGroup, Card, Input, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Card, IconButton, Input, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 import React, { useRef, useState } from 'react';
 import { IColumn, ITask, TaskFormFields } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
@@ -22,7 +25,7 @@ import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -35,6 +38,7 @@ export default function TasksList({
   dataTasks,
   onDeleteColumn,
 }: ITaskListProps): JSX.Element {
+  const { t } = useTranslation();
   const { _id: columnId, title, boardId } = dataColumn;
   const { data: board } = useGetBoardByIdQuery(boardId);
   const { id: currentUserId } = useAppSelector(selectUser);
@@ -267,30 +271,43 @@ export default function TasksList({
     <>
       <Box className="board-column" sx={styleDnD}>
         <Card variant="outlined" ref={ref} className="board-column-inner">
-          <Box className="column-name">
+          <Box className="column-name" sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}>
             {!editTitleColumn && (
-              <Stack
-                className="column-title"
-                direction="row"
-                spacing={2}
-                onClick={() => setEditTitleColumn(!editTitleColumn)}
-              >
-                <Typography variant={'h5'}>{title}</Typography>{' '}
-                <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
-                <p>order: {dataColumn.order}</p>
-              </Stack>
+              <>
+                <Stack
+                  className="column-title"
+                  direction="row"
+                  justifyContent={'space-between'}
+                  spacing={1}
+                  onClick={() => setEditTitleColumn(!editTitleColumn)}
+                >
+                  <Typography variant={'h5'}>{title}</Typography>{' '}
+                  <IconButton onClick={(e) => handleDeleteColumn(e)} sx={{ color: '#FFFFFF' }}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </>
             )}
             {editTitleColumn && (
               <Stack className="column-title-edit" direction="row" spacing={2}>
                 <Input
+                  inputProps={{
+                    maxLength: 16,
+                  }}
                   onChange={(e) => {
                     setNewColumnTitle(e.currentTarget.value);
                   }}
                   value={newColumnTitle}
+                  sx={{ color: '#FFFFFF' }}
+                  className="column-title-input"
                 ></Input>
                 <ButtonGroup>
-                  <Button onClick={handleUpdateColumn}>update</Button>
-                  <Button onClick={() => setEditTitleColumn(!editTitleColumn)}>no</Button>
+                  <IconButton onClick={() => setEditTitleColumn(false)} sx={{ color: '#FFFFFF' }}>
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton onClick={handleUpdateColumn} sx={{ color: '#FFFFFF' }}>
+                    <DoneIcon fontSize="small" />
+                  </IconButton>
                 </ButtonGroup>
               </Stack>
             )}

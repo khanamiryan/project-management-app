@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import './boardItem.scss';
@@ -11,26 +11,31 @@ import {
 } from './../../services/board.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
-import { useAppSelector } from 'store/redux.hooks';
+import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { useGetBoardByIdQuery } from 'services/boards.api';
-import { IColumn } from 'types/types';
-import { t } from 'i18next';
+import { IColumn, ServerError } from 'types/types';
+import { useTranslation } from 'react-i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
+import { showToast } from 'store/toastSlice';
+import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const { id: userId } = useAppSelector(selectUser);
-  const [deleteColumn] = useDeleteColumnMutation();
-  const [updateColumsSet] = useUpdateColumnsSetMutation();
+  const [deleteColumn, deleteColumnsSetResult] = useDeleteColumnMutation();
+  const [updateColumsSet, updateColumnsSetResult] = useUpdateColumnsSetMutation();
+  const dispatch = useAppDispatch();
 
   const {
     data: dataCurrentBoard,
     isLoading: isBoardLoading,
     isError: isBoardError,
+    error: boardError,
   } = useGetBoardByIdQuery(idBoard);
   const {
     data: dataColumns,
@@ -42,6 +47,13 @@ export default function BoardItem(): JSX.Element {
     isLoading: isTasksLoading,
     isError: isTasksError,
   } = useGetTasksByBoardIdQuery(idBoard);
+
+  const isError =
+    isBoardError ||
+    isTasksError ||
+    isColumnsError ||
+    deleteColumnsSetResult.isError ||
+    updateColumnsSetResult.isError;
 
   const handleAddColumn = () => {
     setOpenModalCreate(true);
@@ -80,15 +92,28 @@ export default function BoardItem(): JSX.Element {
     }
   });
 
+  useEffect(() => {
+    if (boardError) {
+      console.log(boardError);
+      if ((boardError as ServerError)?.data) {
+        dispatch(
+          showToast({
+            message: (boardError as ServerError).data.message || t('boards.serverError'),
+            type: 'error',
+          })
+        );
+        if ((boardError as ServerError).status === 404) {
+          navigate('/boards/');
+        }
+      }
+    }
+  }, [boardError, dispatch, navigate]);
+
   return (
     <Box className={'board'}>
       <Stack className="board-header">
         {(isBoardLoading || isTasksLoading || isColumnsLoading) && <CircularProgress size={80} />}
-        {isBoardError && (
-          <Alert variant="outlined" severity="error">
-            {t('boards.serverError')}
-          </Alert>
-        )}
+        {isError && <ErrorAlert />}
         {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
       </Stack>
 
