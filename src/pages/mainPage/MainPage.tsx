@@ -16,7 +16,7 @@ const developers = [
   {
     url: 'https://github.com/utyfjs',
     name: 'Henadzi Suhakou',
-    imageSrc: 'https://avatars.githubusercontent.com/u/79808010?s=64&v=4',
+    imageSrc: '/assets/jpg/henadzi.jpg',
     role: 'developer',
   },
   {
