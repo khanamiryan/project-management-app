@@ -50,13 +50,13 @@ const Header = () => {
   const pages = [
     // { name: t('menu.mainPage'), url: '/' },
     { name: t('menu.boards'), url: '/boards' },
-    // { name: 'Beta board', url: '/boards/636cd10e96274bebf760a073' },
-    { name: t('menu.profilePage'), url: '/profile' },
     {
       name: t('menu.addBoard'),
       onClick: onClickAddBoard,
       icon: <AddCircleIcon sx={{ ml: 0.5 }} />,
     },
+    // { name: 'Beta board', url: '/boards/636cd10e96274bebf760a073' },
+    { name: t('menu.profilePage'), url: '/profile' },
   ];
   const userMenu = [
     { name: t('menu.signIn'), url: '/login' },
@@ -64,7 +64,7 @@ const Header = () => {
   ];
 
   const userAuthorizedMenu = [
-    { name: t('menu.goToMainPage'), url: '/' },
+    { name: t('menu.goToMainPage'), url: '/boards' },
     { name: t('menu.signOut'), onClick: handleSignOut, icon: <LogoutIcon sx={{ ml: 0.5 }} /> },
   ];
 
@@ -82,9 +82,9 @@ const Header = () => {
         color={trigger ? 'secondary' : 'primary'}
         position="sticky"
         sx={{
-          py: trigger ? 0 : 0.3,
+          py: trigger ? 0 : 2,
           mb: 2,
-          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          transition: 'all 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
         }}
       >
         <Toolbar component="nav">
@@ -94,6 +94,7 @@ const Header = () => {
             component={Link}
             href="/"
             color={trigger ? 'primary.contrastText' : 'secondary.contrastText'}
+            sx={{ padding: '0 10px' }}
           >
             Super boards
           </Typography>

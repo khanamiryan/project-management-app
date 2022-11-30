@@ -26,7 +26,6 @@ function App() {
   //   { name: t('menu.signIn'), url: '/login' },
   //   { name: t('menu.signUp'), url: '/registration' },
   // ];
-  // console.log(pages);
   //
   //
   return (
