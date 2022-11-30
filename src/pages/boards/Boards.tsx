@@ -1,14 +1,16 @@
 import BoardsList from 'components/boardsList/BoardsList';
 import React from 'react';
 import './boards.scss';
-import { useAppSelector } from '../../store/redux.hooks';
-import { selectUser } from '../../store/userSlice';
+
+import { useUser } from '../../hooks/useUser';
+import { useTranslation } from 'react-i18next';
 
 export default function Boards(): JSX.Element {
-  const user = useAppSelector(selectUser);
+  const { name } = useUser();
+  const { t } = useTranslation();
   return (
     <>
-      <h2>{`Welcome to your Boards ${user.name}`}</h2>
+      <h2>{t('welcome', { name })}</h2>
       <BoardsList />
     </>
   );

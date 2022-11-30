@@ -41,11 +41,11 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
       <>
         <InputText
           name="title"
-          label={t('modal.board.onCreateTitle')}
+          label={t('form.fields.boardTitle')}
           autoComplete="title"
           control={control}
           rules={{
-            required: t('modal.board.errorTitleMessage') as string,
+            required: t('form.errors.noTitle') as string,
           }}
           inputProps={{
             style: { fontSize: '1.2rem' },

@@ -22,6 +22,7 @@ import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
+import { t } from 'i18next';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -187,14 +188,14 @@ export default function TasksList({
     switch (modalType) {
       case 'delete_column': {
         return {
-          title: `do you really want to remove "${title}" list?`,
+          title: t('modal.column.confirmDeleteColumn', { title }),
           onClickConfirm: confirmDeleteColumn,
         };
       }
       //add_task
       default: {
         return {
-          title: 'Add task',
+          title: t('Add') + ' ' + t('Task'),
           onClickConfirm: handleSubmit(onSubmitNewTask),
         };
       }
@@ -204,33 +205,33 @@ export default function TasksList({
   const getModalContent = () => {
     switch (modalType) {
       case 'delete_column': {
-        return 'if you delete this list you will not be able to restore it';
+        return t('modal.column.deleteReally');
       }
       default: {
         return (
           <>
             <InputText
               name="title"
-              label={`Task title`}
-              autoComplete={`Task title`}
+              label={t('form.fields.taskTitle')}
+              autoComplete={t('form.fields.taskTitle') as string}
               control={control}
               rules={{
-                required: 'title is required',
+                required: t('form.errors.noTitle') as string,
                 maxLength: {
                   value: 18,
-                  message: 'No more then 18 letters',
+                  message: t('form.errors.noMoreThan18Letters') as string,
                 },
               }}
             />
             <InputText
               name="description"
-              label={`Task description`}
-              autoComplete={`Task description`}
+              label={t('form.fields.taskDescription')}
+              autoComplete={t('form.fields.taskDescription') as string}
               control={control}
               multiline
               maxRows={6}
               rules={{
-                required: 'description is required',
+                required: t('form.errors.noDescription') as string,
               }}
             />
             <UsersSelect
@@ -324,7 +325,7 @@ export default function TasksList({
                 })}
           </Stack>
           <Button variant="contained" fullWidth onClick={handleAddTask}>
-            Add task
+            {t('Add') + ' ' + t('Task')}
           </Button>
         </Card>
       </Box>

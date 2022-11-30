@@ -28,17 +28,17 @@ const Header = () => {
   const user = useUser();
   const dispatch = useAppDispatch();
   const [modalOpen, setModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 100,
   });
-  const { t } = useTranslation();
 
   const handleSignOut = () => {
     dispatch(signOutReducer());
     dispatch(api.util.resetApiState());
-    dispatch(showToast({ type: 'success', message: t('Successfully signed out') }));
+    dispatch(showToast({ type: 'success', message: t('auth.toast.signOutSuccess') }));
   };
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -52,7 +52,11 @@ const Header = () => {
     { name: t('menu.boards'), url: '/boards' },
     // { name: 'Beta board', url: '/boards/636cd10e96274bebf760a073' },
     { name: t('menu.profilePage'), url: '/profile' },
-    { name: 'Add board', onClick: onClickAddBoard, icon: <AddCircleIcon sx={{ ml: 0.5 }} /> },
+    {
+      name: t('menu.addBoard'),
+      onClick: onClickAddBoard,
+      icon: <AddCircleIcon sx={{ ml: 0.5 }} />,
+    },
   ];
   const userMenu = [
     { name: t('menu.signIn'), url: '/login' },
@@ -60,7 +64,7 @@ const Header = () => {
   ];
 
   const userAuthorizedMenu = [
-    { name: t('Go to Main Page'), url: '/' },
+    { name: t('menu.goToMainPage'), url: '/' },
     { name: t('menu.signOut'), onClick: handleSignOut, icon: <LogoutIcon sx={{ ml: 0.5 }} /> },
   ];
 

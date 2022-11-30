@@ -132,7 +132,7 @@ export default function BoardItem(): JSX.Element {
             fullWidth
             onClick={handleAddColumn}
           >
-            Add List
+            {t('Add') + ' ' + t('List')}
           </Button>
         </Box>
       </Stack>
