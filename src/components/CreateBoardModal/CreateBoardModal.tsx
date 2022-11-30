@@ -9,7 +9,6 @@ import { useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { useTranslation } from 'react-i18next';
 import { BoardFormFields } from 'types/types';
-
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
 
 const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
@@ -37,7 +36,12 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   }
 
   return (
-    <Modal open={open} onClickCancel={onModalClose} onClickConfirm={handleSubmit(onSubmit)}>
+    <Modal
+      open={open}
+      title={`${t('Create')} ${t('board')}`}
+      onClickCancel={onModalClose}
+      onClickConfirm={handleSubmit(onSubmit)}
+    >
       <>
         <InputText
           name="title"
