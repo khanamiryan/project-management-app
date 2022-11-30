@@ -25,7 +25,7 @@ import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -38,6 +38,7 @@ export default function TasksList({
   dataTasks,
   onDeleteColumn,
 }: ITaskListProps): JSX.Element {
+  const { t } = useTranslation();
   const { _id: columnId, title, boardId } = dataColumn;
   const { data: board } = useGetBoardByIdQuery(boardId);
   const { id: currentUserId } = useAppSelector(selectUser);

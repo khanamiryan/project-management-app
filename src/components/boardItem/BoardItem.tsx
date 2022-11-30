@@ -15,13 +15,14 @@ import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
 import { selectUser } from 'store/userSlice';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { IColumn, ServerError } from 'types/types';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 import { showToast } from 'store/toastSlice';
 import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
