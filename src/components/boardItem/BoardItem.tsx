@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import './boardItem.scss';
@@ -18,6 +18,7 @@ import { IColumn, ServerError } from 'types/types';
 import { t } from 'i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 import { showToast } from 'store/toastSlice';
+import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
@@ -25,8 +26,8 @@ export default function BoardItem(): JSX.Element {
   const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
   const { id: userId } = useAppSelector(selectUser);
-  const [deleteColumn] = useDeleteColumnMutation();
-  const [updateColumsSet] = useUpdateColumnsSetMutation();
+  const [deleteColumn, deleteColumnsSetResult] = useDeleteColumnMutation();
+  const [updateColumsSet, updateColumnsSetResult] = useUpdateColumnsSetMutation();
   const dispatch = useAppDispatch();
 
   const {
@@ -45,6 +46,13 @@ export default function BoardItem(): JSX.Element {
     isLoading: isTasksLoading,
     isError: isTasksError,
   } = useGetTasksByBoardIdQuery(idBoard);
+
+  const isError =
+    isBoardError ||
+    isTasksError ||
+    isColumnsError ||
+    deleteColumnsSetResult.isError ||
+    updateColumnsSetResult.isError;
 
   const handleAddColumn = () => {
     setOpenModalCreate(true);
@@ -104,11 +112,7 @@ export default function BoardItem(): JSX.Element {
     <Box className={'board'}>
       <Stack className="board-header">
         {(isBoardLoading || isTasksLoading || isColumnsLoading) && <CircularProgress size={80} />}
-        {isBoardError && (
-          <Alert variant="outlined" severity="error">
-            {t('boards.serverError')}
-          </Alert>
-        )}
+        {isError && <ErrorAlert />}
         {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
       </Stack>
 

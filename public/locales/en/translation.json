@@ -65,7 +65,7 @@
   },
   "boards": {
     "myBoards": "My boards",
-    "serverError": "Oops! something went wrong.",
+    "serverError": "Oops! something went wrong. Try reload this page",
     "roleIsOwner": "Role: owner",
     "roleIsContributor": "Role: contributor",
     "open": "OPEN BOARD",
