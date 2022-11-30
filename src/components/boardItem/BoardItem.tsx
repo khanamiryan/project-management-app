@@ -86,14 +86,16 @@ export default function BoardItem(): JSX.Element {
   useEffect(() => {
     if (boardError) {
       console.log(boardError);
-      dispatch(
-        showToast({
-          message: (boardError as ServerError).data.message || t('boards.serverError'),
-          type: 'error',
-        })
-      );
-      if ((boardError as ServerError).status === 404) {
-        navigate('/boards/');
+      if ((boardError as ServerError)?.data) {
+        dispatch(
+          showToast({
+            message: (boardError as ServerError).data.message || t('boards.serverError'),
+            type: 'error',
+          })
+        );
+        if ((boardError as ServerError).status === 404) {
+          navigate('/boards/');
+        }
       }
     }
   }, [boardError, dispatch, navigate]);
