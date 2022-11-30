@@ -21,7 +21,7 @@ export default function MainPage(): JSX.Element {
     {
       url: 'https://github.com/utyfjs',
       name: t('developers.henadzi'),
-      imageSrc: 'https://avatars.githubusercontent.com/u/79808010?s=64&v=4',
+      imageSrc: 'https://avatars.githubusercontent.com/u/79808010?s=256&v=4',
       role: t('developers.developer'),
     },
     {

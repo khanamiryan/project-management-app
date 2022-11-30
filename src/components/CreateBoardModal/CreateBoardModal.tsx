@@ -5,17 +5,15 @@ import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 import { useCreateBoardMutation } from 'services/boards.api';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+
 import { useTranslation } from 'react-i18next';
 import { BoardFormFields } from 'types/types';
-
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
-
 const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   const { t } = useTranslation();
   let users: string[] = [];
-  const { id } = useAppSelector(selectUser);
+  const { id } = useCurrentUser();
   const [createBoard, result] = useCreateBoardMutation();
   const { handleSubmit, control } = useForm<BoardFormFields>({
     defaultValues: {

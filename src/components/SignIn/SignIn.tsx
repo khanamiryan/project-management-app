@@ -6,16 +6,15 @@ import InputText from '../InputText/InputText';
 import { useAppDispatch } from '../../store/redux.hooks';
 import LoginIcon from '@mui/icons-material/Login';
 import { showToast } from 'store/toastSlice';
-
 import { useTranslation } from 'react-i18next';
 import { rules } from '../../utils/validation.utils';
 import { useSignInUserMutation } from '../../services/auth.api';
-import { useUser } from '../../hooks/useUser';
+
 import { ISignInForm } from '../../types/types';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 const SignIn = () => {
   const [signInUser, { isLoading }] = useSignInUserMutation();
-
   const { handleSubmit, control, setError } = useForm<ISignInForm>({
     defaultValues: {
       login: '',
@@ -24,18 +23,22 @@ const SignIn = () => {
   });
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { loggedIn } = useUser();
+  const { loggedIn } = useCurrentUser();
 
   useEffect(() => {
     if (loggedIn) {
       dispatch(showToast({ message: t('auth.toast.successToSignIn'), type: 'success' }));
-      // navigate('/boards');
     }
   }, [loggedIn]);
 
   const onSubmit: SubmitHandler<ISignInForm> = ({ login, password }) => {
     signInUser({ login, password })
       .unwrap()
+      .then(({ token }) => {
+        if (token.length) {
+          dispatch(showToast({ message: t('auth.toast.successToSignIn'), type: 'success' }));
+        }
+      })
       .catch((e) => {
         dispatch(showToast({ message: e.data.message }));
         setError('login', { type: 'custom', message: '' });

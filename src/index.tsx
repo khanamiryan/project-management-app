@@ -17,6 +17,15 @@ import './i18n';
 import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+
+const getInitialStore = () => {
+  return {
+    user: {
+      token: localStorage.getItem('token') || '',
+    },
+  };
+};
+
 export const theme = createTheme({
   components: {
     MuiLink: {
@@ -45,7 +54,7 @@ root.render(
   <React.StrictMode>
     <React.Suspense fallback={<LoadingBackdrop />}>
       <BrowserRouter>
-        <Provider store={store({})}>
+        <Provider store={store(getInitialStore())}>
           <ThemeProvider theme={theme}>
             <DndProvider backend={HTML5Backend}>
               <ErrorBoundary>

@@ -13,18 +13,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Board } from 'types/types';
 import Modal from 'components/Modal/Modal';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
-import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+import { useAppDispatch } from 'store/redux.hooks';
+
 import { useNavigate } from 'react-router-dom';
 import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 import { showToast } from 'store/toastSlice';
 import { useTranslation } from 'react-i18next';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
 
 const BoardCard = ({ board }: { board: Board }) => {
   const navigate = useNavigate();
   const goBoard = () => navigate(`/boards/${board._id}`);
   const [modalOpen, setModalOpen] = useState(false);
-  const { id: currentUserId } = useAppSelector(selectUser);
+  const { id: currentUserId } = useCurrentUser();
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const isOwner = currentUserId === board.owner;
@@ -35,7 +36,7 @@ const BoardCard = ({ board }: { board: Board }) => {
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
-  const isSucces = deleteResult.isSuccess || updateResult.isSuccess;
+  const isSuccess = deleteResult.isSuccess || updateResult.isSuccess;
 
   const onClickDelete = () => {
     setModalOpen(true);
@@ -52,7 +53,7 @@ const BoardCard = ({ board }: { board: Board }) => {
   };
 
   useEffect(() => {
-    if (isSucces) {
+    if (isSuccess) {
       dispatch(
         showToast({
           message: t(isOwner ? 'boards.toast.onSuccessDelete' : 'boards.toast.onSuccessLeave'),
@@ -60,7 +61,7 @@ const BoardCard = ({ board }: { board: Board }) => {
         })
       );
     }
-  }, [dispatch, isOwner, isSucces]);
+  }, [dispatch, isOwner, isSuccess]);
 
   return (
     <>

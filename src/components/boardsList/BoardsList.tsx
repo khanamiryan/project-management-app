@@ -1,22 +1,22 @@
-import { Alert, Box, Grid, Typography } from '@mui/material';
-import React from 'react';
+import { Alert, Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import BoardCard from './BoardCard/BoardCard';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useGetBoardsSetByUserIdQuery } from 'services/boards.api';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
 import { useTranslation } from 'react-i18next';
-
+import { useCurrentUser } from '../../hooks/useCurrentUser';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import './boardList.scss';
+import CreateBoardModal from '../CreateBoardModal/CreateBoardModal';
 const BoardsList = () => {
-  const { loggedIn, id } = useAppSelector(selectUser);
+  const { id } = useCurrentUser();
   const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery(id);
   const { t } = useTranslation();
-
-  if (!loggedIn) {
-    //TODO Redirect
-    return <p>redirect to welcome page</p>;
-  }
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const onClickAddBoard = () => {
+    setModalOpen(true);
+  };
+  const onModalClose = () => setModalOpen(false);
   return (
     <>
       <Typography variant="h4" sx={{ mb: '1rem' }}>
@@ -39,6 +39,20 @@ const BoardsList = () => {
               </Grid>
             );
           })}
+        {!isLoading && (
+          <Grid item xs={12} sm={6} md={4} key={'add'}>
+            <Card onClick={onClickAddBoard} className="addBoardCard">
+              <CardContent>
+                <Typography variant="h4" component="div">
+                  {t('menu.addBoard')}
+                </Typography>
+
+                <AddCircleIcon sx={{ width: 50, height: 50 }} />
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
+        {modalOpen && <CreateBoardModal onModalClose={onModalClose} open={modalOpen} />}
       </Grid>
     </>
   );

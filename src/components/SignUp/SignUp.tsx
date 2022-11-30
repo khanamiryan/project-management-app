@@ -32,7 +32,6 @@ const SignUp = () => {
       .then(({ login }) => {
         if (login.length) {
           dispatch(showToast({ message: t('auth.toast.successToSignUp'), type: 'success' }));
-          // navigate('/boards');
         }
       })
       .catch((e) => {

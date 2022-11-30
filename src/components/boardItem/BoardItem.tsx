@@ -11,14 +11,15 @@ import {
 } from './../../services/board.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
-import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+import { useAppDispatch } from 'store/redux.hooks';
+
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { IColumn, ServerError } from 'types/types';
 import { useTranslation } from 'react-i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 import { showToast } from 'store/toastSlice';
 import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
@@ -26,7 +27,7 @@ export default function BoardItem(): JSX.Element {
   const navigate = useNavigate();
   const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const { id: userId } = useAppSelector(selectUser);
+  const { id: userId } = useCurrentUser();
   const [deleteColumn, deleteColumnsSetResult] = useDeleteColumnMutation();
   const [updateColumsSet, updateColumnsSetResult] = useUpdateColumnsSetMutation();
   const dispatch = useAppDispatch();
