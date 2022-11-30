@@ -1,7 +1,9 @@
 .author-link {
   color: #fff;
-  text-decoration: none!important;
-
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
   .developer-name{
     color: #fafafa;
        
