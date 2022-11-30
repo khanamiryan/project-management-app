@@ -20,6 +20,7 @@ import {
 import RoundUsersAvatars from 'components/RoundUsersAvatars/RoundUsersAvatars';
 import { useTranslation } from 'react-i18next';
 import { rules } from '../../../utils/validation.utils';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 type ModalType = 'delete' | 'edit' | 'view';
 
@@ -41,8 +42,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const { t } = useTranslation();
   const { data: board } = useGetBoardByIdQuery(dataTask.boardId);
   const { data: allUsers } = useGetUsersQuery('');
-
-  const [updateTask] = useUpdateTaskMutation();
+  const [updateTask, updateTaskResult] = useUpdateTaskMutation();
 
   const { handleSubmit, control } = useForm<TaskFormFields>({
     defaultValues: {
@@ -274,6 +274,8 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
         onClick={handleShowTask}
         sx={{ position: 'relative', overflow: 'visible', padding: '5px', ...styleDnD }}
       >
+        {updateTaskResult.isLoading && <LoadingShadow />}
+
         <IconButton
           onClick={(e) => handleDeleteTask(e)}
           sx={{ position: 'absolute', top: '4px', right: '8px' }}
