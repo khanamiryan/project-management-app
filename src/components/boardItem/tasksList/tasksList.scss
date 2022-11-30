@@ -5,11 +5,13 @@
   min-width: 280px;
   height: 100%;
 
+
   .board-column-inner {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
     max-height: 100%;
+    cursor: move;
   }
 
 

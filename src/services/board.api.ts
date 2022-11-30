@@ -16,14 +16,7 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Tasks', id: 'LIST' }],
     }),
-    updateTasksSet: builder.mutation<ITask[], Pick<ITask, '_id' | 'order' | 'columnId'>[]>({
-      query: (set) => ({
-        url: Endpoint.TASKS_SET,
-        method: HTTPMethod.PATCH,
-        body: set,
-      }),
-      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
-    }),
+
     /*getTasksByColumn: builder.query<ITask[], { boardId: string; columnId: string }>({
       query: ({ boardId, columnId }) => ({
         url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks`,
@@ -60,7 +53,47 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Tasks', id: 'LIST' }],
     }),
+    updateTasksSet: builder.mutation<
+      ITask[],
+      { set: Pick<ITask, '_id' | 'order' | 'columnId'>[]; boardId: string }
+    >({
+      query: ({ set, boardId }) => ({
+        url: Endpoint.TASKS_SET,
+        method: HTTPMethod.PATCH,
+        body: set,
+      }),
 
+      async onQueryStarted({ boardId, set }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          boardApi.util.updateQueryData('getTasksByBoardId', boardId, (draft) => {
+            const newArr = draft.map((item) => {
+              const task = set.find((newTask) => {
+                if (newTask._id === item._id) {
+                  return item;
+                } else {
+                  return false;
+                }
+              });
+              if (task) {
+                item.order = task.order;
+                item.columnId = task?.columnId;
+                return item;
+              } else {
+                return item;
+              }
+            });
+            Object.assign(draft, newArr);
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          console.log('catch from optimitstic');
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+    }),
     addTask: builder.mutation<ITask, Omit<ITask, '_id'>>({
       query: ({ boardId, columnId, ...rest }) => ({
         url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks`,
@@ -99,12 +132,44 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Columns', id: 'LIST' }],
     }),
-    updateColumnsSet: builder.mutation<IColumn[], Pick<IColumn, '_id' | 'order'>[]>({
-      query: (set) => ({
+    updateColumnsSet: builder.mutation<
+      IColumn[],
+      { set: Pick<IColumn, '_id' | 'order'>[]; boardId: string }
+    >({
+      query: ({ set, boardId }) => ({
         url: Endpoint.COLUMNS_SET,
         method: HTTPMethod.PATCH,
         body: set,
       }),
+      async onQueryStarted({ boardId, set }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          boardApi.util.updateQueryData('getColumns', boardId, (draft) => {
+            const newArr = draft.map((item) => {
+              const column = set.find((newColumn) => {
+                if (newColumn._id === item._id) {
+                  return item;
+                } else {
+                  return false;
+                }
+              });
+              if (column) {
+                item.order = column.order;
+                return item;
+              } else {
+                return item;
+              }
+            });
+            console.log(newArr.length);
+            Object.assign(draft, draft);
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          console.log('catch from optimitstic');
+          patchResult.undo();
+        }
+      },
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     addColumn: builder.mutation<IColumn, Omit<IColumn, '_id'>>({
@@ -147,3 +212,38 @@ export const {
   useUpdateTasksSetMutation,
   //useGetTasksByColumnQuery,
 } = boardApi;
+/*
+const api11 = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/',
+  }),
+  tagTypes: ['Post'],
+  endpoints: (build) => ({
+    getPost: build.query<Post, number>({
+      query: (id) => `post/${id}`,
+      providesTags: ['Post'],
+    }),
+    updatePost: build.mutation<void, Pick<Post, 'id'> & Partial<Post>>({
+      query: ({ id, ...patch }) => ({
+        url: `post/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          api.util.updateQueryData('getPost', id, (draft) => {
+            Object.assign(draft, patch);
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+
+
+        }
+      },
+    }),
+  }),
+});
+*/
