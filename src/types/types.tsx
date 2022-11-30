@@ -54,7 +54,7 @@ export interface IUserResponse {
   _id: string;
   login: string;
 }
-export interface User extends IUserResponse {} //deprecated IUserResponse instead, better if we normalize all to id instead _id
+//export interface User extends IUserResponse {} //deprecated IUserResponse instead, better if we normalize all to id instead _id
 
 export type DecodedToken = {
   id: string;

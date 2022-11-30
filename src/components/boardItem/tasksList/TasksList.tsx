@@ -15,17 +15,16 @@ import {
   useUpdateTasksSetMutation,
   useAddTaskMutation,
   //useGetTasksByColumnQuery,
-} from './../../../services/board.api';
+} from '../../../services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
 import { useTranslation } from 'react-i18next';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -41,7 +40,7 @@ export default function TasksList({
   const { t } = useTranslation();
   const { _id: columnId, title, boardId } = dataColumn;
   const { data: board } = useGetBoardByIdQuery(boardId);
-  const { id: currentUserId } = useAppSelector(selectUser);
+  const { id: currentUserId } = useCurrentUser();
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState<'delete_column' | 'add_task'>('delete_column');
   const [editTitleColumn, setEditTitleColumn] = useState(false);

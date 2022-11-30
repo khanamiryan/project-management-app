@@ -8,11 +8,7 @@ import SignIn from 'pages/signIn/SignIn';
 import SignUp from 'pages/signUp/SignUp';
 import React from 'react';
 import { Route, Routes } from 'react-router';
-
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import { useUser } from './hooks/useUser';
-import { useUserInit } from './hooks/useUserInit';
-
 import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
 import { useCurrentUser } from './hooks/useCurrentUser';
 

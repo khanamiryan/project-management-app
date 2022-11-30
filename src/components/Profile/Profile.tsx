@@ -12,13 +12,13 @@ import { showToast } from 'store/toastSlice';
 import { rules } from '../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
 import { useDeleteUserMutation, useSetUserInfoMutation } from '../../services/users.api';
-import { useUser } from '../../hooks/useUser';
+
 import { useNavigate } from 'react-router-dom';
 import { IProfile } from '../../types/types';
-import { LoggedInUser, useCurrentUser } from '../../hooks/useCurrentUser';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 const Profile = () => {
-  const user = useCurrentUser() as LoggedInUser;
+  const user = useCurrentUser();
   const dispatch = useAppDispatch();
   const [setUserInfo, { isLoading }] = useSetUserInfoMutation();
   const [deleteUser, { isLoading: isDeleteLoading }] = useDeleteUserMutation();

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { selectUser, selectUserID, selectUserLoggedIn } from '../store/userSlice';
+import { selectUserID } from '../store/userSlice';
 import { useAppSelector } from '../store/redux.hooks';
 import { IUserInfo } from '../types/types';
 import { useGetUserQuery } from '../services/users.api';
@@ -21,9 +21,7 @@ export type User = LoggedInUser | NotLoggedInUser;
 
 export const useCurrentUser = (): User => {
   const id = useAppSelector(selectUserID);
-  // const loggedIn = useAppSelector(selectUserLoggedIn);
   const { isLoading, data: user } = useGetUserQuery(id, { skip: id.length === 0 });
-
   if (user) {
     return { isLoading, loggedIn: true, ...user };
   } else {

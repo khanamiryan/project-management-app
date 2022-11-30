@@ -16,12 +16,11 @@ import { signOutAction } from '../../store/userSlice';
 import { useAppDispatch } from '../../store/redux.hooks';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
-import { api } from '../../services/api';
+
 import { showToast } from '../../store/toastSlice';
 import HeaderMenu from './Menu/Menu';
 import TranslateIcon from '@mui/icons-material/Translate';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useUser } from '../../hooks/useUser';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 
@@ -49,7 +48,6 @@ const Header = () => {
     setModalOpen(true);
   };
   const pages = [
-    // { name: t('menu.mainPage'), url: '/' },
     { name: t('menu.boards'), url: '/boards' },
     { name: t('menu.profilePage'), url: '/profile' },
     {
@@ -64,7 +62,7 @@ const Header = () => {
   ];
 
   const userAuthorizedMenu = [
-    { name: t('menu.goToMainPage'), url: '/' },
+    { name: t('menu.goToMainPage'), url: '/boards' },
     { name: t('menu.signOut'), onClick: handleSignOut, icon: <LogoutIcon sx={{ ml: 0.5 }} /> },
   ];
 
@@ -92,7 +90,7 @@ const Header = () => {
             className="logo"
             variant="h6"
             component={Link}
-            href="/"
+            href={user.loggedIn ? '/boards' : '/'}
             color={trigger ? 'primary.contrastText' : 'secondary.contrastText'}
           >
             Super boards

@@ -28,7 +28,8 @@
       "successUserDelete": "Successfully deleted the user",
       "successToSignUp": "Successfully signed up",
       "successToSignIn": "Successfully signed in",
-      "successSetUserInfo": "Profile successfully updated"
+      "successSetUserInfo": "Profile successfully updated",
+      "tokenExpired": "Your token expired, please login again"
     }
   },
   "form": {
