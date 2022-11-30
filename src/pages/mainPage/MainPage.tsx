@@ -5,11 +5,13 @@ import './mainPage.scss';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { theme } from 'index';
+import { useUser } from '../../hooks/useUser';
 
 export default function MainPage(): JSX.Element {
   const welcomePageTheme = responsiveFontSizes(theme);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const user = useUser();
 
   const developers = [
     {
@@ -53,22 +55,24 @@ export default function MainPage(): JSX.Element {
               {t('welcom.slogan')}
             </Typography>
           </Box>
-          <Box textAlign={'center'}>
-            <Button
-              variant="outlined"
-              sx={{ m: 1, minWidth: '150px' }}
-              onClick={() => navigate('/login')}
-            >
-              {t('menu.signIn')}
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ m: 1, minWidth: '150px' }}
-              onClick={() => navigate('/registration')}
-            >
-              {t('menu.signUp')}
-            </Button>
-          </Box>
+          {!user.loggedIn && (
+            <Box textAlign={'center'}>
+              <Button
+                variant="outlined"
+                sx={{ m: 1, minWidth: '150px' }}
+                onClick={() => navigate('/login')}
+              >
+                {t('menu.signIn')}
+              </Button>
+              <Button
+                variant="contained"
+                sx={{ m: 1, minWidth: '150px' }}
+                onClick={() => navigate('/registration')}
+              >
+                {t('menu.signUp')}
+              </Button>
+            </Box>
+          )}
         </Grid>
         <Grid
           item
