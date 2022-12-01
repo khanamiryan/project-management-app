@@ -12,7 +12,7 @@ const Footer = () => {
     <Box
       className="footer"
       component="footer"
-      sx={{ position: pathname === '/' ? 'static' : 'sticky' }}
+      sx={{ position: pathname === '/' || pathname === '/boards' ? 'static' : 'sticky' }}
     >
       <Grid container spacing={1}>
         <Grid item alignItems={'center'} display={'flex'}>
