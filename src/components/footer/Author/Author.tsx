@@ -9,7 +9,13 @@ type AuthorType = {
 const Author = ({ name, imageSrc, url }: AuthorType) => {
   return (
     <Link
-      sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        flexGrow: 1,
+        textDecoration: 'none',
+        color: 'primary.contrastText',
+      }}
       href={url}
       target="_blank"
       className="author-link"

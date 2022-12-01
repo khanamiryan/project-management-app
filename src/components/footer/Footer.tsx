@@ -1,6 +1,6 @@
 // noinspection AllyJsxHardcodedStringInspection
 
-import { Box, Link, Grid, Typography, Stack } from '@mui/material';
+import { Box, Grid, Typography, Stack } from '@mui/material';
 import React from 'react';
 import './footer.scss';
 import Author from './Author/Author';
@@ -46,9 +46,9 @@ const Footer = () => {
           display={'flex'}
           justifyContent={'end'}
         >
-          <Link href="https://rs.school/react/" target="_blank" rel="noreferrer">
+          <a href="https://rs.school/react/" target="_blank" rel="noreferrer">
             <img src="/assets/svg/rs_school.svg" alt="rss school" className="icon-rsschool" />
-          </Link>
+          </a>
         </Grid>
       </Grid>
     </Box>

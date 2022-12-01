@@ -7,12 +7,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import { User } from 'types/types';
+
 import { useGetUsersQuery } from 'services/users.api';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
+import { IUserInfo } from '../../types/types';
 
 type UsersSelectProps = {
   selectedUsersId?: string[];
@@ -40,8 +40,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   };
 }
 
-const getUserIdByLogin = (login: string, users: User[]) => {
-  return users.find((user) => user.login === login)?._id;
+const getUserIdByLogin = (login: string, users: IUserInfo[]) => {
+  return users.find((user) => user.login === login)?.id;
 };
 
 export default function UsersSelect({
@@ -54,13 +54,13 @@ export default function UsersSelect({
   const { data: users, isSuccess } = useGetUsersQuery('');
 
   const [personName, setPersonName] = useState<string[]>([]);
-  const { id: currentUserId } = useAppSelector(selectUser);
+  const { id: currentUserId } = useCurrentUser();
 
   useEffect(() => {
     if (isSuccess && selectedUsersId.length) {
       const selectedNames = users
-        ? selectedUsersId.reduce((acc: string[], id) => {
-            const name = users.find(({ _id }) => id === _id)?.name;
+        ? selectedUsersId.reduce((acc: string[], selectedUserID) => {
+            const name = users.find(({ id }) => id === selectedUserID)?.name;
             if (name) {
               acc = [...acc, name];
             }
@@ -108,16 +108,16 @@ export default function UsersSelect({
         MenuProps={MenuProps}
       >
         {users &&
-          users.map(({ _id, login }) => {
+          users.map(({ id, login }) => {
             // when creating a task, the owner is available for selection, but not when creating a board
-            if (_id === currentUserId && !usersIdForSelection.length) {
+            if (id === currentUserId && !usersIdForSelection.length) {
               return null;
             }
-            if (usersIdForSelection.length && !usersIdForSelection.includes(_id)) {
+            if (usersIdForSelection.length && !usersIdForSelection.includes(id)) {
               return null;
             }
             return (
-              <MenuItem key={_id} value={login} style={getStyles(_id, personName, theme)}>
+              <MenuItem key={id} value={login} style={getStyles(id, personName, theme)}>
                 {login}
               </MenuItem>
             );

@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useUpdateTaskMutation } from 'services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
-import { ITask, TaskFormFields, User } from 'types/types';
+import { ITask, IUserInfo, TaskFormFields } from 'types/types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDrag, useDrop } from 'react-dnd';
 import { useUpdateTasksSetMutation } from 'services/board.api';
@@ -161,9 +161,9 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     closeModal();
   };
 
-  const ownerObj = allUsers?.find(({ _id }) => _id === dataTask.userId);
-  const contributors = dataTask.users.reduce((acc: User[], userId) => {
-    const contributor = allUsers?.find(({ _id }) => userId === _id);
+  const ownerObj = allUsers?.find(({ id }) => id === dataTask.userId);
+  const contributors = dataTask.users.reduce((acc: IUserInfo[], userId) => {
+    const contributor = allUsers?.find(({ id }) => userId === id);
     return contributor ? [...acc, contributor] : acc;
   }, []);
 
@@ -249,7 +249,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
                     {t('modal.task.users')}
                   </Typography>
                   {contributors.map((contributor) => (
-                    <UserChip key={contributor._id} login={contributor.login} />
+                    <UserChip key={contributor.id} login={contributor.login} />
                   ))}
                 </Box>
               </>
