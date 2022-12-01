@@ -1,5 +1,8 @@
-import { Box, Button, ButtonGroup, Card, Input, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Card, IconButton, Input, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 import React, { useRef, useState } from 'react';
 import { IColumn, ITask, TaskFormFields } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
@@ -12,17 +15,17 @@ import {
   useUpdateTasksSetMutation,
   useAddTaskMutation,
   //useGetTasksByColumnQuery,
-} from './../../../services/board.api';
+} from '../../../services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -35,18 +38,19 @@ export default function TasksList({
   dataTasks,
   onDeleteColumn,
 }: ITaskListProps): JSX.Element {
+  const { t } = useTranslation();
   const { _id: columnId, title, boardId } = dataColumn;
   const { data: board } = useGetBoardByIdQuery(boardId);
-  const { id: currentUserId } = useAppSelector(selectUser);
+  const { id: currentUserId } = useCurrentUser();
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState<'delete_column' | 'add_task'>('delete_column');
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  const [updateColumn] = useUpdateColumnMutation();
-  const [deleteTask] = useDeleteTaskMutation();
-  const [updateTasksSet] = useUpdateTasksSetMutation();
-  const [addTask] = useAddTaskMutation();
+  const [updateColumn, updateColumnResult] = useUpdateColumnMutation();
+  const [deleteTask, deleteTaskResult] = useDeleteTaskMutation();
+  const [updateTasksSet, updateTasksSetResult] = useUpdateTasksSetMutation();
+  const [addTask, addTaskResult] = useAddTaskMutation();
   const { handleSubmit, control, reset } = useForm<TaskFormFields>({
     defaultValues: {
       title: '',
@@ -267,30 +271,45 @@ export default function TasksList({
     <>
       <Box className="board-column" sx={styleDnD}>
         <Card variant="outlined" ref={ref} className="board-column-inner">
-          <Box className="column-name">
+          <Box className="column-name" sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}>
             {!editTitleColumn && (
-              <Stack
-                className="column-title"
-                direction="row"
-                spacing={2}
-                onClick={() => setEditTitleColumn(!editTitleColumn)}
-              >
-                <Typography variant={'h5'}>{title}</Typography>{' '}
-                <Button onClick={(e) => handleDeleteColumn(e)}>Del</Button>
-                <p>order: {dataColumn.order}</p>
-              </Stack>
+              <>
+                <Stack
+                  className="column-title"
+                  direction="row"
+                  justifyContent={'space-between'}
+                  spacing={1}
+                  onClick={() => setEditTitleColumn(!editTitleColumn)}
+                >
+                  <Typography variant={'h5'}>
+                    {updateColumnResult.isLoading ? t('updating') : title}
+                  </Typography>{' '}
+                  <IconButton onClick={(e) => handleDeleteColumn(e)} sx={{ color: '#FFFFFF' }}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </>
             )}
             {editTitleColumn && (
               <Stack className="column-title-edit" direction="row" spacing={2}>
                 <Input
+                  inputProps={{
+                    maxLength: 16,
+                  }}
                   onChange={(e) => {
                     setNewColumnTitle(e.currentTarget.value);
                   }}
                   value={newColumnTitle}
+                  sx={{ color: '#FFFFFF' }}
+                  className="column-title-input"
                 ></Input>
                 <ButtonGroup>
-                  <Button onClick={handleUpdateColumn}>update</Button>
-                  <Button onClick={() => setEditTitleColumn(!editTitleColumn)}>no</Button>
+                  <IconButton onClick={() => setEditTitleColumn(false)} sx={{ color: '#FFFFFF' }}>
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton onClick={handleUpdateColumn} sx={{ color: '#FFFFFF' }}>
+                    <DoneIcon fontSize="small" />
+                  </IconButton>
                 </ButtonGroup>
               </Stack>
             )}
@@ -302,7 +321,10 @@ export default function TasksList({
             spacing={1}
             ref={refColumn}
             sx={{ ...styleDnDForCard }}
+            position="relative"
           >
+            {(deleteTaskResult.isLoading || updateTasksSetResult.isLoading) && <LoadingShadow />}
+
             {dataTasks &&
               [...dataTasks]
                 .sort((a, b) => {
@@ -325,7 +347,7 @@ export default function TasksList({
                 })}
           </Stack>
           <Button variant="contained" fullWidth onClick={handleAddTask}>
-            {t('Add') + ' ' + t('Task')}
+            {addTaskResult.isLoading ? t('updating') : t('Add') + ' ' + t('Task')}
           </Button>
         </Card>
       </Box>

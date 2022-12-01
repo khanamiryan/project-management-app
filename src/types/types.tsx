@@ -5,12 +5,6 @@ export type Board = {
   users: string[];
 };
 
-export type User = {
-  _id: string;
-  name: string;
-  login: string;
-};
-
 export interface IColumn {
   _id: string;
   title: string;
@@ -29,36 +23,39 @@ export interface ITask {
   users: string[];
 }
 
-export type UserState = {
-  login: string;
-  token: string;
+// export type UserState = {
+//   login: string;
+//   token: string;
+//   name: string;
+//   id: string;
+//   loggedIn: boolean;
+// };
+
+export interface IProfile {
   name: string;
-  id: string;
-  loggedIn: boolean;
-};
+  login: string;
+  password: string;
+}
 
 export interface ISignInForm {
   login: string;
   password: string;
 }
 
-export interface ISignUpForm {
-  name: string;
-  login: string;
-  password: string;
-}
+export interface ISignUpForm extends IProfile {}
 
 export interface IUserInfo {
   name: string;
   login: string;
   id: string;
 }
-
 export interface IUserResponse {
   name: string;
   _id: string;
   login: string;
 }
+//export interface User extends IUserResponse {} //deprecated IUserResponse instead, better if we normalize all to id instead _id
+
 export type DecodedToken = {
   id: string;
   login: string;
@@ -69,3 +66,11 @@ export type DecodedToken = {
 export type BoardFormFields = { title: string; users: string[] };
 
 export type TaskFormFields = { title: string; description: string; users: string[] };
+
+export type ServerError = {
+  status: number;
+  data: {
+    statusCode: number;
+    message: string;
+  };
+};

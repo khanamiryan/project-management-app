@@ -1,6 +1,6 @@
 // noinspection AllyJsxHardcodedStringInspection
 
-import { Box, Link, Grid, Typography, Stack } from '@mui/material';
+import { Box, Grid, Typography, Stack } from '@mui/material';
 import React from 'react';
 import './footer.scss';
 import Author from './Author/Author';

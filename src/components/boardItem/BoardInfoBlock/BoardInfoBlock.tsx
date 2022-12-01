@@ -1,13 +1,13 @@
 import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import HomeIcon from '@mui/icons-material/Home';
 import React, { useEffect, useState } from 'react';
-import { Board, BoardFormFields, User } from 'types/types';
+import { Board, BoardFormFields, IUserInfo } from 'types/types';
 import { useTranslation } from 'react-i18next';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
-import { useAppSelector, useAppDispatch } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+import { useAppDispatch } from 'store/redux.hooks';
 import { showToast } from 'store/toastSlice';
 import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -15,14 +15,18 @@ import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
 import UserChip from 'components/UserChip/UserChip';
 import { rules } from '../../../utils/validation.utils';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import { useNavigate } from 'react-router-dom';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'delete' | 'edit'>('delete');
-  const { id: currentUserId } = useAppSelector(selectUser);
+  const { id: currentUserId } = useCurrentUser();
   const { data: allUsers } = useGetUsersQuery('');
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isOwner = currentUserId === board.owner;
   const modalDeleteTitle =
     t(isOwner ? 'modal.board.onDeleteTitle' : 'modal.board.onLeaveTitle') + ` ${board.title}?`;
@@ -98,21 +102,26 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     }
   }, [deleteResult.isSuccess, updateResult.isSuccess, dispatch, isOwner, t]);
 
-  const ownerObj = allUsers?.find(({ _id }) => _id === board.owner);
-  const contributors = board.users.reduce((acc: User[], userId) => {
-    const contributor = allUsers?.find(({ _id }) => userId === _id);
+  const ownerObj = allUsers?.find(({ id }) => id === board.owner);
+  const contributors = board.users.reduce((acc: IUserInfo[], userId) => {
+    const contributor = allUsers?.find(({ id }) => userId === id);
     return contributor ? [...acc, contributor] : acc;
   }, []);
 
   return (
     <>
+      {isLoading && <LoadingShadow />}
       <Stack
         className="board-nav"
         direction={{ xs: 'row', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
+        sx={{ pl: 1, pb: 1 }}
       >
-        <Typography variant={'h3'} component="h1" className="board-title">
-          {board.title}
+        <IconButton onClick={() => navigate('/boards')}>
+          <HomeIcon fontSize="large" />
+        </IconButton>
+        <Typography variant={'h4'} component="h2" className="board-title">
+          / {board.title}
         </Typography>
         <ButtonGroup>
           {isOwner && (
@@ -128,11 +137,11 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
 
       {/* //TODO  вынести в отдельный компонент*/}
       {ownerObj && (
-        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }}>
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, pl: 1 }}>
           <UserChip login={ownerObj.login} isOwner />
           {contributors.length &&
             contributors.map((contributor) => (
-              <UserChip key={contributor._id} login={contributor.login} />
+              <UserChip key={contributor.id} login={contributor.login} />
             ))}
         </Stack>
       )}

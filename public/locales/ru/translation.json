@@ -30,7 +30,8 @@
       "successUserDelete": "Пользователь успешно удален",
       "successToSignUp": "Пользователь успешно зарегистрировался",
       "successToSignIn": "Пользователь успешно вошел в систему",
-      "successSetUserInfo": "Профиль успешно обновлен"
+      "successSetUserInfo": "Профиль успешно обновлен",
+      "tokenExpired": "Ваш токен истек, пожалуста войдите в систему снова"
     }
   },
   "form": {
@@ -59,6 +60,7 @@
       "shortPassword": "Пароль слишком короткий",
       "shortColumnName": "Имя столбца слишком короткое",
       "shortDescription": "Описание слишком короткое",
+      "noMoreThan16Letters": "Не более 16 букв",
       "noMoreThan18Letters": "Не более 18 букв",
       "noMoreThan20Letters": "Не более 20 букв",
       "noMoreThen50Letters": "Не более 50 букв"
@@ -66,7 +68,7 @@
   },
   "boards": {
     "myBoards": "Мои доски",
-    "serverError": "Ой! Сервер вернул ошибку.",
+    "serverError": "Ой! Что-то пошло не так. Попробуйте перезагрузить страницу",
     "roleIsOwner": "Роль: владелец",
     "roleIsContributor": "Роль: участник",
     "open": "ОТКРЫТЬ ДОСКУ",

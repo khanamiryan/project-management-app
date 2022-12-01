@@ -29,7 +29,8 @@
       "successUserDelete": "Successfully deleted the user",
       "successToSignUp": "Successfully signed up",
       "successToSignIn": "Successfully signed in",
-      "successSetUserInfo": "Profile successfully updated"
+      "successSetUserInfo": "Profile successfully updated",
+      "tokenExpired": "Your token expired, please login again"
     }
   },
   "form": {
@@ -58,6 +59,7 @@
       "shortPassword": "Password is too short",
       "shortColumnName": "Column name is too short",
       "shortDescription": "Description is too short",
+      "noMoreThan16Letters": "No more than 16 letters",
       "noMoreThan18Letters": "No more than 18 letters",
       "noMoreThan20Letters": "No more then 20 letters",
       "noMoreThen50Letters": "No more then 50 letters"
@@ -65,7 +67,7 @@
   },
   "boards": {
     "myBoards": "My boards",
-    "serverError": "Oops! A Server error occurred.",
+    "serverError": "Oops! something went wrong. Try reload this page",
     "roleIsOwner": "Role: owner",
     "roleIsContributor": "Role: contributor",
     "open": "OPEN BOARD",

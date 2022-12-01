@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useUpdateTaskMutation } from 'services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import { useGetUsersQuery } from 'services/users.api';
-import { ITask, TaskFormFields, User } from 'types/types';
+import { ITask, IUserInfo, TaskFormFields } from 'types/types';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDrag, useDrop } from 'react-dnd';
 import { useUpdateTasksSetMutation } from 'services/board.api';
@@ -20,6 +20,7 @@ import {
 import RoundUsersAvatars from 'components/RoundUsersAvatars/RoundUsersAvatars';
 import { useTranslation } from 'react-i18next';
 import { rules } from '../../../utils/validation.utils';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 type ModalType = 'delete' | 'edit' | 'view';
 
@@ -41,8 +42,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const { t } = useTranslation();
   const { data: board } = useGetBoardByIdQuery(dataTask.boardId);
   const { data: allUsers } = useGetUsersQuery('');
-
-  const [updateTask] = useUpdateTaskMutation();
+  const [updateTask, updateTaskResult] = useUpdateTaskMutation();
 
   const { handleSubmit, control } = useForm<TaskFormFields>({
     defaultValues: {
@@ -161,9 +161,9 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     closeModal();
   };
 
-  const ownerObj = allUsers?.find(({ _id }) => _id === dataTask.userId);
-  const contributors = dataTask.users.reduce((acc: User[], userId) => {
-    const contributor = allUsers?.find(({ _id }) => userId === _id);
+  const ownerObj = allUsers?.find(({ id }) => id === dataTask.userId);
+  const contributors = dataTask.users.reduce((acc: IUserInfo[], userId) => {
+    const contributor = allUsers?.find(({ id }) => userId === id);
     return contributor ? [...acc, contributor] : acc;
   }, []);
 
@@ -249,7 +249,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
                     {t('modal.task.users')}
                   </Typography>
                   {contributors.map((contributor) => (
-                    <UserChip key={contributor._id} login={contributor.login} />
+                    <UserChip key={contributor.id} login={contributor.login} />
                   ))}
                 </Box>
               </>
@@ -274,6 +274,8 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
         onClick={handleShowTask}
         sx={{ position: 'relative', overflow: 'visible', padding: '5px', ...styleDnD }}
       >
+        {updateTaskResult.isLoading && <LoadingShadow />}
+
         <IconButton
           onClick={(e) => handleDeleteTask(e)}
           sx={{ position: 'absolute', top: '4px', right: '8px' }}

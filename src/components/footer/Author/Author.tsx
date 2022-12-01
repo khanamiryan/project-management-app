@@ -8,7 +8,18 @@ type AuthorType = {
 };
 const Author = ({ name, imageSrc, url }: AuthorType) => {
   return (
-    <a href={url} target="_blank" className="author-link" rel="noreferrer">
+    <Link
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        flexGrow: 1,
+        textDecoration: 'none',
+        color: 'primary.contrastText',
+      }}
+      href={url}
+      target="_blank"
+      className="author-link"
+    >
       <Avatar
         alt={name}
         src={imageSrc}
@@ -18,7 +29,7 @@ const Author = ({ name, imageSrc, url }: AuthorType) => {
       <Typography className="developer-name" display={{ xs: 'none', md: 'block' }}>
         {name}
       </Typography>
-    </a>
+    </Link>
   );
 };
 

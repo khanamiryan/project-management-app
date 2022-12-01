@@ -1,10 +1,8 @@
-// noinspection AllyPlainJsInspection
 //TODO эта модалка создает только колонки,
 // функционал создания тасков теперь в другом компоненте, ее можно рефакторить
 
 import { Box, Button, Dialog, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
-//import Modal from 'components/Modal/Modal';
 import React from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import {
@@ -12,12 +10,12 @@ import {
   useAddTaskMutation,
   useUpdateTaskMutation,
 } from 'services/board.api';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+
 import { ITask } from 'types/types';
 import './ModalCreate.scss';
 import { rules } from '../../../utils/validation.utils';
 import { useTranslation } from 'react-i18next';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
 
 interface ICreateModalProps {
   type: 'List' | 'Task';
@@ -52,7 +50,7 @@ export default function ModalCreate({
     setValue('description', taskData.description);
   }
 
-  const { id: userId } = useAppSelector(selectUser);
+  const { id: userId } = useCurrentUser();
   const [addColumn] = useAddColumnMutation();
   const [addTask] = useAddTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
