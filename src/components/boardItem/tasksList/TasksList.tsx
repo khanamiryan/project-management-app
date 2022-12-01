@@ -25,6 +25,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { dndUpdateColumns } from 'services/dndSortColumns';
 import { useTranslation } from 'react-i18next';
 import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 interface ITaskListProps {
   dataColumn: IColumn;
@@ -46,10 +47,10 @@ export default function TasksList({
   const [editTitleColumn, setEditTitleColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState(dataColumn.title);
 
-  const [updateColumn] = useUpdateColumnMutation();
-  const [deleteTask] = useDeleteTaskMutation();
-  const [updateTasksSet] = useUpdateTasksSetMutation();
-  const [addTask] = useAddTaskMutation();
+  const [updateColumn, updateColumnResult] = useUpdateColumnMutation();
+  const [deleteTask, deleteTaskResult] = useDeleteTaskMutation();
+  const [updateTasksSet, updateTasksSetResult] = useUpdateTasksSetMutation();
+  const [addTask, addTaskResult] = useAddTaskMutation();
   const { handleSubmit, control, reset } = useForm<TaskFormFields>({
     defaultValues: {
       title: '',
@@ -280,7 +281,9 @@ export default function TasksList({
                   spacing={1}
                   onClick={() => setEditTitleColumn(!editTitleColumn)}
                 >
-                  <Typography variant={'h5'}>{title}</Typography>{' '}
+                  <Typography variant={'h5'}>
+                    {updateColumnResult.isLoading ? t('updating') : title}
+                  </Typography>{' '}
                   <IconButton onClick={(e) => handleDeleteColumn(e)} sx={{ color: '#FFFFFF' }}>
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -318,7 +321,10 @@ export default function TasksList({
             spacing={1}
             ref={refColumn}
             sx={{ ...styleDnDForCard }}
+            position="relative"
           >
+            {(deleteTaskResult.isLoading || updateTasksSetResult.isLoading) && <LoadingShadow />}
+
             {dataTasks &&
               [...dataTasks]
                 .sort((a, b) => {
@@ -341,7 +347,7 @@ export default function TasksList({
                 })}
           </Stack>
           <Button variant="contained" fullWidth onClick={handleAddTask}>
-            {t('Add') + ' ' + t('Task')}
+            {addTaskResult.isLoading ? t('updating') : t('Add') + ' ' + t('Task')}
           </Button>
         </Card>
       </Box>

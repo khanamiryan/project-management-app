@@ -1,6 +1,7 @@
 import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import HomeIcon from '@mui/icons-material/Home';
 import React, { useEffect, useState } from 'react';
 import { Board, BoardFormFields, IUserInfo } from 'types/types';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,8 @@ import UsersSelect from 'components/UsersSelect/UsersSelect';
 import UserChip from 'components/UserChip/UserChip';
 import { rules } from '../../../utils/validation.utils';
 import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import { useNavigate } from 'react-router-dom';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,6 +26,7 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   const { data: allUsers } = useGetUsersQuery('');
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isOwner = currentUserId === board.owner;
   const modalDeleteTitle =
     t(isOwner ? 'modal.board.onDeleteTitle' : 'modal.board.onLeaveTitle') + ` ${board.title}?`;
@@ -106,14 +110,18 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
 
   return (
     <>
+      {isLoading && <LoadingShadow />}
       <Stack
         className="board-nav"
         direction={{ xs: 'row', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
-        sx={{ pl: 1 }}
+        sx={{ pl: 1, pb: 1 }}
       >
+        <IconButton onClick={() => navigate('/boards')}>
+          <HomeIcon fontSize="large" />
+        </IconButton>
         <Typography variant={'h4'} component="h2" className="board-title">
-          {board.title}
+          / {board.title}
         </Typography>
         <ButtonGroup>
           {isOwner && (
