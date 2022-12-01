@@ -5,13 +5,13 @@ import './mainPage.scss';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { theme } from 'index';
-import { useUser } from '../../hooks/useUser';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 export default function MainPage(): JSX.Element {
   const welcomePageTheme = responsiveFontSizes(theme);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const user = useUser();
+  const user = useCurrentUser();
 
   const developers = [
     {
