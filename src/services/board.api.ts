@@ -159,14 +159,12 @@ export const boardApi = api.injectEndpoints({
                 return item;
               }
             });
-            console.log(newArr.length);
             Object.assign(draft, draft);
           })
         );
         try {
           await queryFulfilled;
         } catch {
-          console.log('catch from optimitstic');
           patchResult.undo();
         }
       },

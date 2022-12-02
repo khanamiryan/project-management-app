@@ -57,7 +57,6 @@ export default function ModalCreate({
   const { t } = useTranslation();
   const onSubmit: SubmitHandler<FieldValues> = ({ name, description }) => {
     if (taskData) {
-      console.log('taskData');
       updateTask({
         _id: taskData._id,
         title: name,

@@ -35,7 +35,12 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   }
 
   return (
-    <Modal open={open} onClickCancel={onModalClose} onClickConfirm={handleSubmit(onSubmit)}>
+    <Modal
+      open={open}
+      title={`${t('Create')} ${t('board')}`}
+      onClickCancel={onModalClose}
+      onClickConfirm={handleSubmit(onSubmit)}
+    >
       <>
         <InputText
           name="title"

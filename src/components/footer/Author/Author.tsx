@@ -26,7 +26,9 @@ const Author = ({ name, imageSrc, url }: AuthorType) => {
         sx={{ mr: { md: 1 }, width: { xs: 24, md: 32 }, height: { xs: 24, md: 32 } }}
       />
 
-      <Typography display={{ xs: 'none', md: 'block' }}>{name}</Typography>
+      <Typography className="developer-name" display={{ xs: 'none', md: 'block' }}>
+        {name}
+      </Typography>
     </Link>
   );
 };

@@ -80,9 +80,9 @@ const Header = () => {
         color={trigger ? 'secondary' : 'primary'}
         position="sticky"
         sx={{
-          py: trigger ? 0 : 0.3,
+          py: trigger ? 0 : 0.6,
           mb: 2,
-          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          transition: 'all 500ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
         }}
       >
         <Toolbar component="nav">
@@ -92,6 +92,7 @@ const Header = () => {
             component={Link}
             href={user.loggedIn ? '/boards' : '/'}
             color={trigger ? 'primary.contrastText' : 'secondary.contrastText'}
+            sx={{ padding: '0 10px' }}
           >
             Super boards
           </Typography>
