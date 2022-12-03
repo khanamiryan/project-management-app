@@ -8,6 +8,7 @@ import { useCurrentUser } from '../../hooks/useCurrentUser';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import './boardList.scss';
 import CreateBoardModal from '../CreateBoardModal/CreateBoardModal';
+import TaskSearchBlock from 'components/TaskSearchBlock/TaskSearchBlock';
 const BoardsList = () => {
   const { id } = useCurrentUser();
   const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery(id);
@@ -17,6 +18,7 @@ const BoardsList = () => {
     setModalOpen(true);
   };
   const onModalClose = () => setModalOpen(false);
+
   return (
     <>
       <Typography variant="h4" sx={{ mb: '1rem' }}>
@@ -30,30 +32,34 @@ const BoardsList = () => {
           </Alert>
         )}
       </Box>
-      <Grid container spacing={2}>
-        {data &&
-          data.map((board) => {
-            return (
-              <Grid item xs={12} sm={6} md={4} key={board._id}>
-                <BoardCard key={board._id} board={board} />
-              </Grid>
-            );
-          })}
-        {!isLoading && (
-          <Grid item xs={12} sm={6} md={4} key={'add'}>
-            <Card onClick={onClickAddBoard} className="addBoardCard">
-              <CardContent>
-                <Typography variant="h4" component="div">
-                  {t('menu.addBoard')}
-                </Typography>
 
-                <AddCircleIcon sx={{ width: 50, height: 50 }} />
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
-        {modalOpen && <CreateBoardModal onModalClose={onModalClose} open={modalOpen} />}
-      </Grid>
+      <TaskSearchBlock />
+      {data && (
+        <Grid container spacing={2}>
+          {data &&
+            data.map((board) => {
+              return (
+                <Grid item xs={12} sm={6} md={4} key={board._id}>
+                  <BoardCard key={board._id} board={board} />
+                </Grid>
+              );
+            })}
+          {!isLoading && (
+            <Grid item xs={12} sm={6} md={4} key={'add'}>
+              <Card onClick={onClickAddBoard} className="addBoardCard">
+                <CardContent>
+                  <Typography variant="h4" component="div">
+                    {t('menu.addBoard')}
+                  </Typography>
+
+                  <AddCircleIcon sx={{ width: 50, height: 50 }} />
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {modalOpen && <CreateBoardModal onModalClose={onModalClose} open={modalOpen} />}
+        </Grid>
+      )}
     </>
   );
 };

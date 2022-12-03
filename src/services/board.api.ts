@@ -53,6 +53,11 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Tasks', id: 'LIST' }],
     }),
+    getTasksSetBySearch: builder.query<ITask[], string>({
+      query: (string) => ({
+        url: `${Endpoint.TASKS_SET}?search=${string}`,
+      }),
+    }),
     updateTasksSet: builder.mutation<
       ITask[],
       { set: Pick<ITask, '_id' | 'order' | 'columnId'>[]; boardId: string }
@@ -208,6 +213,7 @@ export const {
   useGetTasksByBoardIdQuery,
   useUpdateTaskMutation,
   useUpdateTasksSetMutation,
+  useGetTasksSetBySearchQuery,
   //useGetTasksByColumnQuery,
 } = boardApi;
 /*
