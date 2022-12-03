@@ -5,23 +5,23 @@ import UsersSelect from 'components/UsersSelect/UsersSelect';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import LoadingBackdrop from 'components/LoadingBackdrop/LoadingBackdrop';
 import { useCreateBoardMutation } from 'services/boards.api';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
 
-type CreateBoardFormFields = { title: string; users: string[] };
+import { useTranslation } from 'react-i18next';
+import { BoardFormFields } from 'types/types';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 type CreateBoardModalProps = { open: boolean; onModalClose: () => void };
-
 const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
+  const { t } = useTranslation();
   let users: string[] = [];
-  const { id } = useAppSelector(selectUser);
+  const { id } = useCurrentUser();
   const [createBoard, result] = useCreateBoardMutation();
-  const { handleSubmit, control } = useForm<CreateBoardFormFields>({
+  const { handleSubmit, control } = useForm<BoardFormFields>({
     defaultValues: {
       title: '',
     },
   });
 
-  const onSubmit: SubmitHandler<CreateBoardFormFields> = (data) => {
+  const onSubmit: SubmitHandler<BoardFormFields> = (data) => {
     createBoard({ ...data, owner: id, users });
     onModalClose();
   };
@@ -35,15 +35,20 @@ const CreateBoardModal = ({ open, onModalClose }: CreateBoardModalProps) => {
   }
 
   return (
-    <Modal open={open} onClickCancel={onModalClose} onClickConfirm={handleSubmit(onSubmit)}>
+    <Modal
+      open={open}
+      title={`${t('Create')} ${t('board')}`}
+      onClickCancel={onModalClose}
+      onClickConfirm={handleSubmit(onSubmit)}
+    >
       <>
         <InputText
           name="title"
-          label="title"
+          label={t('form.fields.boardTitle')}
           autoComplete="title"
           control={control}
           rules={{
-            required: 'title is required',
+            required: t('form.errors.noTitle') as string,
           }}
           inputProps={{
             style: { fontSize: '1.2rem' },

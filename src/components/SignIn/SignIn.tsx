@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './SignIn.scss';
-import { Box, Button, Link } from '@mui/material';
+import { Avatar, Button, Link, Typography, Card, CardContent } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from '../InputText/InputText';
-import { useAppDispatch, useAppSelector } from '../../store/redux.hooks';
-import { ISignInForm, selectUser, signIn } from '../../store/userSlice';
-
-import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../store/redux.hooks';
+import LoginIcon from '@mui/icons-material/Login';
 import { showToast } from 'store/toastSlice';
-
 import { useTranslation } from 'react-i18next';
 import { rules } from '../../utils/validation.utils';
+import { useSignInUserMutation } from '../../services/auth.api';
+
+import { ISignInForm } from '../../types/types';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 const SignIn = () => {
+  const [signInUser, { isLoading }] = useSignInUserMutation();
   const { handleSubmit, control, setError } = useForm<ISignInForm>({
     defaultValues: {
       login: '',
@@ -20,42 +22,48 @@ const SignIn = () => {
     },
   });
   const { t } = useTranslation();
-  const [message, setMessage] = useState('');
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { login, loggedIn, error, loading } = useAppSelector(selectUser);
+  const { loggedIn } = useCurrentUser();
 
   useEffect(() => {
-    if (login.length) {
-      navigate('/boards');
+    if (loggedIn) {
+      dispatch(showToast({ message: t('auth.toast.successToSignIn'), type: 'success' }));
     }
-  }, [login, loggedIn]);
+  }, [loggedIn]);
 
-  useEffect(() => {
-    if (error.length) {
-      setMessage(error);
-      setError('login', { type: 'custom', message: '' });
-      setError('password', { type: 'custom', message: '' });
-      dispatch(showToast({ message: error }));
-    }
-  }, [error]);
-
-  const onSubmit: SubmitHandler<ISignInForm> = async ({ login, password }) => {
-    dispatch(signIn({ login, password }));
+  const onSubmit: SubmitHandler<ISignInForm> = ({ login, password }) => {
+    signInUser({ login, password })
+      .unwrap()
+      .then(({ token }) => {
+        if (token.length) {
+          dispatch(showToast({ message: t('auth.toast.successToSignIn'), type: 'success' }));
+        }
+      })
+      .catch((e) => {
+        dispatch(showToast({ message: e.data.message }));
+        setError('login', { type: 'custom', message: '' });
+        setError('password', { type: 'custom', message: '' });
+      });
   };
 
   return (
-    <Box component="form" className={'SignInForm'} onSubmit={handleSubmit(onSubmit)}>
-      <div>
+    <Card component="form" onSubmit={handleSubmit(onSubmit)} className="SignInForm">
+      <CardContent className="inner">
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LoginIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          {t('signInTitle')}
+        </Typography>
         <InputText
           name="login"
           label={t('form.fields.login')}
           autoComplete="login"
           control={control}
           rules={rules.login}
+          fullWidth
         />
-      </div>
-      <div>
+
         <InputText
           name="password"
           control={control}
@@ -63,20 +71,26 @@ const SignIn = () => {
           margin="normal"
           label={t('form.fields.password')}
           type="password"
+          fullWidth
           autoComplete="password"
         />
-      </div>
 
-      <Button type="submit" variant="contained" disabled={loading}>
-        {t('form.fields.signIn')}
-        {loading && '...'}
-      </Button>
-      <div>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={isLoading}
+          sx={{ mb: 2, mt: 1 }}
+          fullWidth
+        >
+          {t('auth.signIn')}
+          {isLoading && '...'}
+        </Button>
+
         <Link href="/registration" margin="normal">
-          {t('form.noAccount')}
+          {t('auth.noAccount')}
         </Link>
-      </div>
-    </Box>
+      </CardContent>
+    </Card>
   );
 };
 
