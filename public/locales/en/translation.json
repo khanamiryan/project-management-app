@@ -3,10 +3,10 @@
   "signInTitle": "Sign In",
   "welcome": "Welcome, {{name}}",
   "Add": "Add",
-  "Create": "Create",
   "Edit": "Edit",
   "List": "List",
   "Task": "Task",
+  "updating": "updating",
   "menu": {
     "mainPage": "Main Page",
     "profilePage": "Profile",
@@ -43,8 +43,8 @@
       "typeName": "{{type}} name",
       "typeTitle": "{{type}} title",
       "typeDescription": "{{type}} description",
-      "taskDescription": "Task description",
-      "taskTitle": "Task title",
+      "taskDescription": "Description",
+      "taskTitle": "Title",
       "boardTitle": "Title",
       "columnTitle": "Title"
     },
@@ -78,7 +78,8 @@
     }
   },
   "task": {
-    "toast": {}
+    "toast": {},
+    "myTasks": "My tasks"
   },
   "modal": {
     "cancel": "Cancel",
@@ -105,7 +106,7 @@
       "creator": "Creator:",
       "users": "Users:"
     },
-    "column": {
+      "column": {
       "confirmDeleteColumn": "Do you really want to remove column \"{{title}}\"?",
       "deleteReally": "If you delete this column you will not be able to restore it"
     }
@@ -119,7 +120,7 @@
     "secondTextBlock": "Create as many columns as you want and fill them with any number of tasks. You can add team members to boards and tasks. You can even drag and drop elements with the mouse if that makes you happy.",
     "developers": "Development team",
     "schoolInfoFirstPart": "This app was created as the final task of ",
-    "schoolInfoSecondPart": "the React course of the Rolling Scopes School."
+    "schoolInfoSecondPart": "the React course of the Rolling Scopes School."    
   },
   "developers": {
     "ashot": "Ashot Khanamiryan",
@@ -127,5 +128,7 @@
     "siarhei": "Siarhei Hancharyk",
     "developer": "developer",
     "lead": "team lead"
-  }
+  },
+  "noUsers": "no users",
+  "accountDeleted": "account deleted"  
 }
