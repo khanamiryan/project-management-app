@@ -19,7 +19,6 @@ const TaskListItem = ({ task }: { task: ITask }) => {
   const navigate = useNavigate();
 
   const getLoginById = (id: string) => {
-    console.log(id);
     return allUsers?.find((user) => user.id === id)?.login || 'account deleted';
   };
 
@@ -28,7 +27,6 @@ const TaskListItem = ({ task }: { task: ITask }) => {
   // if (isError || isLoading) {
   //   return null;
   // }
-  console.log(allUsers);
 
   return (
     <>
