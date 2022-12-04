@@ -96,7 +96,9 @@ export default function TasksList({
   const [, dropRef] = useDrop(
     () => ({
       accept: 'column',
-      drop: () => ({ dataColumn }),
+      drop: () => {
+        return { dataColumn };
+      },
       collect: (monitor) => ({}),
     }),
     [dataColumns, dataColumn]
@@ -279,7 +281,7 @@ export default function TasksList({
             sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}
             position="relative"
           >
-            {/*updateColumdsSetResults.isLoading && <LoadingShadow />*/}
+            {updateColumdsSetResults.isLoading && <LoadingShadow />}
             {!editTitleColumn && (
               <>
                 <Stack

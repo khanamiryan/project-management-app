@@ -46,7 +46,7 @@ export default function BoardItem(): JSX.Element {
     isLoading: isColumnsLoading,
     isError: isColumnsError,
   } = useGetColumnsQuery(idBoard);
-
+  console.log('isColumnsLoading', isColumnsLoading);
   const {
     data: dataTasksByBoardId,
     isLoading: isTasksLoading,
