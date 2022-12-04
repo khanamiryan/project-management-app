@@ -59,7 +59,8 @@ export default function TasksList({
   });
 
   const closeModal = () => setOpenModal(false);
-  const [updateColumnsSet] = useUpdateColumnsSetMutation();
+  const [updateColumnsSet, updateColumnsSetResults] = useUpdateColumnsSetMutation();
+
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
   const wrapperUpdateColumnsSet = (data: {
     set: Pick<IColumn, '_id' | 'order'>[];
@@ -70,8 +71,6 @@ export default function TasksList({
 
   const ref = useRef<HTMLDivElement | null>(null);
   const refColumn = useRef<HTMLDivElement | null>(null);
-
-  // todo: styles for isDragging components
 
   const [{ isDragging }, dragRef] = useDrag(
     () => ({
@@ -86,20 +85,17 @@ export default function TasksList({
     }),
     [dataColumns, dataColumn]
   );
-  // todo: styles for isOver elements
-  const [{ isOver }, dropRef] = useDrop(
+  const [, dropRef] = useDrop(
     () => ({
       accept: 'column',
-      drop: () => ({ dataColumn }),
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
+      drop: () => {
+        return { dataColumn };
+      },
     }),
     [dataColumns, dataColumn]
   );
 
-  // todo добавление карточки в пустой столбец
-  const [{ isOverCard, isOverCurrentCard }, dropRefCard] = useDrop(
+  const [{ isOverCard }, dropRefCard] = useDrop(
     () => ({
       accept: 'task',
       drop: (_itemDrag, monitor) => {
@@ -110,15 +106,13 @@ export default function TasksList({
       },
       collect: (monitor) => ({
         isOverCard: !!monitor.isOver(),
-        isOverCurrentCard: !!monitor.isOver({ shallow: true }),
       }),
     }),
     [dataColumns, dataColumn]
   );
 
-  dragRef(dropRef(ref));
+  updateColumnsSetResults.isLoading ? dragRef(dropRef(null)) : dragRef(dropRef(ref));
   dropRefCard(refColumn);
-  //dropRefCard(dragRef(dropRef(ref)));
 
   const confirmDeleteColumn = () => {
     onDeleteColumn(dataColumn);
@@ -247,31 +241,28 @@ export default function TasksList({
       }
     }
   };
-  /*const style = {
-    position: 'absolute',
-    width: '280px',
-    minWidth: '280px',
-    height: '100%',
-    border: '1px solid gray',
-    backgroundColor: 'white',
-    padding: '0.5rem 1rem',
-    cursor: 'move',
-  };*/
-  const styleDnD = {
+
+  const styleDnD: Record<string, string | number> = {
     opacity: isDragging ? 0 : 1,
-    cursor: 'move,',
-    //paddingLeft: isOver  ? '300px' : 0,
+
+    cursor: updateColumnsSetResults.isLoading ? 'wait!important' : 'move!important',
   };
   const styleDnDForCard = {
-    minHeight: isOverCard ? '110px!important' : '30px',
+    minHeight: isOverCard ? '70px!important' : '30px',
     transition: 'all .5s',
+    cursor: updateColumnsSetResults.isLoading ? 'wait!important' : 'move!important',
   };
 
   return (
     <>
       <Box className="board-column" sx={styleDnD}>
-        <Card variant="outlined" ref={ref} className="board-column-inner">
-          <Box className="column-name" sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}>
+        <Card variant="outlined" ref={ref} sx={styleDnD} className="board-column-inner">
+          <Box
+            className="column-name"
+            sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}
+            position="relative"
+          >
+            {updateColumnsSetResults.isLoading && <LoadingShadow />}
             {!editTitleColumn && (
               <>
                 <Stack

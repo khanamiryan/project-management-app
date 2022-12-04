@@ -1,4 +1,4 @@
-import { Avatar, Link, Typography } from '@mui/material';
+import { Avatar, Typography } from '@mui/material';
 import React from 'react';
 import './author.scss';
 type AuthorType = {
@@ -8,18 +8,7 @@ type AuthorType = {
 };
 const Author = ({ name, imageSrc, url }: AuthorType) => {
   return (
-    <Link
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        flexGrow: 1,
-        textDecoration: 'none',
-        color: 'primary.contrastText',
-      }}
-      href={url}
-      target="_blank"
-      className="author-link"
-    >
+    <a href={url} target="_blank" className="author-link" rel="noreferrer">
       <Avatar
         alt={name}
         src={imageSrc}
@@ -29,7 +18,7 @@ const Author = ({ name, imageSrc, url }: AuthorType) => {
       <Typography className="developer-name" display={{ xs: 'none', md: 'block' }}>
         {name}
       </Typography>
-    </Link>
+    </a>
   );
 };
 

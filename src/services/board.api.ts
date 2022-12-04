@@ -102,7 +102,6 @@ export const boardApi = api.injectEndpoints({
         try {
           await queryFulfilled;
         } catch {
-          console.log('catch from optimitstic');
           patchResult.undo();
         }
       },
@@ -158,22 +157,31 @@ export const boardApi = api.injectEndpoints({
       async onQueryStarted({ boardId, set }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           boardApi.util.updateQueryData('getColumns', boardId, (draft) => {
-            const newArr = draft.map((item) => {
-              const column = set.find((newColumn) => {
-                if (newColumn._id === item._id) {
+            const newArr = draft
+              .map((item) => {
+                const column = set.find((newColumn) => {
+                  if (newColumn._id === item._id) {
+                    return item;
+                  } else {
+                    return false;
+                  }
+                });
+                if (column) {
+                  item.order = column.order;
                   return item;
                 } else {
-                  return false;
+                  return item;
+                }
+              })
+              .sort((a, b) => {
+                if (a.order > b.order) {
+                  return 1;
+                } else {
+                  return -1;
                 }
               });
-              if (column) {
-                item.order = column.order;
-                return item;
-              } else {
-                return item;
-              }
-            });
-            Object.assign(draft, draft);
+
+            Object.assign(draft, newArr);
           })
         );
         try {
