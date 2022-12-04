@@ -20,7 +20,6 @@ import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 import { showToast } from 'store/toastSlice';
 import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
-import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
@@ -32,8 +31,6 @@ export default function BoardItem(): JSX.Element {
   const [deleteColumn, deleteColumnsSetResult] = useDeleteColumnMutation();
   const [updateColumsSet, updateColumnsSetResult] = useUpdateColumnsSetMutation();
   const dispatch = useAppDispatch();
-
-  const [isLoadingUpdateColumns, setIsLoadingUpdateColumns] = useState(false);
 
   const {
     data: dataCurrentBoard,
@@ -132,7 +129,6 @@ export default function BoardItem(): JSX.Element {
         }}
         position="relative"
       >
-        {isLoadingUpdateColumns && <LoadingShadow />}
         {dataColumns &&
           [...dataColumns]
             .sort((a, b) => {
@@ -152,9 +148,6 @@ export default function BoardItem(): JSX.Element {
                   dataColumn={dataColumn}
                   dataTasks={tasksByColumn}
                   onDeleteColumn={onDeleteColumn}
-                  isLoadingUpdate={(isLoading) => {
-                    setIsLoadingUpdateColumns(isLoading);
-                  }}
                 />
               );
             })}

@@ -3,7 +3,7 @@ import { Stack } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { IColumn, ITask, TaskFormFields } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
@@ -31,14 +31,12 @@ interface ITaskListProps {
   dataColumn: IColumn;
   dataTasks: ITask[] | undefined;
   onDeleteColumn: (selectedColumn: IColumn) => void;
-  isLoadingUpdate: (isLoading: boolean) => void;
 }
 
 export default function TasksList({
   dataColumn,
   dataTasks,
   onDeleteColumn,
-  isLoadingUpdate,
 }: ITaskListProps): JSX.Element {
   const { t } = useTranslation();
   const { _id: columnId, title, boardId } = dataColumn;
@@ -61,11 +59,8 @@ export default function TasksList({
   });
 
   const closeModal = () => setOpenModal(false);
-  const [updateColumnsSet, updateColumdsSetResults] = useUpdateColumnsSetMutation();
+  const [updateColumnsSet, updateColumnsSetResults] = useUpdateColumnsSetMutation();
 
-  /*useEffect(() => {
-    isLoadingUpdate(updateColumdsSetResults.isLoading);
-  }, [updateColumdsSetResults]);*/
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
   const wrapperUpdateColumnsSet = (data: {
     set: Pick<IColumn, '_id' | 'order'>[];
@@ -76,8 +71,6 @@ export default function TasksList({
 
   const ref = useRef<HTMLDivElement | null>(null);
   const refColumn = useRef<HTMLDivElement | null>(null);
-
-  // todo: styles for isDragging components
 
   const [{ isDragging }, dragRef] = useDrag(
     () => ({
@@ -92,19 +85,17 @@ export default function TasksList({
     }),
     [dataColumns, dataColumn]
   );
-  // todo: styles for isOver elements
   const [, dropRef] = useDrop(
     () => ({
       accept: 'column',
       drop: () => {
         return { dataColumn };
       },
-      collect: (monitor) => ({}),
     }),
     [dataColumns, dataColumn]
   );
 
-  const [{ isOverCard, isOverCurrentCard }, dropRefCard] = useDrop(
+  const [{ isOverCard }, dropRefCard] = useDrop(
     () => ({
       accept: 'task',
       drop: (_itemDrag, monitor) => {
@@ -115,7 +106,6 @@ export default function TasksList({
       },
       collect: (monitor) => ({
         isOverCard: !!monitor.isOver(),
-        isOverCurrentCard: !!monitor.isOver({ shallow: true }),
       }),
     }),
     [dataColumns, dataColumn]
@@ -123,7 +113,6 @@ export default function TasksList({
 
   dragRef(dropRef(ref));
   dropRefCard(refColumn);
-  //dropRefCard(dragRef(dropRef(ref)));
 
   const confirmDeleteColumn = () => {
     onDeleteColumn(dataColumn);
@@ -262,7 +251,7 @@ export default function TasksList({
     padding: '0.5rem 1rem',
     cursor: 'move',
   };*/
-  const styleDnD = {
+  const styleDnD: Record<string, string | number> = {
     opacity: isDragging ? 0 : 1,
     cursor: 'move,',
     //paddingLeft: isOver  ? '300px' : 0,
@@ -281,7 +270,7 @@ export default function TasksList({
             sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}
             position="relative"
           >
-            {updateColumdsSetResults.isLoading && <LoadingShadow />}
+            {updateColumnsSetResults.isLoading && <LoadingShadow />}
             {!editTitleColumn && (
               <>
                 <Stack

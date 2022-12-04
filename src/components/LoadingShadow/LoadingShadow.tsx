@@ -13,6 +13,7 @@ const LoadingShadow = () => {
         display: 'flex',
         top: 0,
         zIndex: 10,
+        overflow: 'hidden',
       }}
     >
       {true && <CircularProgress size={80} sx={{ m: 'auto' }} />}

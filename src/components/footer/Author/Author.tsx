@@ -1,4 +1,4 @@
-import { Avatar, Link, Typography } from '@mui/material';
+import { Avatar, Typography } from '@mui/material';
 import React from 'react';
 import './author.scss';
 type AuthorType = {

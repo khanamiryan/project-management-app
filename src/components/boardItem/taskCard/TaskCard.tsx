@@ -51,8 +51,8 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     },
   });
 
-  const { title, description, _id, boardId, columnId, order } = dataTask;
-  const [updateTasksSet] = useUpdateTasksSetMutation();
+  const { title, description } = dataTask;
+  const [updateTasksSet, updateTasksSetResult] = useUpdateTasksSetMutation();
   const wrapperUpdateTasksSet = (data: {
     set: Pick<ITask, '_id' | 'order' | 'columnId'>[];
     boardId: string;
@@ -61,7 +61,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   };
 
   const refTask = useRef(null);
-  //todo: styles for isDragging component
+
   const [{ isDragging }, dragRefTask] = useDrag(
     () => ({
       type: 'task',
@@ -104,8 +104,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     [dataTasks]
   );
 
-  // todo: styles for isOver Component
-  const [{ isOver, isOverCurrent }, dropRefTask] = useDrop(
+  const [, dropRefTask] = useDrop(
     () => ({
       accept: 'task',
       drop: (_item, monitor) => {
@@ -274,8 +273,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
         onClick={handleShowTask}
         sx={{ position: 'relative', overflow: 'visible', padding: '5px', ...styleDnD }}
       >
-        {updateTaskResult.isLoading && <LoadingShadow />}
-
+        {(updateTaskResult.isLoading || updateTasksSetResult.isLoading) && <LoadingShadow />}
         <IconButton
           onClick={(e) => handleDeleteTask(e)}
           sx={{ position: 'absolute', top: '4px', right: '8px' }}
