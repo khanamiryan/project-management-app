@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Divider, ListItem, ListItemText, Typography } from '@mui/material';
 import UserChip from 'components/UserChip/UserChip';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
