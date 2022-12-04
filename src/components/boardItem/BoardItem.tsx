@@ -20,6 +20,7 @@ import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
 import { showToast } from 'store/toastSlice';
 import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
@@ -32,6 +33,8 @@ export default function BoardItem(): JSX.Element {
   const [updateColumsSet, updateColumnsSetResult] = useUpdateColumnsSetMutation();
   const dispatch = useAppDispatch();
 
+  const [isLoadingUpdateColumns, setIsLoadingUpdateColumns] = useState(false);
+
   const {
     data: dataCurrentBoard,
     isLoading: isBoardLoading,
@@ -43,6 +46,7 @@ export default function BoardItem(): JSX.Element {
     isLoading: isColumnsLoading,
     isError: isColumnsError,
   } = useGetColumnsQuery(idBoard);
+
   const {
     data: dataTasksByBoardId,
     isLoading: isTasksLoading,
@@ -95,7 +99,6 @@ export default function BoardItem(): JSX.Element {
 
   useEffect(() => {
     if (boardError) {
-      console.log(boardError);
       if ((boardError as ServerError)?.data) {
         dispatch(
           showToast({
@@ -127,7 +130,9 @@ export default function BoardItem(): JSX.Element {
           display: 'flex',
           maxHeight: '100%',
         }}
+        position="relative"
       >
+        {isLoadingUpdateColumns && <LoadingShadow />}
         {dataColumns &&
           [...dataColumns]
             .sort((a, b) => {
@@ -147,6 +152,9 @@ export default function BoardItem(): JSX.Element {
                   dataColumn={dataColumn}
                   dataTasks={tasksByColumn}
                   onDeleteColumn={onDeleteColumn}
+                  isLoadingUpdate={(isLoading) => {
+                    setIsLoadingUpdateColumns(isLoading);
+                  }}
                 />
               );
             })}

@@ -3,7 +3,7 @@ import { Stack } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IColumn, ITask, TaskFormFields } from 'types/types';
 import TaskCard from '../taskCard/TaskCard';
 import './tasksList.scss';
@@ -31,12 +31,14 @@ interface ITaskListProps {
   dataColumn: IColumn;
   dataTasks: ITask[] | undefined;
   onDeleteColumn: (selectedColumn: IColumn) => void;
+  isLoadingUpdate: (isLoading: boolean) => void;
 }
 
 export default function TasksList({
   dataColumn,
   dataTasks,
   onDeleteColumn,
+  isLoadingUpdate,
 }: ITaskListProps): JSX.Element {
   const { t } = useTranslation();
   const { _id: columnId, title, boardId } = dataColumn;
@@ -59,7 +61,11 @@ export default function TasksList({
   });
 
   const closeModal = () => setOpenModal(false);
-  const [updateColumnsSet] = useUpdateColumnsSetMutation();
+  const [updateColumnsSet, updateColumdsSetResults] = useUpdateColumnsSetMutation();
+
+  /*useEffect(() => {
+    isLoadingUpdate(updateColumdsSetResults.isLoading);
+  }, [updateColumdsSetResults]);*/
   const { data: dataColumns } = useGetColumnsQuery(dataColumn.boardId);
   const wrapperUpdateColumnsSet = (data: {
     set: Pick<IColumn, '_id' | 'order'>[];
@@ -87,18 +93,15 @@ export default function TasksList({
     [dataColumns, dataColumn]
   );
   // todo: styles for isOver elements
-  const [{ isOver }, dropRef] = useDrop(
+  const [, dropRef] = useDrop(
     () => ({
       accept: 'column',
       drop: () => ({ dataColumn }),
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
+      collect: (monitor) => ({}),
     }),
     [dataColumns, dataColumn]
   );
 
-  // todo добавление карточки в пустой столбец
   const [{ isOverCard, isOverCurrentCard }, dropRefCard] = useDrop(
     () => ({
       accept: 'task',
@@ -263,7 +266,7 @@ export default function TasksList({
     //paddingLeft: isOver  ? '300px' : 0,
   };
   const styleDnDForCard = {
-    minHeight: isOverCard ? '110px!important' : '30px',
+    minHeight: isOverCard ? '70px!important' : '30px',
     transition: 'all .5s',
   };
 
@@ -271,7 +274,12 @@ export default function TasksList({
     <>
       <Box className="board-column" sx={styleDnD}>
         <Card variant="outlined" ref={ref} className="board-column-inner">
-          <Box className="column-name" sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}>
+          <Box
+            className="column-name"
+            sx={{ backgroundColor: 'primary.main', color: '#FFFFFF' }}
+            position="relative"
+          >
+            {/*updateColumdsSetResults.isLoading && <LoadingShadow />*/}
             {!editTitleColumn && (
               <>
                 <Stack
@@ -284,6 +292,7 @@ export default function TasksList({
                   <Typography variant={'h5'}>
                     {updateColumnResult.isLoading ? t('updating') : title}
                   </Typography>{' '}
+                  <p>order: {dataColumn.order}</p>
                   <IconButton onClick={(e) => handleDeleteColumn(e)} sx={{ color: '#FFFFFF' }}>
                     <DeleteIcon fontSize="small" />
                   </IconButton>
