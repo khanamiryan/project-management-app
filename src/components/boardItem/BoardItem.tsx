@@ -43,6 +43,7 @@ export default function BoardItem(): JSX.Element {
     isLoading: isColumnsLoading,
     isError: isColumnsError,
   } = useGetColumnsQuery(idBoard);
+  console.log('isColumnsLoading', isColumnsLoading);
   const {
     data: dataTasksByBoardId,
     isLoading: isTasksLoading,
@@ -95,7 +96,6 @@ export default function BoardItem(): JSX.Element {
 
   useEffect(() => {
     if (boardError) {
-      console.log(boardError);
       if ((boardError as ServerError)?.data) {
         dispatch(
           showToast({
@@ -127,6 +127,7 @@ export default function BoardItem(): JSX.Element {
           display: 'flex',
           maxHeight: '100%',
         }}
+        position="relative"
       >
         {dataColumns &&
           [...dataColumns]
