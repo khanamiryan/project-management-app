@@ -34,7 +34,11 @@ export default function Modal({
       aria-describedby="alert-dialog-description"
       className="modal"
     >
-      {title && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
+      {title && (
+        <DialogTitle id="alert-dialog-title" overflow={'auto'}>
+          {title}
+        </DialogTitle>
+      )}
       <DialogContent sx={{ overflowY: 'initial' }}>{content}</DialogContent>
       <DialogActions>
         {!onlyConfirmButton && (
