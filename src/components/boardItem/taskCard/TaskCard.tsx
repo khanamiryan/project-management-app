@@ -121,11 +121,13 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
     [dataTasks]
   );
 
-  dragRefTask(dropRefTask(refTask));
+  updateTasksSetResult.isLoading
+    ? dragRefTask(dropRefTask(null))
+    : dragRefTask(dropRefTask(refTask));
 
   const styleDnD = {
     opacity: isDragging ? 0 : 1,
-    cursor: 'move',
+    cursor: updateTasksSetResult.isLoading ? 'wait!important' : 'move!important',
     //height: isDragging ? 0 : 'inherit',
 
     //paddingTop: isOver ? '110px' : 0,
@@ -281,7 +283,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
           <DeleteIcon fontSize="small" />
         </IconButton>
         <Typography component="h3" mt={1} variant={'h6'}>
-          {title} order: {dataTask.order}
+          {title}
         </Typography>
         <Typography component="p" variant={'body1'}>
           {description.length > 24 ? `${description.slice(0, 24)}...` : description}
