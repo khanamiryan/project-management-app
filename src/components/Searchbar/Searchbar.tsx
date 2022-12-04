@@ -73,6 +73,7 @@ export default function Searchbar({
             onChange={(e) => onChange(e.target.value)}
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            required={false}
           />
         </form>
       </Search>

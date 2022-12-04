@@ -53,10 +53,18 @@ export const boardApi = api.injectEndpoints({
             ]
           : [{ type: 'Tasks', id: 'LIST' }],
     }),
-    getTasksSetBySearch: builder.query<ITask[], string>({
-      query: (string) => ({
-        url: `${Endpoint.TASKS_SET}?search=${string}`,
-      }),
+    getTasksSetBySearch: builder.query<ITask[], { userId: string; searchString: string }>({
+      query: ({ userId, searchString }) => {
+        console.log('getTasksSetBySearch');
+        if (searchString) {
+          return {
+            url: `${Endpoint.TASKS_SET}?search=${searchString}`,
+          };
+        }
+        return {
+          url: `${Endpoint.TASKS_SET}?userId=${userId}`,
+        };
+      },
     }),
     updateTasksSet: builder.mutation<
       ITask[],
