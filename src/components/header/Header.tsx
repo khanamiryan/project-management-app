@@ -48,8 +48,8 @@ const Header = () => {
     setModalOpen(true);
   };
   const pages = [
-    { name: t('menu.boards'), url: '/boards' },
-    { name: t('menu.profilePage'), url: '/profile' },
+    // { name: t('menu.boards'), url: '/boards' },
+    // { name: t('menu.profilePage'), url: '/profile' },
     {
       name: t('menu.addBoard'),
       onClick: onClickAddBoard,
@@ -63,6 +63,7 @@ const Header = () => {
 
   const userAuthorizedMenu = [
     { name: t('menu.goToMainPage'), url: '/boards' },
+    { name: t('menu.profilePage'), url: '/profile' },
     { name: t('menu.signOut'), onClick: handleSignOut, icon: <LogoutIcon sx={{ ml: 0.5 }} /> },
   ];
 
@@ -90,7 +91,7 @@ const Header = () => {
             className="logo"
             variant="h6"
             component={Link}
-            href={user.loggedIn ? '/boards' : '/'}
+            href={'/'}
             color={trigger ? 'primary.contrastText' : 'secondary.contrastText'}
             sx={{ padding: '0 10px' }}
           >
