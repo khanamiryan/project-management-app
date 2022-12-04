@@ -73,7 +73,7 @@ const BoardsList = () => {
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
             <Tab label={t('boards.myBoards')} {...a11yProps(0)} />
-            <Tab label="My tasks" {...a11yProps(1)} />
+            <Tab label={t('task.myTasks')} {...a11yProps(1)} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
