@@ -47,7 +47,7 @@ const TaskListItem = ({ task }: { task: ITask }) => {
 
         <Box display={'flex'} alignItems="center">
           <ListItemText sx={{ pr: '2px' }}>{t('modal.task.users')}</ListItemText>
-          {users.length ? (
+          {Boolean(users.length) ? (
             <Box
               display={'flex'}
               sx={{

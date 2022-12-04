@@ -235,17 +235,17 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
               </>
             )}
             <Box>
-              <Typography variant="body1" component={'span'}>
+              <Typography variant="body1" component={'span'} sx={{ pr: '2px' }}>
                 {t('modal.task.creator')}
               </Typography>
               {ownerObj && <UserChip login={ownerObj.login} isOwner />}
             </Box>
 
-            {contributors.length && (
+            {Boolean(contributors.length) && (
               <>
                 <Divider />
                 <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <Typography variant="body1" component={'span'}>
+                  <Typography variant="body1" component={'span'} sx={{ pr: '2px' }}>
                     {t('modal.task.users')}
                   </Typography>
                   {contributors.map((contributor) => (
