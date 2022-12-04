@@ -1,24 +1,32 @@
 import { Stack, ButtonGroup, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import HomeIcon from '@mui/icons-material/Home';
 import React, { useEffect, useState } from 'react';
-import { Board, BoardFormFields } from 'types/types';
+import { Board, BoardFormFields, IUserInfo } from 'types/types';
 import { useTranslation } from 'react-i18next';
 import { useDeleteBoardMutation, useUpdateBoardMutation } from 'services/boards.api';
-import { useAppSelector, useAppDispatch } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+import { useGetUsersQuery } from 'services/users.api';
+import { useAppDispatch } from 'store/redux.hooks';
 import { showToast } from 'store/toastSlice';
 import Modal from 'components/Modal/Modal';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InputText from 'components/InputText/InputText';
 import UsersSelect from 'components/UsersSelect/UsersSelect';
+import UserChip from 'components/UserChip/UserChip';
+import { rules } from '../../../utils/validation.utils';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import { useNavigate } from 'react-router-dom';
+import LoadingShadow from 'components/LoadingShadow/LoadingShadow';
 
 const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'delete' | 'edit'>('delete');
-  const { id: currentUserId } = useAppSelector(selectUser);
+  const { id: currentUserId } = useCurrentUser();
+  const { data: allUsers } = useGetUsersQuery('');
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const isOwner = currentUserId === board.owner;
   const modalDeleteTitle =
     t(isOwner ? 'modal.board.onDeleteTitle' : 'modal.board.onLeaveTitle') + ` ${board.title}?`;
@@ -36,12 +44,10 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
     <>
       <InputText
         name="title"
-        label={t('modal.board.onCreateTitle')}
+        label={t('form.fields.boardTitle')}
         autoComplete="title"
         control={control}
-        rules={{
-          required: t('modal.board.errorTitleMessage') as string,
-        }}
+        rules={rules.boardInfo}
         inputProps={{
           style: { fontSize: '1.2rem' },
         }}
@@ -53,7 +59,6 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   const [deleteBoard, deleteResult] = useDeleteBoardMutation();
   const [updateBoard, updateResult] = useUpdateBoardMutation();
   const isLoading = deleteResult.isLoading || updateResult.isLoading;
-  const isSuccess = deleteResult.isSuccess;
 
   const onClickDelete = () => {
     setModalType('delete');
@@ -80,38 +85,70 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (deleteResult.isSuccess) {
       dispatch(
         showToast({
-          message: t(isOwner ? 'boards.toast.onSuccesDelete' : 'boards.toast.onSuccesLeave'),
+          message: t('boards.toast.onSuccessDelete'),
+          type: 'success',
+        })
+      );
+    } else if (updateResult.isSuccess) {
+      dispatch(
+        showToast({
+          message: t(isOwner ? 'boards.toast.onSuccessUpdate' : 'boards.toast.onSuccessLeave'),
           type: 'success',
         })
       );
     }
-  }, [dispatch, isOwner, isSuccess]);
+  }, [deleteResult.isSuccess, updateResult.isSuccess, dispatch, isOwner, t]);
+
+  const ownerObj = allUsers?.find(({ id }) => id === board.owner);
+  const contributors = board.users.reduce((acc: IUserInfo[], userId) => {
+    const contributor = allUsers?.find(({ id }) => userId === id);
+    return contributor ? [...acc, contributor] : acc;
+  }, []);
 
   return (
     <>
+      {isLoading && <LoadingShadow />}
       <Stack
         className="board-nav"
         direction={{ xs: 'row', sm: 'row' }}
         spacing={{ xs: 1, sm: 2, md: 4 }}
+        sx={{ pl: 1, pb: 1 }}
       >
-        <Typography variant={'h3'} component="h1" className="board-title">
-          {board.title}
+        <IconButton onClick={() => navigate('/boards')}>
+          <HomeIcon fontSize="large" />
+        </IconButton>
+        <Typography variant={'h4'} component="h2" className="board-title">
+          / {board.title}
         </Typography>
         <ButtonGroup>
-          <IconButton onClick={onClickEdit}>
-            <EditIcon fontSize="large" />
-          </IconButton>
+          {isOwner && (
+            <IconButton onClick={onClickEdit}>
+              <EditIcon fontSize="large" />
+            </IconButton>
+          )}
           <IconButton onClick={onClickDelete}>
             <DeleteIcon fontSize="large" />
           </IconButton>
         </ButtonGroup>
       </Stack>
+
+      {/* //TODO  вынести в отдельный компонент*/}
+      {ownerObj && (
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, pl: 1 }}>
+          <UserChip login={ownerObj.login} isOwner />
+          {contributors.length &&
+            contributors.map((contributor) => (
+              <UserChip key={contributor.id} login={contributor.login} />
+            ))}
+        </Stack>
+      )}
+
       <Modal
         open={modalOpen}
-        title={modalType === 'delete' ? modalDeleteTitle : 'Edit board'}
+        title={modalType === 'delete' ? modalDeleteTitle : (t('modal.board.editBoard') as string)}
         onClickConfirm={modalType === 'delete' ? onBoardDelete : handleSubmit(onBoardEdit)}
         onClickCancel={onModalClose}
       >

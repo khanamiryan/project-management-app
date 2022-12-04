@@ -1,36 +1,32 @@
-import { IUserInfo, IUserResponse, User } from 'types/types';
+import { IUserInfo, IUserResponse } from 'types/types';
 import { api } from './api';
 import { Endpoint, HTTPMethod } from './api.constants';
 import { signOutReducer } from '../store/userSlice';
-import { IProfile } from '../components/Profile/Profile';
 
 export const usersApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], string>({
+    getUsers: builder.query<IUserInfo[], string>({
       query: () => ({
         url: Endpoint.USERS,
       }),
+      providesTags: (result) =>
+        result ? [...result.map(({ id }) => ({ type: 'Users' as const, id })), 'Users'] : ['Users'],
+      transformResponse: (users: IUserResponse[]) => {
+        return users.map(({ _id, ...rest }) => ({ ...rest, id: _id }));
+      },
     }),
 
     getUser: builder.query<IUserInfo, string>({
       query: (id) => ({
         url: `${Endpoint.USERS}${id}`,
       }),
-      providesTags: [{ type: 'Users', id: 'LIST' }],
+      providesTags: (result) => (result ? [{ type: 'Users' as const, id: result.id }] : ['Users']),
       transformResponse: ({ _id, ...rest }: IUserResponse) => {
         return { ...rest, id: _id };
       },
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-        } catch (e) {
-          console.log('may be here we need to catch expired token ');
-          console.log(e);
-        }
-      },
     }),
 
-    setUserInfo: builder.mutation<IUserResponse, IProfile & { id: string }>({
+    setUserInfo: builder.mutation<IUserResponse, IUserInfo>({
       query: ({ id, ...user }) => ({
         url: `${Endpoint.USERS}${id}`,
         method: HTTPMethod.PUT,

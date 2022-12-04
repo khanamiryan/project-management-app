@@ -12,8 +12,21 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { LinkProps } from '@mui/material/Link';
 import LinkRouter from './utils/LinkRouter';
 
+// import i18n (needs to be bundled ;))
+import './i18n';
+import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-const theme = createTheme({
+
+const getInitialStore = () => {
+  return {
+    user: {
+      token: localStorage.getItem('token') || '',
+    },
+  };
+};
+
+export const theme = createTheme({
   components: {
     MuiLink: {
       defaultProps: {
@@ -39,17 +52,19 @@ const theme = createTheme({
 });
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store({})}>
-        <ThemeProvider theme={theme}>
-          <DndProvider backend={HTML5Backend}>
-            <ErrorBoundary>
-              <App />
-            </ErrorBoundary>
-          </DndProvider>
-        </ThemeProvider>
-      </Provider>
-    </BrowserRouter>
+    <React.Suspense fallback={<LoadingBackdrop />}>
+      <BrowserRouter>
+        <Provider store={store(getInitialStore())}>
+          <ThemeProvider theme={theme}>
+            <DndProvider backend={HTML5Backend}>
+              <ErrorBoundary>
+                <App />
+              </ErrorBoundary>
+            </DndProvider>
+          </ThemeProvider>
+        </Provider>
+      </BrowserRouter>
+    </React.Suspense>
   </React.StrictMode>
 );
 

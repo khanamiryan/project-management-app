@@ -1,8 +1,9 @@
 import { api } from './api';
 import { Endpoint, HTTPMethod } from './api.constants';
 import jwt_decode from 'jwt-decode';
-import { usersApi } from './users.api';
+
 import { DecodedToken, ISignInForm, ISignUpForm, IUserResponse } from '../types/types';
+import { showToast } from '../store/toastSlice';
 
 export const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -18,9 +19,12 @@ export const authApi = api.injectEndpoints({
           const { data } = await queryFulfilled;
           const { id, exp } = jwt_decode(data.token) as DecodedToken;
           localStorage.setItem('token', data.token);
+
+          // dispatch(showToast({ message: 'successToSignIn' }));
           // console.log(jwt_decode(data.token) as DecodedToken);
           // console.log(exp > Date.now() / 1000);
-          await dispatch(usersApi.endpoints.getUser.initiate(id));
+          //todo remove and change
+          // await dispatch(usersApi.endpoints.getUser.initiate(id));
         } catch (error) {}
       },
       invalidatesTags: [{ type: 'Users', id: 'LIST' }],

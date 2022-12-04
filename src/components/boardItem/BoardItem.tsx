@@ -1,4 +1,4 @@
-import { Alert, Button, CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import { Box, Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import './boardItem.scss';
@@ -11,37 +11,51 @@ import {
 } from './../../services/board.api';
 import { useNavigate, useParams } from 'react-router-dom';
 import ModalCreate from './ModalCreate/ModalCreate';
-import { useAppSelector } from 'store/redux.hooks';
-import { selectUser } from 'store/userSlice';
+import { useAppDispatch } from 'store/redux.hooks';
+
 import { useGetBoardByIdQuery } from 'services/boards.api';
-import { IColumn } from 'types/types';
-import { t } from 'i18next';
+import { IColumn, ServerError } from 'types/types';
+import { useTranslation } from 'react-i18next';
 import BoardInfoBlock from './BoardInfoBlock/BoardInfoBlock';
+import { showToast } from 'store/toastSlice';
+import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
+import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 export default function BoardItem(): JSX.Element {
   // todo: loader, toast
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const idBoard = useParams().id as string;
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const { id: userId } = useAppSelector(selectUser);
-  const [deleteColumn] = useDeleteColumnMutation();
-  const [updateColumsSet] = useUpdateColumnsSetMutation();
+  const { id: userId } = useCurrentUser();
+  const [deleteColumn, deleteColumnsSetResult] = useDeleteColumnMutation();
+  const [updateColumsSet, updateColumnsSetResult] = useUpdateColumnsSetMutation();
+  const dispatch = useAppDispatch();
 
   const {
     data: dataCurrentBoard,
     isLoading: isBoardLoading,
     isError: isBoardError,
+    error: boardError,
   } = useGetBoardByIdQuery(idBoard);
   const {
     data: dataColumns,
     isLoading: isColumnsLoading,
     isError: isColumnsError,
   } = useGetColumnsQuery(idBoard);
+  console.log('isColumnsLoading', isColumnsLoading);
   const {
     data: dataTasksByBoardId,
     isLoading: isTasksLoading,
     isError: isTasksError,
   } = useGetTasksByBoardIdQuery(idBoard);
+
+  const isError =
+    isBoardError ||
+    isTasksError ||
+    isColumnsError ||
+    deleteColumnsSetResult.isError ||
+    updateColumnsSetResult.isError;
 
   const handleAddColumn = () => {
     setOpenModalCreate(true);
@@ -64,7 +78,7 @@ export default function BoardItem(): JSX.Element {
           };
         }
       });
-      updateColumsSet(set);
+      updateColumsSet({ set: set, boardId: selectedColumn.boardId });
     }
   };
 
@@ -80,17 +94,29 @@ export default function BoardItem(): JSX.Element {
     }
   });
 
+  useEffect(() => {
+    if (boardError) {
+      if ((boardError as ServerError)?.data) {
+        dispatch(
+          showToast({
+            message: (boardError as ServerError).data.message || t('boards.serverError'),
+            type: 'error',
+          })
+        );
+        if ((boardError as ServerError).status === 404) {
+          navigate('/boards/');
+        }
+      }
+    }
+  }, [boardError, dispatch, navigate]);
+
   return (
     <Box className={'board'}>
-      <Box className="board-header">
-        {isBoardLoading && <CircularProgress size={80} />}
-        {isBoardError && (
-          <Alert variant="outlined" severity="error">
-            {t('boards.serverError')}
-          </Alert>
-        )}
+      <Stack className="board-header">
+        {(isBoardLoading || isTasksLoading || isColumnsLoading) && <CircularProgress size={80} />}
+        {isError && <ErrorAlert />}
         {dataCurrentBoard && <BoardInfoBlock board={dataCurrentBoard} />}
-      </Box>
+      </Stack>
 
       <Stack
         className="board-body"
@@ -101,6 +127,7 @@ export default function BoardItem(): JSX.Element {
           display: 'flex',
           maxHeight: '100%',
         }}
+        position="relative"
       >
         {dataColumns &&
           [...dataColumns]
@@ -132,7 +159,7 @@ export default function BoardItem(): JSX.Element {
             fullWidth
             onClick={handleAddColumn}
           >
-            Add List
+            {t('Add') + ' ' + t('List')}
           </Button>
         </Box>
       </Stack>
