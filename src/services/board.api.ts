@@ -65,6 +65,7 @@ export const boardApi = api.injectEndpoints({
           url: `${Endpoint.TASKS_SET}?userId=${userId}`,
         };
       },
+      providesTags: ['Search'],
     }),
     updateTasksSet: builder.mutation<
       ITask[],
@@ -112,7 +113,7 @@ export const boardApi = api.injectEndpoints({
         method: HTTPMethod.POST,
         body: { ...rest },
       }),
-      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }, 'Search'],
     }),
     updateTask: builder.mutation<ITask, ITask>({
       query: ({ boardId, columnId, _id, ...rest }) => ({
@@ -120,7 +121,7 @@ export const boardApi = api.injectEndpoints({
         method: HTTPMethod.PUT,
         body: { columnId: columnId, ...rest },
       }),
-      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }, 'Search'],
     }),
     deleteTask: builder.mutation<
       ITask,
@@ -130,7 +131,7 @@ export const boardApi = api.injectEndpoints({
         url: `${Endpoint.BOARDS}${boardId}/columns/${columnId}/tasks/${_id}`,
         method: HTTPMethod.DELETE,
       }),
-      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Tasks', id: 'LIST' }, 'Search'],
     }),
     getColumns: builder.query<IColumn[], string>({
       query: (boardId) => ({

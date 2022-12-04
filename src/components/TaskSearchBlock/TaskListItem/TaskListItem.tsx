@@ -28,13 +28,13 @@ const TaskListItem = ({ task }: { task: ITask }) => {
       <ListItem
         sx={{ flexDirection: 'column', alignItems: 'start', flexWrap: 'wrap', gap: '2px', pb: 2 }}
       >
-        <ListItemText>
+        <ListItemText sx={{ overflowX: 'auto', width: '100%' }}>
           {t('form.fields.taskTitle')}:
           <Typography component={'span'} variant={'h5'}>
             {title}
           </Typography>
         </ListItemText>
-        <ListItemText>
+        <ListItemText sx={{ overflowX: 'auto', width: '100%' }}>
           {t('form.fields.taskDescription')}:
           <Typography component={'span'} variant={'h6'}>
             {description}
@@ -47,7 +47,7 @@ const TaskListItem = ({ task }: { task: ITask }) => {
 
         <Box display={'flex'} alignItems="center">
           <ListItemText sx={{ pr: '2px' }}>{t('modal.task.users')}</ListItemText>
-          {users.length ? (
+          {Boolean(users.length) ? (
             <Box
               display={'flex'}
               sx={{

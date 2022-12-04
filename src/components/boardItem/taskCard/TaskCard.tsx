@@ -231,22 +231,24 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
           <Stack spacing={2} minWidth={'250px'}>
             {dataTask.description && (
               <>
-                <Typography variant="body1">{dataTask.description}</Typography>
+                <Typography variant="body1" overflow={'auto'}>
+                  {dataTask.description}
+                </Typography>
                 <Divider />
               </>
             )}
             <Box>
-              <Typography variant="body1" component={'span'}>
+              <Typography variant="body1" component={'span'} sx={{ pr: '2px' }}>
                 {t('modal.task.creator')}
               </Typography>
               {ownerObj && <UserChip login={ownerObj.login} isOwner />}
             </Box>
 
-            {contributors.length && (
+            {Boolean(contributors.length) && (
               <>
                 <Divider />
                 <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <Typography variant="body1" component={'span'}>
+                  <Typography variant="body1" component={'span'} sx={{ pr: '2px' }}>
                     {t('modal.task.users')}
                   </Typography>
                   {contributors.map((contributor) => (

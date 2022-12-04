@@ -7,6 +7,7 @@ import {
   Button,
   Badge,
   IconButton,
+  Box,
 } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -67,30 +68,36 @@ const BoardCard = ({ board }: { board: Board }) => {
     <>
       <Card sx={{ position: 'relative' }}>
         {isLoading && <LoadingShadow />}
-        <CardContent>
-          <Typography variant="h5" component="div">
-            {board.title}
-          </Typography>
-          <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            {t(isOwner ? 'boards.roleIsOwner' : 'boards.roleIsContributor')}
-          </Typography>
-          <Typography variant="body2">
-            <Badge badgeContent={board.users.length + 1} color="primary">
-              <AssignmentIndIcon color="action" fontSize="large" />
-            </Badge>
-          </Typography>
-        </CardContent>
-        <CardActions sx={{ pt: 0 }}>
-          <Button variant="contained" onClick={goBoard}>
-            {t('boards.open')}
-          </Button>
-        </CardActions>
-        <IconButton
-          sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
-          onClick={onClickDelete}
-        >
-          <DeleteIcon fontSize="large" />
-        </IconButton>
+        <Box display="flex" justifyContent={'space-between'} flexGrow={'1'}>
+          <Box>
+            <CardContent>
+              <Typography variant="h5" component="div">
+                {board.title}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                {t(isOwner ? 'boards.roleIsOwner' : 'boards.roleIsContributor')}
+              </Typography>
+              <Typography variant="body2">
+                <Badge badgeContent={board.users.length + 1} color="primary">
+                  <AssignmentIndIcon color="action" fontSize="large" />
+                </Badge>
+              </Typography>
+            </CardContent>
+            <CardActions sx={{ pt: 0 }}>
+              <Button variant="contained" onClick={goBoard}>
+                {t('boards.open')}
+              </Button>
+            </CardActions>
+          </Box>
+          <Box>
+            <IconButton
+              // sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
+              onClick={onClickDelete}
+            >
+              <DeleteIcon fontSize="large" />
+            </IconButton>
+          </Box>
+        </Box>
       </Card>
       <Modal
         open={modalOpen}
