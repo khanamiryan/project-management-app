@@ -6,12 +6,15 @@ import i18n from '../i18n';
 
 export const rtkErrorMiddleware: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
-    if (action.payload.status === 'FETCH_ERROR') {
-      api.dispatch(showToast({ message: action.payload.error }));
-    }
     if (action.payload.status === 403 && action.payload.data.statusCode === 403) {
       signOut(api.dispatch);
-      api.dispatch(showToast({ message: i18n.t('auth.toast.tokenExpired') }));
+    }
+    if (action.payload.status) {
+      api.dispatch(
+        showToast({
+          message: i18n.t([`serverError.${action.payload.status}`, 'serverError.unspecific']),
+        })
+      );
     }
   }
   return next(action);

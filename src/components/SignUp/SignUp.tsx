@@ -34,11 +34,10 @@ const SignUp = () => {
           dispatch(showToast({ message: t('auth.toast.successToSignUp'), type: 'success' }));
         }
       })
-      .catch((e) => {
+      .catch(() => {
         setError('name', { type: 'custom', message: '' });
         setError('login', { type: 'custom', message: '' });
         setError('password', { type: 'custom', message: '' });
-        dispatch(showToast({ message: t(e.data.message) }));
       });
   };
   const { t } = useTranslation();

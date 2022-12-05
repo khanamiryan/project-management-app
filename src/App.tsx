@@ -6,14 +6,19 @@ import NotFound from 'pages/notFound/NotFound';
 import Profile from 'pages/profile/Profile';
 import SignIn from 'pages/signIn/SignIn';
 import SignUp from 'pages/signUp/SignUp';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
 import { useCurrentUser } from './hooks/useCurrentUser';
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const { isLoading, loggedIn } = useCurrentUser();
+  const { t, i18n } = useTranslation();
+  useEffect(() => {
+    document.title = t('title');
+  }, [i18n.language]);
 
   return (
     <>
@@ -26,8 +31,6 @@ function App() {
             <Route path="boards" element={<Boards />} />
             <Route path="boards/:id" element={<Board />} />
             <Route path="profile" element={<Profile />} />
-
-            {/*<Route path="/boards/:id" element={<p>This is a page for some board</p>} />*/}
           </Route>
           <Route
             element={
@@ -49,5 +52,3 @@ function App() {
 }
 
 export default App;
-/*
-           <Route path="*" element={<NotFoundRoute />} />*/
