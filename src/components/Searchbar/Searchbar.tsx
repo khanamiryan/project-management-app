@@ -3,6 +3,7 @@ import { styled, alpha } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
+import { useTranslation } from 'react-i18next';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -55,6 +56,8 @@ export default function Searchbar({
   onChange: (value: string) => void;
   onSubmit: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <Toolbar>
       <Search>
@@ -71,7 +74,7 @@ export default function Searchbar({
           <StyledInputBase
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="Search…"
+            placeholder={t('search') as string}
             inputProps={{ 'aria-label': 'search' }}
             required={false}
           />

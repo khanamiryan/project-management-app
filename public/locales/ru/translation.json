@@ -133,5 +133,6 @@
     "lead": "тимлид"
   },
   "noUsers": "нет участников",
-    "accountDeleted": "аккаунт удален"  
+  "accountDeleted": "аккаунт удален",
+  "search": "Поиск..."  
 }
