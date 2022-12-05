@@ -23,7 +23,6 @@ const toastSlice = createSlice({
       state.open = true;
     },
     hideToast: (state: ToastState) => {
-      console.log('hideToast');
       state.open = false;
     },
   },
