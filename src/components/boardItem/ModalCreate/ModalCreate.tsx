@@ -96,7 +96,7 @@ export default function ModalCreate({
   return (
     <Dialog open={openModal} onClose={closeModal} className="modal-form">
       <Box component="form" className="column-create-form" onSubmit={handleSubmit(onSubmit)}>
-        <Typography variant="h4" component="h3">
+        <Typography variant="h4" component="h3" sx={{ fontSize: '1.25rem' }}>
           {t(action)} {t(type)}
         </Typography>
         <InputText
