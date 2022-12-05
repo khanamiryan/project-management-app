@@ -228,7 +228,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
       }
       default: {
         return (
-          <Stack spacing={2} minWidth={'250px'}>
+          <Stack spacing={2} minWidth={'230px'}>
             {dataTask.description && (
               <>
                 <Typography variant="body1" overflow={'auto'}>
