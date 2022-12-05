@@ -1,6 +1,3 @@
-//TODO эта модалка создает только колонки,
-// функционал создания тасков теперь в другом компоненте, ее можно рефакторить
-
 import { Box, Button, Dialog, DialogActions, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
 import React from 'react';
@@ -95,9 +92,6 @@ export default function ModalCreate({
     setValue('description', '');
     closeModal();
   };
-
-  //todo : add check input, add errors
-  //todo : add logic for order column
 
   return (
     <Dialog open={openModal} onClose={closeModal} className="modal-form">

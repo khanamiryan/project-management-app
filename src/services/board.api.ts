@@ -230,40 +230,4 @@ export const {
   useUpdateTaskMutation,
   useUpdateTasksSetMutation,
   useGetTasksSetBySearchQuery,
-  //useGetTasksByColumnQuery,
 } = boardApi;
-/*
-const api11 = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/',
-  }),
-  tagTypes: ['Post'],
-  endpoints: (build) => ({
-    getPost: build.query<Post, number>({
-      query: (id) => `post/${id}`,
-      providesTags: ['Post'],
-    }),
-    updatePost: build.mutation<void, Pick<Post, 'id'> & Partial<Post>>({
-      query: ({ id, ...patch }) => ({
-        url: `post/${id}`,
-        method: 'PATCH',
-        body: patch,
-      }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          api.util.updateQueryData('getPost', id, (draft) => {
-            Object.assign(draft, patch);
-          })
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patchResult.undo();
-
-
-        }
-      },
-    }),
-  }),
-});
-*/

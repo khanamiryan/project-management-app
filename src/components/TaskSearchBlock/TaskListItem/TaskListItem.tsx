@@ -7,7 +7,7 @@ import { ITask } from 'types/types';
 import { useTranslation } from 'react-i18next';
 
 const TaskListItem = ({ task }: { task: ITask }) => {
-  const { data: allUsers, isError, isLoading } = useGetUsersQuery('');
+  const { data: allUsers } = useGetUsersQuery('');
   const { boardId, description, title, userId, users } = task;
   const navigate = useNavigate();
   const { t } = useTranslation();
