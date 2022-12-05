@@ -7,8 +7,9 @@ import {
   Box,
   Avatar,
   Link,
+  Button,
+  Tooltip,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import React, { useState } from 'react';
 import './header.scss';
 import CreateBoardModal from 'components/CreateBoardModal/CreateBoardModal';
@@ -47,15 +48,7 @@ const Header = () => {
   const onClickAddBoard = () => {
     setModalOpen(true);
   };
-  const pages = [
-    { name: t('menu.boards'), url: '/boards' },
-    { name: t('menu.profilePage'), url: '/profile' },
-    {
-      name: t('menu.addBoard'),
-      onClick: onClickAddBoard,
-      icon: <AddCircleIcon sx={{ ml: 0.5 }} />,
-    },
-  ];
+
   const userMenu = [
     { name: t('menu.signIn'), url: '/login' },
     { name: t('menu.signUp'), url: '/registration' },
@@ -63,6 +56,7 @@ const Header = () => {
 
   const userAuthorizedMenu = [
     { name: t('menu.goToMainPage'), url: '/boards' },
+    { name: t('menu.profilePage'), url: '/profile' },
     { name: t('menu.signOut'), onClick: handleSignOut, icon: <LogoutIcon sx={{ ml: 0.5 }} /> },
   ];
 
@@ -90,15 +84,25 @@ const Header = () => {
             className="logo"
             variant="h6"
             component={Link}
-            href={user.loggedIn ? '/boards' : '/'}
+            href={'/'}
             color={trigger ? 'primary.contrastText' : 'secondary.contrastText'}
             sx={{ padding: '0 10px' }}
           >
             Super boards
           </Typography>
-          {user.loggedIn && <HeaderMenu items={pages} icon={<MenuIcon />} />}
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            <ButtonGroup sx={{ ml: 'auto' }} variant={'text'}>
+          {user.loggedIn && (
+            <Button onClick={onClickAddBoard} color="inherit" sx={{ ml: 'auto' }}>
+              <Typography sx={{ display: { xs: 'none', md: 'flex' } }}>
+                {t('menu.addBoard')}
+              </Typography>
+              <Tooltip title={t('menu.addBoard')}>
+                <AddCircleIcon fontSize="large" sx={{ ml: 0.5 }} />
+              </Tooltip>
+            </Button>
+          )}
+
+          <Box sx={{ ml: 'auto', display: 'flex' }}>
+            <ButtonGroup variant={'text'}>
               <HeaderMenu
                 items={user.loggedIn ? userAuthorizedMenu : userMenu}
                 icon={<Avatar alt={user.name} />}
