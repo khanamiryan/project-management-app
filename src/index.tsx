@@ -11,8 +11,7 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { LinkProps } from '@mui/material/Link';
 import LinkRouter from './utils/LinkRouter';
-
-// import i18n (needs to be bundled ;))
+import './index.scss';
 import './i18n';
 import LoadingBackdrop from './components/LoadingBackdrop/LoadingBackdrop';
 
