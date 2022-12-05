@@ -2,18 +2,19 @@ import { Box, CircularProgress, List } from '@mui/material';
 import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 import Searchbar from 'components/Searchbar/Searchbar';
 import { useCurrentUser } from 'hooks/useCurrentUser';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useGetTasksSetBySearchQuery } from 'services/board.api';
+import { selectSearchValue, setSearchValue } from 'store/boardsPageSlice';
+import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
 import TaskListItem from './TaskListItem/TaskListItem';
 
 const TaskSearchBlock = () => {
-  const [inputValue, setInputValue] = useState('');
-  const [searchValue, setSearchValue] = useState('');
+  const searchValue = useAppSelector(selectSearchValue);
+  const dispatch = useAppDispatch();
+  const [inputValue, setInputValue] = useState(searchValue);
   const { id: currentUserId } = useCurrentUser();
   const {
     data: tasks,
-    refetch,
-    isLoading,
     isError,
     isFetching,
   } = useGetTasksSetBySearchQuery({
@@ -25,8 +26,7 @@ const TaskSearchBlock = () => {
     setInputValue(value);
   };
   const searchTasks = () => {
-    setSearchValue(inputValue);
-    refetch();
+    dispatch(setSearchValue({ searchValue: inputValue }));
   };
 
   // TODO need refactor
