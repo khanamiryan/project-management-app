@@ -1,7 +1,7 @@
 //TODO эта модалка создает только колонки,
 // функционал создания тасков теперь в другом компоненте, ее можно рефакторить
 
-import { Box, Button, Dialog, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
 import React from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
@@ -121,8 +121,10 @@ export default function ModalCreate({
             rules={rules.columnDescription}
           />
         )}
-        <Button type="submit">{t('modal.submit')}</Button>
-        <Button onClick={handleCancel}>{t('modal.close')}</Button>
+        <DialogActions>
+          <Button onClick={handleCancel}>{t('modal.close')}</Button>
+          <Button type="submit">{t('modal.submit')}</Button>
+        </DialogActions>
       </Box>
     </Dialog>
   );

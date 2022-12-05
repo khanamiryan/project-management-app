@@ -81,7 +81,8 @@
   },
   "task": {
     "toast": {},
-    "myTasks": "Мои задачи"
+    "myTasks": "Мои задачи",
+    "goToBoard": "Перейти к доске"
   },
   "modal": {
     "cancel": "Отмена",
@@ -109,7 +110,7 @@
       "creator": "Создатель:",
       "users": "Участники:"
     },
-      "column": {
+    "column": {
       "confirmDeleteColumn": "Вы уверены, что хотите удалить колонку \"{{title}}\"?",
       "deleteReally": "Если вы удалите колонку, вы не сможете восстановить ее."
     }
@@ -123,7 +124,7 @@
     "secondTextBlock": "Создавайте столько столбцов сколько захотите и заполняйте их любым количеством задач. Вы можете добавлять членов команды к доскам и задачам. Можете даже перетаскивать элементы мышью, если это будет приносить вам радость.",
     "developers": "Команда разработки",
     "schoolInfoFirstPart": "Это приложение создано в качестве финального задания ",
-    "schoolInfoSecondPart": "курса React от Rolling Scopes School."    
+    "schoolInfoSecondPart": "курса React от Rolling Scopes School."
   },
   "developers": {
     "ashot": "Ашот",
@@ -133,5 +134,5 @@
     "lead": "тимлид"
   },
   "noUsers": "нет участников",
-    "accountDeleted": "аккаунт удален"  
+  "accountDeleted": "аккаунт удален"
 }

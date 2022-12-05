@@ -65,7 +65,7 @@ const TaskListItem = ({ task }: { task: ITask }) => {
         </Box>
 
         <Button onClick={goBoard} variant="contained" sx={{ mt: 1 }}>
-          {'go to board'}
+          {t('task.goToBoard')}
         </Button>
       </ListItem>
     </>
