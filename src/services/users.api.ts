@@ -37,7 +37,6 @@ export const usersApi = api.injectEndpoints({
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
           usersApi.util.updateQueryData('getUser', id, (draft) => {
-            console.log('draft and patch', draft, patch);
             //need to understand why not updates the state
             //it's should work, if we find the way get rid of user state or do really sync of state and cache.
             Object.assign(draft, patch);
@@ -68,9 +67,7 @@ export const usersApi = api.injectEndpoints({
             dispatch(api.util.resetApiState());
             dispatch(signOutReducer());
           }
-        } catch {
-          console.log('Unknown error with user delete');
-        }
+        } catch {}
       },
     }),
   }),

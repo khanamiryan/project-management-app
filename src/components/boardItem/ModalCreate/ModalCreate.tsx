@@ -1,7 +1,4 @@
-//TODO эта модалка создает только колонки,
-// функционал создания тасков теперь в другом компоненте, ее можно рефакторить
-
-import { Box, Button, Dialog, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, Typography } from '@mui/material';
 import InputText from 'components/InputText/InputText';
 import React from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
@@ -96,13 +93,10 @@ export default function ModalCreate({
     closeModal();
   };
 
-  //todo : add check input, add errors
-  //todo : add logic for order column
-
   return (
     <Dialog open={openModal} onClose={closeModal} className="modal-form">
       <Box component="form" className="column-create-form" onSubmit={handleSubmit(onSubmit)}>
-        <Typography variant="h4" component="h3">
+        <Typography variant="h4" component="h3" sx={{ fontSize: '1.25rem' }}>
           {t(action)} {t(type)}
         </Typography>
         <InputText
@@ -121,8 +115,10 @@ export default function ModalCreate({
             rules={rules.columnDescription}
           />
         )}
-        <Button type="submit">{t('modal.submit')}</Button>
-        <Button onClick={handleCancel}>{t('modal.close')}</Button>
+        <DialogActions>
+          <Button onClick={handleCancel}>{t('modal.close')}</Button>
+          <Button type="submit">{t('modal.submit')}</Button>
+        </DialogActions>
       </Box>
     </Dialog>
   );

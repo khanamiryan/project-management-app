@@ -22,7 +22,6 @@ import ErrorAlert from 'components/ErrorAlert/ErrorAlert';
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 
 export default function BoardItem(): JSX.Element {
-  // todo: loader, toast
   const { t } = useTranslation();
   const navigate = useNavigate();
   const idBoard = useParams().id as string;
@@ -43,7 +42,7 @@ export default function BoardItem(): JSX.Element {
     isLoading: isColumnsLoading,
     isError: isColumnsError,
   } = useGetColumnsQuery(idBoard);
-  console.log('isColumnsLoading', isColumnsLoading);
+
   const {
     data: dataTasksByBoardId,
     isLoading: isTasksLoading,
@@ -108,7 +107,7 @@ export default function BoardItem(): JSX.Element {
         }
       }
     }
-  }, [boardError, dispatch, navigate]);
+  }, [boardError, dispatch, navigate, t]);
 
   return (
     <Box className={'board'}>

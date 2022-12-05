@@ -14,7 +14,6 @@ import {
   useUpdateColumnsSetMutation,
   useUpdateTasksSetMutation,
   useAddTaskMutation,
-  //useGetTasksByColumnQuery,
 } from '../../../services/board.api';
 import { useGetBoardByIdQuery } from 'services/boards.api';
 import Modal from 'components/Modal/Modal';
@@ -130,7 +129,6 @@ export default function TasksList({
     if (newColumnTitle !== dataColumn.title) {
       updateColumn(newColumnData);
     }
-    // todo: order
 
     setEditTitleColumn(!editTitleColumn);
   };
@@ -332,7 +330,6 @@ export default function TasksList({
                       dataTask={task}
                       dataTasks={dataTasks}
                       onDelete={onDeleteTask}
-                      //ref={refTask}
                     ></TaskCard>
                   );
                 })}

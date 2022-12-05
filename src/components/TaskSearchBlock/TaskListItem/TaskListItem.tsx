@@ -7,7 +7,7 @@ import { ITask } from 'types/types';
 import { useTranslation } from 'react-i18next';
 
 const TaskListItem = ({ task }: { task: ITask }) => {
-  const { data: allUsers, isError, isLoading } = useGetUsersQuery('');
+  const { data: allUsers } = useGetUsersQuery('');
   const { boardId, description, title, userId, users } = task;
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -65,7 +65,7 @@ const TaskListItem = ({ task }: { task: ITask }) => {
         </Box>
 
         <Button onClick={goBoard} variant="contained" sx={{ mt: 1 }}>
-          {'go to board'}
+          {t('task.goToBoard')}
         </Button>
       </ListItem>
     </>

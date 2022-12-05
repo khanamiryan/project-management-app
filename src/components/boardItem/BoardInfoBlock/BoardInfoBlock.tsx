@@ -139,7 +139,7 @@ const BoardInfoBlock = ({ board }: { board: Board }) => {
       {ownerObj && (
         <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, pl: 1 }}>
           <UserChip login={ownerObj.login} isOwner />
-          {contributors.length &&
+          {Boolean(contributors.length) &&
             contributors.map((contributor) => (
               <UserChip key={contributor.id} login={contributor.login} />
             ))}

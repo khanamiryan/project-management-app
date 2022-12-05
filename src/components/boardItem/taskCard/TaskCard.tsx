@@ -128,12 +128,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
   const styleDnD = {
     opacity: isDragging ? 0 : 1,
     cursor: updateTasksSetResult.isLoading ? 'wait!important' : 'move!important',
-    //height: isDragging ? 0 : 'inherit',
-
-    //paddingTop: isOver ? '110px' : 0,
-    //transition: 'all 0.5s',
   };
-  // todo if(order<orderdrop) { return paddingBottom } else{ return paddingTop} ??
 
   const closeModal = () => setOpenModal(false);
 
@@ -228,7 +223,7 @@ export default function TaskCard({ dataTask, dataTasks, onDelete }: taskCardProp
       }
       default: {
         return (
-          <Stack spacing={2} minWidth={'250px'}>
+          <Stack spacing={2} minWidth={'230px'}>
             {dataTask.description && (
               <>
                 <Typography variant="body1" overflow={'auto'}>

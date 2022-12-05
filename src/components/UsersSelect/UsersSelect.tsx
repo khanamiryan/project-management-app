@@ -67,7 +67,6 @@ export default function UsersSelect({
             return acc;
           }, [])
         : [];
-      console.log('useEffect');
       setPersonName(selectedNames);
     }
   }, [isSuccess, selectedUsersId, users]);

@@ -62,7 +62,7 @@ const BoardCard = ({ board }: { board: Board }) => {
         })
       );
     }
-  }, [dispatch, isOwner, isSuccess]);
+  }, [dispatch, isOwner, isSuccess, t]);
 
   return (
     <>
@@ -90,10 +90,7 @@ const BoardCard = ({ board }: { board: Board }) => {
             </CardActions>
           </Box>
           <Box>
-            <IconButton
-              // sx={{ position: 'absolute', top: '1rem', right: '1rem' }}
-              onClick={onClickDelete}
-            >
+            <IconButton onClick={onClickDelete}>
               <DeleteIcon fontSize="large" />
             </IconButton>
           </Box>
