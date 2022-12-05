@@ -39,10 +39,8 @@ export const userSlice = createSlice({
   },
 });
 
-export const { signOutReducer, setToken } = userSlice.actions;
+export const { signOutReducer } = userSlice.actions;
 export default userSlice.reducer;
 
-export const selectUserToken = ({ user }: RootState) => user.token;
 export const selectUserID = (state: RootState) =>
   state.user.token ? (jwt_decode(state.user.token) as DecodedToken).id : '';
-export const selectUserLoggedIn = (state: RootState) => state.user.token.length > 0;

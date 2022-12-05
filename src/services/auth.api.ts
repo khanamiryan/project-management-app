@@ -12,7 +12,7 @@ export const authApi = api.injectEndpoints({
         body: user,
       }),
 
-      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+      async onQueryStarted(args, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           localStorage.setItem('token', data.token);
@@ -31,10 +31,12 @@ export const authApi = api.injectEndpoints({
         body: user,
       }),
       async onQueryStarted({ login, password }, { queryFulfilled, dispatch }) {
-        const { data } = await queryFulfilled;
-        if (data._id) {
-          await dispatch(authApi.endpoints.signInUser.initiate({ login, password }));
-        }
+        try {
+          const { data } = await queryFulfilled;
+          if (data._id) {
+            await dispatch(authApi.endpoints.signInUser.initiate({ login, password }));
+          }
+        } catch (error) {}
       },
     }),
   }),

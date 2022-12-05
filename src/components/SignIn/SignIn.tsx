@@ -39,8 +39,7 @@ const SignIn = () => {
           dispatch(showToast({ message: t('auth.toast.successToSignIn'), type: 'success' }));
         }
       })
-      .catch((e) => {
-        dispatch(showToast({ message: e.data.message }));
+      .catch(() => {
         setError('login', { type: 'custom', message: '' });
         setError('password', { type: 'custom', message: '' });
       });

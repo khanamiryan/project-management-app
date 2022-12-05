@@ -55,9 +55,6 @@ const Profile = () => {
         setOpen(false);
         dispatch(showToast({ message: t('auth.toast.successUserDelete'), type: 'success' }));
         navigate('/');
-      })
-      .catch((error) => {
-        dispatch(showToast({ message: t(error.data.message) }));
       });
   };
 

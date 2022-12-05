@@ -1,4 +1,5 @@
 {
+  "title": "Super Boards: superpower for you projects",
   "signUpTitle": "Sign Up",
   "signInTitle": "Sign In",
   "welcome": "Welcome, {{name}}",
@@ -29,8 +30,7 @@
       "successUserDelete": "Successfully deleted the user",
       "successToSignUp": "Successfully signed up",
       "successToSignIn": "Successfully signed in",
-      "successSetUserInfo": "Profile successfully updated",
-      "tokenExpired": "Your token expired, please login again"
+      "successSetUserInfo": "Profile successfully updated"
     }
   },
   "form": {
@@ -130,6 +130,13 @@
     "siarhei": "Siarhei Hancharyk",
     "developer": "developer",
     "lead": "team lead"
+  },
+  "serverError": {
+    "403": "Your token expired, please login again",
+    "401": "Wrong login or password",
+    "409": "User with this login exists",
+    "FETCH_ERROR": "Server is down",
+    "unspecific": "Something wrong on server side"
   },
   "noUsers": "no users",
   "accountDeleted": "account deleted",

@@ -74,7 +74,7 @@ const BoardsList = () => {
   return (
     <>
       {/* tabs start */}
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: '100%', marginBottom: 1 }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
             <Tab label={t('boards.myBoards')} {...a11yProps(0)} />
