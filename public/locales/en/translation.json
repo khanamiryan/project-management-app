@@ -131,5 +131,6 @@
     "lead": "team lead"
   },
   "noUsers": "no users",
-  "accountDeleted": "account deleted"  
+  "accountDeleted": "account deleted",
+  "search": "Search..."  
 }

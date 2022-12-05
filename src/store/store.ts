@@ -8,12 +8,14 @@ import {
 import userReducer from './userSlice';
 import { api } from '../services/api';
 import toastReducer from './toastSlice';
+import boardsPageReducer from './boardsPageSlice';
 import { rtkErrorMiddleware } from './error.middleware';
 
 export const reducersList = {
   user: userReducer,
   [api.reducerPath]: api.reducer,
   toast: toastReducer,
+  boardsPage: boardsPageReducer,
 };
 
 export const rootReducer = combineReducers(reducersList);
