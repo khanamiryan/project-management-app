@@ -13,6 +13,8 @@ import TaskSearchBlock from 'components/TaskSearchBlock/TaskSearchBlock';
 // tabs start
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { useAppDispatch, useAppSelector } from 'store/redux.hooks';
+import { selectActiveTab, setActiveTab } from 'store/boardsPageSlice';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -54,16 +56,19 @@ const BoardsList = () => {
   const { data, isError, isLoading } = useGetBoardsSetByUserIdQuery(id);
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = useState(false);
+  const activeTab = useAppSelector(selectActiveTab);
+  const dispatch = useAppDispatch();
   const onClickAddBoard = () => {
     setModalOpen(true);
   };
   const onModalClose = () => setModalOpen(false);
 
   // tabs
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(activeTab === 'boards' ? 0 : 1);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    dispatch(setActiveTab({ activeTab: newValue === 0 ? 'boards' : 'tasks' }));
   };
 
   return (
